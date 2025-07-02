@@ -25,4 +25,7 @@ AWS_REGIONS=($(aws ec2 describe-regions --query "Regions[].RegionName" --output 
 
 # Call ec2_security_group.sh with output file and regions
 ./ec2_security_group.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call ec2_elastic_ips.sh with output file and regions
+./ec2_elastic_ips.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 echo "INFO: Done."
