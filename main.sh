@@ -91,4 +91,10 @@ AWS_REGIONS=($(aws ec2 describe-regions --query "Regions[].RegionName" --output 
 
 # Call ecs_task_definitions.sh with output file and regions
 ./ecs_task_definitions.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call ecr_public_repositories.sh with output file and regions
+./ecr_public_repositories.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call ecr_private_repositories.sh with output file and regions
+./ecr_private_repositories.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 echo "INFO: Done."
