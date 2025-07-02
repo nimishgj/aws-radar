@@ -193,4 +193,40 @@ AWS_REGIONS=($(aws ec2 describe-regions --query "Regions[].RegionName" --output 
 
 # Call sqs_queues.sh with output file and regions
 ./sqs_queues.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call apigateway_rest_apis.sh with output file and regions
+./apigateway_rest_apis.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call apigateway_http_apis.sh with output file and regions
+./apigateway_http_apis.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call apigateway_websocket_apis.sh with output file and regions
+./apigateway_websocket_apis.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call eks_clusters.sh with output file and regions
+./eks_clusters.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call sns_topics.sh with output file and regions
+./sns_topics.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call secretsmanager_secrets.sh with output file and regions
+./secretsmanager_secrets.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call kms_keys.sh with output file and regions
+./kms_keys.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call ssm_parameters.sh with output file and regions
+./ssm_parameters.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call route53_hosted_zones.sh with output file
+./route53_hosted_zones.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call dynamodb_tables.sh with output file and regions
+./dynamodb_tables.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call kinesis_streams.sh with output file and regions
+./kinesis_streams.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call stepfunctions_state_machines.sh with output file and regions
+./stepfunctions_state_machines.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 echo "INFO: Done."
