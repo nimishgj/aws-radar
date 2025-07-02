@@ -178,4 +178,16 @@ AWS_REGIONS=($(aws ec2 describe-regions --query "Regions[].RegionName" --output 
 
 # Call amazon_mq_brokers.sh with output file and regions
 ./amazon_mq_brokers.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call msk_clusters.sh with output file and regions
+./msk_clusters.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call msk_configurations.sh with output file and regions
+./msk_configurations.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call msk_connectors.sh with output file and regions
+./msk_connectors.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call msk_replicators.sh with output file and regions
+./msk_replicators.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 echo "INFO: Done."
