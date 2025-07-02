@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# AWS Radar - AWS Resource Inventory Tool
 # Output file name
 OUTPUT_FILE="aws_resources.csv"
 
@@ -11,222 +12,143 @@ echo "INFO: Initialized $OUTPUT_FILE"
 echo "INFO: Fetching AWS regions"
 AWS_REGIONS=($(aws ec2 describe-regions --query "Regions[].RegionName" --output text))
 
-# Pass regions and output file to ec2.sh
-./ec2_instances.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+# EC2 resources
+echo "INFO: Processing EC2 resources"
+./ec2/instances.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./ec2/ebs_volumes.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./ec2/ebs_snapshots.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./ec2/security_group.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./ec2/elastic_ips.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./ec2/key_pairs.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./ec2/network_interfaces.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./ec2/load_balancers.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./ec2/target_groups.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./ec2/asg.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# S3 resources
+echo "INFO: Processing S3 resources"
+./s3/s3.sh "$OUTPUT_FILE"
+
+# VPC resources
+echo "INFO: Processing VPC resources"
+./vpc/vpc.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./vpc/subnets.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./vpc/route_table.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./vpc/egress_igw.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./vpc/dhpc_option_set.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./vpc/managed_prefix_list.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./vpc/nat_gateway.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./vpc/network_acls.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./vpc/customer_gateway.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./vpc/virtual_private_gateway.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./vpc/site_to_site_vpn.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./vpc/transit_gateways.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# ECS resources
+echo "INFO: Processing ECS resources"
+./ecs/cluster.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./ecs/namespaces.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./ecs/task_definitions.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# ECR resources
+echo "INFO: Processing ECR resources"
+./ecr/public_repositories.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./ecr/private_repositories.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# RDS resources
+echo "INFO: Processing RDS resources"
+./rds/rds.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./rds/snapshots.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# CloudWatch resources
+echo "INFO: Processing CloudWatch resources"
+./cloudwatch/log_groups.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./cloudwatch/dashboards.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./cloudwatch/alarms.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./cloudwatch/anomaly_detectors.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./cloudwatch/synthetics_canaries.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./cloudwatch/contributor_insights.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./cloudwatch/evidently.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./cloudwatch/rum.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./cloudwatch/servicelens.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./cloudwatch/internet_monitor.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./cloudwatch/logs_insights.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Lambda resources
+echo "INFO: Processing Lambda resources"
+./lambda/functions.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./lambda/layers.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./lambda/event_source_mappings.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./lambda/function_urls.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# ElastiCache resources
+echo "INFO: Processing ElastiCache resources"
+./elasticache/clusters.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./elasticache/replication_groups.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./elasticache/parameter_groups.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./elasticache/subnet_groups.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./elasticache/security_groups.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./elasticache/valkey.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./elasticache/memcached.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./elasticache/redis_oss.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./elasticache/global_datastores.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Amazon MQ resources
+echo "INFO: Processing Amazon MQ resources"
+./amazon_mq/brokers.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# MSK resources
+echo "INFO: Processing MSK resources"
+./msk/clusters.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./msk/configurations.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./msk/connectors.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./msk/replicators.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# SQS resources
+echo "INFO: Processing SQS resources"
+./sqs/queues.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# API Gateway resources
+echo "INFO: Processing API Gateway resources"
+./apigateway/rest_apis.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./apigateway/http_apis.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+./apigateway/websocket_apis.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 
-# Call s3.sh with output file
-./s3.sh "$OUTPUT_FILE"
+# EKS resources
+echo "INFO: Processing EKS resources"
+./eks/clusters.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 
-# Call ec2_ebs_volumes.sh with output file and regions
-./ec2_ebs_volumes.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+# SNS resources
+echo "INFO: Processing SNS resources"
+./sns/topics.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 
-# Call ec2_ebs_snapshots.sh with output file and regions
-./ec2_ebs_snapshots.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+# Secrets Manager resources
+echo "INFO: Processing Secrets Manager resources"
+./secretsmanager/secrets.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 
-# Call ec2_security_group.sh with output file and regions
-./ec2_security_group.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+# KMS resources
+echo "INFO: Processing KMS resources"
+./kms/keys.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 
-# Call ec2_elastic_ips.sh with output file and regions
-./ec2_elastic_ips.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+# SSM resources
+echo "INFO: Processing SSM resources"
+./ssm/parameters.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 
-# Call ec2_key_pairs.sh with output file and regions
-./ec2_key_pairs.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+# Route53 resources
+echo "INFO: Processing Route53 resources"
+./route53/hosted_zones.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 
-# Call ec2_network_interfaces.sh with output file and regions
-./ec2_network_interfaces.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+# DynamoDB resources
+echo "INFO: Processing DynamoDB resources"
+./dynamodb/tables.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 
-# Call ec2_load_balancers.sh with output file and regions
-./ec2_load_balancers.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+# Kinesis resources
+echo "INFO: Processing Kinesis resources"
+./kinesis/streams.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 
-# Call ec2_target_groups.sh with output file and regions
-./ec2_target_groups.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+# Step Functions resources
+echo "INFO: Processing Step Functions resources"
+./stepfunctions/state_machines.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 
-# Call ec2_asg.sh with output file and regions
-./ec2_asg.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call vpc.sh with output file and regions
-./vpc.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call vpc_subnets.sh with output file and regions
-./vpc_subnets.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call vpc_route_table.sh with output file and regions
-./vpc_route_table.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call vpc_internet_gateway.sh with output file and regions
-./vpc_internet_gateway.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call vpc_egress_igw.sh with output file and regions
-./vpc_egress_igw.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call vpc_dhpc_option_set.sh with output file and regions
-./vpc_dhpc_option_set.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call vpc_managed_prefix_list.sh with output file and regions
-./vpc_managed_prefix_list.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call vpc_nat_gateway.sh with output file and regions
-./vpc_nat_gateway.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call vpc_network_acls.sh with output file and regions
-./vpc_network_acls.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call vpc_customer_gateway.sh with output file and regions
-./vpc_customer_gateway.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call vpc_virtual_private_gateway.sh with output file and regions
-./vpc_virtual_private_gateway.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call vpc_site_to_site_vpn.sh with output file and regions
-./vpc_site_to_site_vpn.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call vpc_transit_gateways.sh with output file and regions
-./vpc_transit_gateways.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call ecs_cluster.sh with output file and regions
-./ecs_cluster.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call ecs_namespaces.sh with output file and regions
-./ecs_namespaces.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call ecs_task_definitions.sh with output file and regions
-./ecs_task_definitions.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call ecr_public_repositories.sh with output file and regions
-./ecr_public_repositories.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call ecr_private_repositories.sh with output file and regions
-./ecr_private_repositories.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call rds.sh with output file and regions
-./rds.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call rds_snapshots.sh with output file and regions
-./rds_snapshots.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call cloudwatch_log_groups.sh with output file and regions
-./cloudwatch_log_groups.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call cloudwatch_dashboards.sh with output file and regions
-./cloudwatch_dashboards.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call cloudwatch_alarms.sh with output file and regions
-./cloudwatch_alarms.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call cloudwatch_anomaly_detectors.sh with output file and regions
-./cloudwatch_anomaly_detectors.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call cloudwatch_synthetics_canaries.sh with output file and regions
-./cloudwatch_synthetics_canaries.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call cloudwatch_contributor_insights.sh with output file and regions
-./cloudwatch_contributor_insights.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call cloudwatch_evidently.sh with output file and regions
-./cloudwatch_evidently.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call cloudwatch_rum.sh with output file and regions
-./cloudwatch_rum.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call cloudwatch_servicelens.sh with output file and regions
-./cloudwatch_servicelens.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call cloudwatch_internet_monitor.sh with output file and regions
-./cloudwatch_internet_monitor.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call cloudwatch_logs_insights.sh with output file and regions
-./cloudwatch_logs_insights.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call lambda_functions.sh with output file and regions
-./lambda_functions.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call lambda_layers.sh with output file and regions
-./lambda_layers.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call lambda_event_source_mappings.sh with output file and regions
-./lambda_event_source_mappings.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call lambda_function_urls.sh with output file and regions
-./lambda_function_urls.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call elasticache_clusters.sh with output file and regions
-./elasticache_clusters.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call elasticache_replication_groups.sh with output file and regions
-./elasticache_replication_groups.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call elasticache_parameter_groups.sh with output file and regions
-./elasticache_parameter_groups.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call elasticache_subnet_groups.sh with output file and regions
-./elasticache_subnet_groups.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call elasticache_security_groups.sh with output file and regions
-./elasticache_security_groups.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call elasticache_valkey.sh with output file and regions
-./elasticache_valkey.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call elasticache_memcached.sh with output file and regions
-./elasticache_memcached.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call elasticache_redis_oss.sh with output file and regions
-./elasticache_redis_oss.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call elasticache_global_datastores.sh with output file and regions
-./elasticache_global_datastores.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call amazon_mq_brokers.sh with output file and regions
-./amazon_mq_brokers.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call msk_clusters.sh with output file and regions
-./msk_clusters.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call msk_configurations.sh with output file and regions
-./msk_configurations.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call msk_connectors.sh with output file and regions
-./msk_connectors.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call msk_replicators.sh with output file and regions
-./msk_replicators.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call sqs_queues.sh with output file and regions
-./sqs_queues.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call apigateway_rest_apis.sh with output file and regions
-./apigateway_rest_apis.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call apigateway_http_apis.sh with output file and regions
-./apigateway_http_apis.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call apigateway_websocket_apis.sh with output file and regions
-./apigateway_websocket_apis.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call eks_clusters.sh with output file and regions
-./eks_clusters.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call sns_topics.sh with output file and regions
-./sns_topics.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call secretsmanager_secrets.sh with output file and regions
-./secretsmanager_secrets.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call kms_keys.sh with output file and regions
-./kms_keys.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call ssm_parameters.sh with output file and regions
-./ssm_parameters.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call route53_hosted_zones.sh with output file
-./route53_hosted_zones.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call dynamodb_tables.sh with output file and regions
-./dynamodb_tables.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call kinesis_streams.sh with output file and regions
-./kinesis_streams.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-
-# Call stepfunctions_state_machines.sh with output file and regions
-./stepfunctions_state_machines.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
-echo "INFO: Done."
+echo "INFO: AWS Radar inventory completed successfully."
+echo "INFO: Results saved to $OUTPUT_FILE"
