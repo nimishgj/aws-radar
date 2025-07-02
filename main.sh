@@ -103,4 +103,37 @@ AWS_REGIONS=($(aws ec2 describe-regions --query "Regions[].RegionName" --output 
 
 # Call rds_snapshots.sh with output file and regions
 ./rds_snapshots.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call cloudwatch_log_groups.sh with output file and regions
+./cloudwatch_log_groups.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call cloudwatch_dashboards.sh with output file and regions
+./cloudwatch_dashboards.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call cloudwatch_alarms.sh with output file and regions
+./cloudwatch_alarms.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call cloudwatch_anomaly_detectors.sh with output file and regions
+./cloudwatch_anomaly_detectors.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call cloudwatch_synthetics_canaries.sh with output file and regions
+./cloudwatch_synthetics_canaries.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call cloudwatch_contributor_insights.sh with output file and regions
+./cloudwatch_contributor_insights.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call cloudwatch_evidently.sh with output file and regions
+./cloudwatch_evidently.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call cloudwatch_rum.sh with output file and regions
+./cloudwatch_rum.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call cloudwatch_servicelens.sh with output file and regions
+./cloudwatch_servicelens.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call cloudwatch_internet_monitor.sh with output file and regions
+./cloudwatch_internet_monitor.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call cloudwatch_logs_insights.sh with output file and regions
+./cloudwatch_logs_insights.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 echo "INFO: Done."
