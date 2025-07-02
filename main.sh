@@ -19,4 +19,7 @@ AWS_REGIONS=($(aws ec2 describe-regions --query "Regions[].RegionName" --output 
 
 # Call ec2_ebs_volumes.sh with output file and regions
 ./ec2_ebs_volumes.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call ec2_ebs_snapshots.sh with output file and regions
+./ec2_ebs_snapshots.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 echo "INFO: Done."
