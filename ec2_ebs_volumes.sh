@@ -18,7 +18,5 @@ for REGION in "${REGIONS[@]}"; do
   done
 done
 
-# Append a blank line first to separate from previous service entries
 echo "" >> "$OUTPUT_FILE"
-# Append EBS volumes to the output file
 echo "$ALL_VOLUME_INFO" >> "$OUTPUT_FILE"
