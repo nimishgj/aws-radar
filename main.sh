@@ -82,4 +82,13 @@ AWS_REGIONS=($(aws ec2 describe-regions --query "Regions[].RegionName" --output 
 
 # Call vpc_transit_gateways.sh with output file and regions
 ./vpc_transit_gateways.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call ecs_cluster.sh with output file and regions
+./ecs_cluster.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call ecs_namespaces.sh with output file and regions
+./ecs_namespaces.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call ecs_task_definitions.sh with output file and regions
+./ecs_task_definitions.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 echo "INFO: Done."
