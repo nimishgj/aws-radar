@@ -148,4 +148,31 @@ AWS_REGIONS=($(aws ec2 describe-regions --query "Regions[].RegionName" --output 
 
 # Call lambda_function_urls.sh with output file and regions
 ./lambda_function_urls.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call elasticache_clusters.sh with output file and regions
+./elasticache_clusters.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call elasticache_replication_groups.sh with output file and regions
+./elasticache_replication_groups.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call elasticache_parameter_groups.sh with output file and regions
+./elasticache_parameter_groups.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call elasticache_subnet_groups.sh with output file and regions
+./elasticache_subnet_groups.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call elasticache_security_groups.sh with output file and regions
+./elasticache_security_groups.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call elasticache_valkey.sh with output file and regions
+./elasticache_valkey.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call elasticache_memcached.sh with output file and regions
+./elasticache_memcached.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call elasticache_redis_oss.sh with output file and regions
+./elasticache_redis_oss.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call elasticache_global_datastores.sh with output file and regions
+./elasticache_global_datastores.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 echo "INFO: Done."
