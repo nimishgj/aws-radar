@@ -136,4 +136,16 @@ AWS_REGIONS=($(aws ec2 describe-regions --query "Regions[].RegionName" --output 
 
 # Call cloudwatch_logs_insights.sh with output file and regions
 ./cloudwatch_logs_insights.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call lambda_functions.sh with output file and regions
+./lambda_functions.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call lambda_layers.sh with output file and regions
+./lambda_layers.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call lambda_event_source_mappings.sh with output file and regions
+./lambda_event_source_mappings.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call lambda_function_urls.sh with output file and regions
+./lambda_function_urls.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 echo "INFO: Done."
