@@ -77,7 +77,7 @@ You can attach this policy to an IAM role or user and use those credentials with
 
 1. Clone this repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/nimishgj/aws-radar.git
    cd aws-radar
    ```
 
