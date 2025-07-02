@@ -175,4 +175,7 @@ AWS_REGIONS=($(aws ec2 describe-regions --query "Regions[].RegionName" --output 
 
 # Call elasticache_global_datastores.sh with output file and regions
 ./elasticache_global_datastores.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call amazon_mq_brokers.sh with output file and regions
+./amazon_mq_brokers.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 echo "INFO: Done."
