@@ -43,4 +43,43 @@ AWS_REGIONS=($(aws ec2 describe-regions --query "Regions[].RegionName" --output 
 
 # Call ec2_asg.sh with output file and regions
 ./ec2_asg.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call vpc.sh with output file and regions
+./vpc.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call vpc_subnets.sh with output file and regions
+./vpc_subnets.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call vpc_route_table.sh with output file and regions
+./vpc_route_table.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call vpc_internet_gateway.sh with output file and regions
+./vpc_internet_gateway.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call vpc_egress_igw.sh with output file and regions
+./vpc_egress_igw.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call vpc_dhpc_option_set.sh with output file and regions
+./vpc_dhpc_option_set.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call vpc_managed_prefix_list.sh with output file and regions
+./vpc_managed_prefix_list.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call vpc_nat_gateway.sh with output file and regions
+./vpc_nat_gateway.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call vpc_network_acls.sh with output file and regions
+./vpc_network_acls.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call vpc_customer_gateway.sh with output file and regions
+./vpc_customer_gateway.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call vpc_virtual_private_gateway.sh with output file and regions
+./vpc_virtual_private_gateway.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call vpc_site_to_site_vpn.sh with output file and regions
+./vpc_site_to_site_vpn.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call vpc_transit_gateways.sh with output file and regions
+./vpc_transit_gateways.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 echo "INFO: Done."
