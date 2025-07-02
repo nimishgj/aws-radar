@@ -190,4 +190,7 @@ AWS_REGIONS=($(aws ec2 describe-regions --query "Regions[].RegionName" --output 
 
 # Call msk_replicators.sh with output file and regions
 ./msk_replicators.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call sqs_queues.sh with output file and regions
+./sqs_queues.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 echo "INFO: Done."
