@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Output file name
+OUTPUT_FILE="aws_resources.csv"
+
+# Initialize the output file
+> "$OUTPUT_FILE"
+echo "INFO: Initialized $OUTPUT_FILE"
+
+# Get all AWS regions
+echo "INFO: Fetching AWS regions"
+AWS_REGIONS=($(aws ec2 describe-regions --query "Regions[].RegionName" --output text))
+
+# Pass regions and output file to ec2.sh
+./ec2_instances.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
+
+# Call s3.sh with output file
+./s3.sh "$OUTPUT_FILE"
+
+echo "INFO: Done."
+
