@@ -29,6 +29,8 @@ AWS_REGIONS=($(aws ec2 describe-regions --query "Regions[].RegionName" --output 
 # Call ec2_elastic_ips.sh with output file and regions
 ./ec2_elastic_ips.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 
+# Call ec2_key_pairs.sh with output file and regions
+./ec2_key_pairs.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 # Call ec2_target_groups.sh with output file and regions
 ./ec2_target_groups.sh "$OUTPUT_FILE" "${AWS_REGIONS[@]}"
 
