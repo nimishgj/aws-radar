@@ -1,0 +1,96 @@
+services:
+  aws-radar:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: aws-radar
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+    ports:
+      - "9090:9090"
+    volumes:
+      - ../config.yaml:/app/config.yaml:ro
+    networks:
+      - aws-radar-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:9090/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.142.0
+    container_name: otel-collector
+    command: ["--config=/etc/otelcol/config.yaml"]
+    env_file:
+      - infraspec.env
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otelcol/config.yaml:ro
+    ports:
+      - "18888:8888"
+      - "18889:8889"
+      - "14317:4317"
+      - "14318:4318"
+      - "23133:13133"
+    depends_on:
+      aws-radar:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+    networks:
+      - aws-radar-network
+    restart: unless-stopped
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: clickhouse
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+      - ./clickhouse/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    environment:
+      - CLICKHOUSE_DB=aws_radar
+      - CLICKHOUSE_USER=default
+      - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
+    networks:
+      - aws-radar-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "clickhouse-client", "--query", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-clickhouse-datasource
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    networks:
+      - aws-radar-network
+    restart: unless-stopped
+
+volumes:
+  clickhouse-data:
+  grafana-data:
+
+networks:
+  aws-radar-network:
+    driver: bridge

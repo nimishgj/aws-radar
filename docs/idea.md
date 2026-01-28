@@ -1,0 +1,3 @@
+I want to build a agent written in go which ihould connect to aws account and then it should use the aws sdk and get the count of resources running and it should have a confing of collection interval and it should convert them to prometheus format and expose it to a endpoint so that otel collector can scrapte it and store it in clickhouse and then i can use grafana to visulize like number of instances running over a peroid of time based on type or size
+
+each aws service has speciic attributes, like s3 has bucket name and tier of storage and for ec2 , it is instance type  and similarly find out attributes for all the other aws services and this is an idea, kinda like aws-radar

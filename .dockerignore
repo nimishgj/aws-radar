@@ -1,0 +1,38 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+docs/
+*.md
+!go.mod
+!go.sum
+
+# Docker
+docker/
+Dockerfile
+.dockerignore
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Build artifacts
+bin/
+
+# Test files
+*_test.go
+**/*_test.go
+
+# Environment files
+.env
+*.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Claude
+.claude/

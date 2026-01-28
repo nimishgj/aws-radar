@@ -1,0 +1,13 @@
+apiVersion: 1
+
+providers:
+  - name: 'AWS Radar Dashboards'
+    orgId: 1
+    folder: 'AWS Radar'
+    folderUid: 'aws-radar'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards
