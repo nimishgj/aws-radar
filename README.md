@@ -56,7 +56,7 @@ AWS Radar periodically scans your AWS account and collects resource counts for v
 ### Prerequisites
 
 - Docker and Docker Compose
-- AWS credentials with read access to the services you want to monitor
+- AWS credentials with read access to the services you want to monitor (see [AWS IAM Setup Guide](docs/aws-iam-setup.md))
 
 ### Setup
 
@@ -162,6 +162,11 @@ aws-radar/
 ├── Dockerfile
 └── Makefile
 ```
+
+## Documentation
+
+- [AWS IAM Setup Guide](docs/aws-iam-setup.md) - How to create an IAM user with required permissions
+- [Metrics Registry](docs/metrics-registry.md) - Complete list of all metrics emitted by AWS Radar
 
 ## Metrics
 
