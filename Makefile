@@ -1,4 +1,4 @@
-.PHONY: build run test clean docker docker-up docker-down lint fmt help
+.PHONY: build run test test-race clean docker docker-up docker-down lint fmt fmt-check mod-check ci help
 
 # Variables
 BINARY_NAME=aws-radar
@@ -56,6 +56,26 @@ lint:
 	@echo "Linting code..."
 	$(GOVET) ./...
 
+# Check formatting (fails if not formatted)
+fmt-check:
+	@echo "Checking code formatting..."
+	@test -z "$$(gofmt -l .)" || (echo "Code not formatted. Run 'make fmt'" && gofmt -l . && exit 1)
+
+# Check go.mod is tidy
+mod-check:
+	@echo "Checking go.mod..."
+	@go mod tidy
+	@git diff --exit-code go.mod go.sum || (echo "go.mod/go.sum not tidy. Run 'go mod tidy'" && exit 1)
+
+# Run tests with race detection
+test-race:
+	@echo "Running tests with race detection..."
+	$(GOTEST) -race -v ./...
+
+# CI recipe - runs all checks
+ci: fmt-check mod-check lint build test
+	@echo "CI checks passed!"
+
 # Build Docker image
 docker:
 	@echo "Building Docker image..."
@@ -96,7 +116,11 @@ help:
 	@echo "  clean         - Clean build artifacts"
 	@echo "  deps          - Download dependencies"
 	@echo "  fmt           - Format code"
+	@echo "  fmt-check     - Check code formatting (CI)"
+	@echo "  mod-check     - Check go.mod is tidy (CI)"
 	@echo "  lint          - Lint code"
+	@echo "  test-race     - Run tests with race detection"
+	@echo "  ci            - Run all CI checks (fmt, mod, lint, build, test)"
 	@echo "  docker        - Build Docker image"
 	@echo "  docker-up     - Start all services with Docker Compose"
 	@echo "  docker-down   - Stop all services"
