@@ -1,5 +1,7 @@
 {
-  "annotations": { "list": [] },
+  "annotations": {
+    "list": []
+  },
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 2,
@@ -9,521 +11,2780 @@
   "panels": [
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
       "id": 100,
       "panels": [],
       "title": "Overview - Current State",
       "type": "row"
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
       "fieldConfig": {
-        "defaults": { "color": { "mode": "thresholds" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "#73BF69", "value": null }] }, "unit": "short" },
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#73BF69",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
         "overrides": []
       },
-      "gridPos": { "h": 3, "w": 2, "x": 0, "y": 1 },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 0,
+        "y": 1
+      },
       "id": 1,
-      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ec2_instances_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND ($region = 'All' OR Attributes['region'] IN ($region))", "refId": "A" }],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ec2_instances_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote})",
+          "refId": "A"
+        }
+      ],
       "title": "EC2",
       "type": "stat"
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
-      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "#6ED0E0", "value": null }] }, "unit": "short" }, "overrides": [] },
-      "gridPos": { "h": 3, "w": 2, "x": 2, "y": 1 },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#6ED0E0",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 2,
+        "y": 1
+      },
       "id": 2,
-      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_lambda_functions_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND ($region = 'All' OR Attributes['region'] IN ($region))", "refId": "A" }],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_lambda_functions_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote})",
+          "refId": "A"
+        }
+      ],
       "title": "Lambda",
       "type": "stat"
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
-      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "#B877D9", "value": null }] }, "unit": "short" }, "overrides": [] },
-      "gridPos": { "h": 3, "w": 2, "x": 4, "y": 1 },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#B877D9",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 4,
+        "y": 1
+      },
       "id": 3,
-      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_s3_buckets_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND ($region = 'All' OR Attributes['region'] IN ($region))", "refId": "A" }],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_s3_buckets_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote})",
+          "refId": "A"
+        }
+      ],
       "title": "S3",
       "type": "stat"
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
-      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "#FF9830", "value": null }] }, "unit": "short" }, "overrides": [] },
-      "gridPos": { "h": 3, "w": 2, "x": 6, "y": 1 },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#FF9830",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 6,
+        "y": 1
+      },
       "id": 4,
-      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ebs_volumes_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND ($region = 'All' OR Attributes['region'] IN ($region))", "refId": "A" }],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ebs_volumes_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote})",
+          "refId": "A"
+        }
+      ],
       "title": "EBS",
       "type": "stat"
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
-      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "#5794F2", "value": null }] }, "unit": "short" }, "overrides": [] },
-      "gridPos": { "h": 3, "w": 2, "x": 8, "y": 1 },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#5794F2",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 8,
+        "y": 1
+      },
       "id": 5,
-      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_vpc_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND ($region = 'All' OR Attributes['region'] IN ($region))", "refId": "A" }],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_vpc_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote})",
+          "refId": "A"
+        }
+      ],
       "title": "VPCs",
       "type": "stat"
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
-      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "#CA95E5", "value": null }] }, "unit": "short" }, "overrides": [] },
-      "gridPos": { "h": 3, "w": 2, "x": 10, "y": 1 },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#CA95E5",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 10,
+        "y": 1
+      },
       "id": 6,
-      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_security_groups_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND ($region = 'All' OR Attributes['region'] IN ($region))", "refId": "A" }],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_security_groups_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote})",
+          "refId": "A"
+        }
+      ],
       "title": "SGs",
       "type": "stat"
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
-      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "#96D98D", "value": null }] }, "unit": "short" }, "overrides": [] },
-      "gridPos": { "h": 3, "w": 2, "x": 12, "y": 1 },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#96D98D",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 12,
+        "y": 1
+      },
       "id": 7,
-      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_iam_users_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE", "refId": "A" }],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_iam_users_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE",
+          "refId": "A"
+        }
+      ],
       "title": "IAM Users",
       "type": "stat"
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
-      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "#FADE2A", "value": null }] }, "unit": "short" }, "overrides": [] },
-      "gridPos": { "h": 3, "w": 2, "x": 14, "y": 1 },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#FADE2A",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 14,
+        "y": 1
+      },
       "id": 8,
-      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_iam_roles_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE", "refId": "A" }],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_iam_roles_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE",
+          "refId": "A"
+        }
+      ],
       "title": "IAM Roles",
       "type": "stat"
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
-      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "#F2495C", "value": null }] }, "unit": "short" }, "overrides": [] },
-      "gridPos": { "h": 3, "w": 2, "x": 16, "y": 1 },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#F2495C",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 16,
+        "y": 1
+      },
       "id": 9,
-      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_dynamodb_tables_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND ($region = 'All' OR Attributes['region'] IN ($region))", "refId": "A" }],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_dynamodb_tables_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote})",
+          "refId": "A"
+        }
+      ],
       "title": "DynamoDB",
       "type": "stat"
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
-      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "#8AB8FF", "value": null }] }, "unit": "short" }, "overrides": [] },
-      "gridPos": { "h": 3, "w": 2, "x": 18, "y": 1 },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#8AB8FF",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 18,
+        "y": 1
+      },
       "id": 10,
-      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_sqs_queues_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND ($region = 'All' OR Attributes['region'] IN ($region))", "refId": "A" }],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_sqs_queues_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote})",
+          "refId": "A"
+        }
+      ],
       "title": "SQS",
       "type": "stat"
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
-      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "#FF6E40", "value": null }] }, "unit": "short" }, "overrides": [] },
-      "gridPos": { "h": 3, "w": 2, "x": 20, "y": 1 },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#FF6E40",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 20,
+        "y": 1
+      },
       "id": 11,
-      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_sns_topics_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND ($region = 'All' OR Attributes['region'] IN ($region))", "refId": "A" }],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_sns_topics_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote})",
+          "refId": "A"
+        }
+      ],
       "title": "SNS",
       "type": "stat"
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
-      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "#37872D", "value": null }] }, "unit": "short" }, "overrides": [] },
-      "gridPos": { "h": 3, "w": 2, "x": 22, "y": 1 },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#37872D",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 22,
+        "y": 1
+      },
       "id": 12,
-      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_acm_certificates_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND ($region = 'All' OR Attributes['region'] IN ($region))", "refId": "A" }],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_acm_certificates_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote})",
+          "refId": "A"
+        }
+      ],
       "title": "ACM",
       "type": "stat"
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 4 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
       "id": 200,
       "panels": [],
       "title": "Compute - EC2 & Lambda",
       "type": "row"
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 15, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": true, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } },
-          "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "short"
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 5 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 5
+      },
       "id": 201,
-      "options": { "legend": { "calcs": ["last", "min", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 2, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ec2_instances_total' AND $__timeFilter(TimeUnix) AND ($region = 'All' OR Attributes['region'] IN ($region)) GROUP BY time, metric ORDER BY time", "refId": "A" }],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ec2_instances_total' AND $__timeFilter(TimeUnix) GROUP BY time, region ORDER BY time",
+          "refId": "A"
+        }
+      ],
       "title": "EC2 Instances Over Time (by Region)",
-      "type": "timeseries"
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "region"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 15, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": true, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } },
-          "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "short"
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 5 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 5
+      },
       "id": 202,
-      "options": { "legend": { "calcs": ["last", "min", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 2, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['instance_type'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ec2_instances_total' AND $__timeFilter(TimeUnix) AND ($region = 'All' OR Attributes['region'] IN ($region)) GROUP BY time, metric ORDER BY time", "refId": "A" }],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['instance_type'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ec2_instances_total' AND $__timeFilter(TimeUnix) GROUP BY time, metric ORDER BY time",
+          "refId": "A"
+        }
+      ],
       "title": "EC2 Instances Over Time (by Type)",
-      "type": "timeseries"
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "metric"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 15, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": true, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } },
-          "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "short"
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 13 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 13
+      },
       "id": 203,
-      "options": { "legend": { "calcs": ["last", "min", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 2, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_lambda_functions_total' AND $__timeFilter(TimeUnix) AND ($region = 'All' OR Attributes['region'] IN ($region)) GROUP BY time, metric ORDER BY time", "refId": "A" }],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_lambda_functions_total' AND $__timeFilter(TimeUnix) GROUP BY time, region ORDER BY time",
+          "refId": "A"
+        }
+      ],
       "title": "Lambda Functions Over Time (by Region)",
-      "type": "timeseries"
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "region"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 15, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": true, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } },
-          "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "short"
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 13 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 13
+      },
       "id": 204,
-      "options": { "legend": { "calcs": ["last", "min", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 2, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['runtime'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_lambda_functions_total' AND length(Attributes['runtime']) > 0 AND $__timeFilter(TimeUnix) AND ($region = 'All' OR Attributes['region'] IN ($region)) GROUP BY time, metric ORDER BY time", "refId": "A" }],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['runtime'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_lambda_functions_total' AND length(Attributes['runtime']) > 0 AND $__timeFilter(TimeUnix) GROUP BY time, metric ORDER BY time",
+          "refId": "A"
+        }
+      ],
       "title": "Lambda Functions Over Time (by Runtime)",
-      "type": "timeseries"
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "metric"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 21 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
       "id": 300,
       "panels": [],
       "title": "Storage - S3, EBS & DynamoDB",
       "type": "row"
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 15, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": true, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } },
-          "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "short"
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 22 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 22
+      },
       "id": 301,
-      "options": { "legend": { "calcs": ["last", "min", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 2, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_s3_buckets_total' AND $__timeFilter(TimeUnix) AND ($region = 'All' OR Attributes['region'] IN ($region)) GROUP BY time, metric ORDER BY time", "refId": "A" }],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_s3_buckets_total' AND $__timeFilter(TimeUnix) GROUP BY time, region ORDER BY time",
+          "refId": "A"
+        }
+      ],
       "title": "S3 Buckets Over Time",
-      "type": "timeseries"
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "region"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 15, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": true, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } },
-          "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "short"
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 22 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 22
+      },
       "id": 302,
-      "options": { "legend": { "calcs": ["last", "min", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 2, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['volume_type'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ebs_volumes_total' AND $__timeFilter(TimeUnix) AND ($region = 'All' OR Attributes['region'] IN ($region)) GROUP BY time, metric ORDER BY time", "refId": "A" }],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['volume_type'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ebs_volumes_total' AND $__timeFilter(TimeUnix) GROUP BY time, metric ORDER BY time",
+          "refId": "A"
+        }
+      ],
       "title": "EBS Volumes Over Time (by Type)",
-      "type": "timeseries"
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "metric"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 15, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": true, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } },
-          "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "short"
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 22 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 22
+      },
       "id": 303,
-      "options": { "legend": { "calcs": ["last", "min", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 2, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_dynamodb_tables_total' AND $__timeFilter(TimeUnix) AND ($region = 'All' OR Attributes['region'] IN ($region)) GROUP BY time, metric ORDER BY time", "refId": "A" }],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_dynamodb_tables_total' AND $__timeFilter(TimeUnix) GROUP BY time, region ORDER BY time",
+          "refId": "A"
+        }
+      ],
       "title": "DynamoDB Tables Over Time",
-      "type": "timeseries"
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "region"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 30 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 30
+      },
       "id": 400,
       "panels": [],
       "title": "Networking - VPC, Subnets & Gateways",
       "type": "row"
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 15, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": true, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } },
-          "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "short"
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 31 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 31
+      },
       "id": 401,
-      "options": { "legend": { "calcs": ["last", "min", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 2, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_vpc_total' AND $__timeFilter(TimeUnix) AND ($region = 'All' OR Attributes['region'] IN ($region)) GROUP BY time, metric ORDER BY time", "refId": "A" }],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_vpc_total' AND $__timeFilter(TimeUnix) GROUP BY time, region ORDER BY time",
+          "refId": "A"
+        }
+      ],
       "title": "VPCs Over Time",
-      "type": "timeseries"
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "region"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 15, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": true, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } },
-          "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "short"
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 31 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 31
+      },
       "id": 402,
-      "options": { "legend": { "calcs": ["last", "min", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 2, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_subnet_total' AND $__timeFilter(TimeUnix) AND ($region = 'All' OR Attributes['region'] IN ($region)) GROUP BY time, metric ORDER BY time", "refId": "A" }],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_subnet_total' AND $__timeFilter(TimeUnix) GROUP BY time, region ORDER BY time",
+          "refId": "A"
+        }
+      ],
       "title": "Subnets Over Time",
-      "type": "timeseries"
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "region"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 15, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": true, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } },
-          "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "short"
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 31 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 31
+      },
       "id": 403,
-      "options": { "legend": { "calcs": ["last", "min", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 2, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_security_groups_total' AND $__timeFilter(TimeUnix) AND ($region = 'All' OR Attributes['region'] IN ($region)) GROUP BY time, metric ORDER BY time", "refId": "A" }],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_security_groups_total' AND $__timeFilter(TimeUnix) GROUP BY time, region ORDER BY time",
+          "refId": "A"
+        }
+      ],
       "title": "Security Groups Over Time",
-      "type": "timeseries"
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "region"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 15, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": true, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } },
-          "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "short"
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 39 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 39
+      },
       "id": 404,
-      "options": { "legend": { "calcs": ["last", "min", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 2, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_internet_gateways_total' AND $__timeFilter(TimeUnix) AND ($region = 'All' OR Attributes['region'] IN ($region)) GROUP BY time, metric ORDER BY time", "refId": "A" }],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_internet_gateways_total' AND $__timeFilter(TimeUnix) GROUP BY time, region ORDER BY time",
+          "refId": "A"
+        }
+      ],
       "title": "Internet Gateways Over Time",
-      "type": "timeseries"
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "region"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 15, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": true, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } },
-          "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "short"
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 39 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 39
+      },
       "id": 405,
-      "options": { "legend": { "calcs": ["last", "min", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 2, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_nat_gateways_total' AND $__timeFilter(TimeUnix) AND ($region = 'All' OR Attributes['region'] IN ($region)) GROUP BY time, metric ORDER BY time", "refId": "A" }],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_nat_gateways_total' AND $__timeFilter(TimeUnix) GROUP BY time, region ORDER BY time",
+          "refId": "A"
+        }
+      ],
       "title": "NAT Gateways Over Time",
-      "type": "timeseries"
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "region"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 47 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 47
+      },
       "id": 500,
       "panels": [],
       "title": "Identity & Security - IAM & ACM",
       "type": "row"
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 15, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": true, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } },
-          "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "short"
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 48 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 48
+      },
       "id": 501,
-      "options": { "legend": { "calcs": ["last", "min", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 2, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, 'IAM Users' as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_iam_users_total' AND $__timeFilter(TimeUnix) GROUP BY time ORDER BY time", "refId": "A" }],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, 'IAM Users' as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_iam_users_total' AND $__timeFilter(TimeUnix) GROUP BY time ORDER BY time",
+          "refId": "A"
+        }
+      ],
       "title": "IAM Users Over Time",
-      "type": "timeseries"
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "metric"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 15, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": true, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } },
-          "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "short"
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 48 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 48
+      },
       "id": 502,
-      "options": { "legend": { "calcs": ["last", "min", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 2, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, 'IAM Roles' as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_iam_roles_total' AND $__timeFilter(TimeUnix) GROUP BY time ORDER BY time", "refId": "A" }],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, 'IAM Roles' as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_iam_roles_total' AND $__timeFilter(TimeUnix) GROUP BY time ORDER BY time",
+          "refId": "A"
+        }
+      ],
       "title": "IAM Roles Over Time",
-      "type": "timeseries"
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "metric"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 15, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": true, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } },
-          "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "short"
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 48 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 48
+      },
       "id": 503,
-      "options": { "legend": { "calcs": ["last", "min", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 2, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['status'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_acm_certificates_total' AND $__timeFilter(TimeUnix) AND ($region = 'All' OR Attributes['region'] IN ($region)) GROUP BY time, metric ORDER BY time", "refId": "A" }],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['status'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_acm_certificates_total' AND $__timeFilter(TimeUnix) GROUP BY time, metric ORDER BY time",
+          "refId": "A"
+        }
+      ],
       "title": "ACM Certificates Over Time (by Status)",
-      "type": "timeseries"
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "metric"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 56 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 56
+      },
       "id": 600,
       "panels": [],
       "title": "Messaging - SQS, SNS & Route53",
       "type": "row"
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 15, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": true, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } },
-          "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "short"
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 57 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 57
+      },
       "id": 601,
-      "options": { "legend": { "calcs": ["last", "min", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 2, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_sqs_queues_total' AND $__timeFilter(TimeUnix) AND ($region = 'All' OR Attributes['region'] IN ($region)) GROUP BY time, metric ORDER BY time", "refId": "A" }],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_sqs_queues_total' AND $__timeFilter(TimeUnix) GROUP BY time, region ORDER BY time",
+          "refId": "A"
+        }
+      ],
       "title": "SQS Queues Over Time",
-      "type": "timeseries"
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "region"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 15, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": true, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } },
-          "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "short"
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 57 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 57
+      },
       "id": 602,
-      "options": { "legend": { "calcs": ["last", "min", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 2, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_sns_topics_total' AND $__timeFilter(TimeUnix) AND ($region = 'All' OR Attributes['region'] IN ($region)) GROUP BY time, metric ORDER BY time", "refId": "A" }],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_sns_topics_total' AND $__timeFilter(TimeUnix) GROUP BY time, region ORDER BY time",
+          "refId": "A"
+        }
+      ],
       "title": "SNS Topics Over Time",
-      "type": "timeseries"
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "region"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 15, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": true, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } },
-          "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "short"
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 57 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 57
+      },
       "id": 603,
-      "options": { "legend": { "calcs": ["last", "min", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 2, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, 'Route53 Zones' as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_route53_hosted_zones_total' AND $__timeFilter(TimeUnix) GROUP BY time ORDER BY time", "refId": "A" }],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, 'Route53 Zones' as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_route53_hosted_zones_total' AND $__timeFilter(TimeUnix) GROUP BY time ORDER BY time",
+          "refId": "A"
+        }
+      ],
       "title": "Route53 Hosted Zones Over Time",
-      "type": "timeseries"
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "metric"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 65 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 65
+      },
       "id": 700,
       "panels": [],
       "title": "Total Resources Trend",
       "type": "row"
     },
     {
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 20, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": true, "stacking": { "group": "A", "mode": "normal" }, "thresholdsStyle": { "mode": "off" } },
-          "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "short"
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 66 },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 66
+      },
       "id": 701,
-      "options": { "legend": { "calcs": ["last", "min", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 2, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, replaceRegexpOne(MetricName, 'aws_(.*)_total', '\\\\1') as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName LIKE 'aws_%_total' AND MetricName NOT LIKE '%radar%' AND $__timeFilter(TimeUnix) AND ($region = 'All' OR Attributes['region'] IN ($region) OR length(Attributes['region']) = 0) GROUP BY time, MetricName ORDER BY time", "refId": "A" }],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, replaceRegexpOne(MetricName, 'aws_(.*)_total', '\\\\1') as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName LIKE 'aws_%_total' AND MetricName NOT LIKE '%radar%' AND $__timeFilter(TimeUnix) AND (length(Attributes['region']) = 0 OR Attributes['region'] IN (${region:singlequote})) GROUP BY time, MetricName ORDER BY time",
+          "refId": "A"
+        }
+      ],
       "title": "All AWS Resources Over Time (Stacked)",
-      "type": "timeseries"
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "metric"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
     }
   ],
   "refresh": "1m",
   "schemaVersion": 38,
   "style": "dark",
-  "tags": ["aws", "radar", "monitoring", "cloud"],
+  "tags": [
+    "aws",
+    "radar",
+    "monitoring",
+    "cloud"
+  ],
   "templating": {
     "list": [
       {
-        "allValue": "All",
+        "allValue": "",
         "current": {
           "selected": true,
-          "text": ["All"],
-          "value": ["$__all"]
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
         },
-        "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+        "datasource": {
+          "type": "grafana-clickhouse-datasource",
+          "uid": "clickhouse-aws-radar"
+        },
         "definition": "SELECT DISTINCT Attributes['region'] as region FROM aws_radar.otel_metrics_gauge WHERE MetricName LIKE 'aws_%_total' AND length(Attributes['region']) > 0 ORDER BY region",
         "description": "Filter by AWS Region",
         "hide": 0,
@@ -541,8 +2802,22 @@
       }
     ]
   },
-  "time": { "from": "now-6h", "to": "now" },
-  "timepicker": { "refresh_intervals": ["5s", "10s", "30s", "1m", "5m", "15m", "30m", "1h"] },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h"
+    ]
+  },
   "timezone": "",
   "title": "AWS Radar Dashboard",
   "uid": "aws-radar-main",
