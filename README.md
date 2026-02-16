@@ -122,6 +122,25 @@ collectors:
 | `AWS_SECRET_ACCESS_KEY` | AWS secret key |
 | `AWS_REGION` | Default AWS region (optional) |
 
+## Versioning & Releases
+
+Releases are managed using SemVer tags on commits that are already in `main`.
+
+Example:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+Pushing a tag like `v0.1.0` will:
+- Verify the tagged commit is on `main`
+- Verify the `CI` workflow succeeded for that commit
+- Build and push the Docker image to `ghcr.io/<owner>/aws-radar`
+- Create a GitHub Release
+
+Docker tags include: `v0.1.0`, `v0.1`, `v0`, `latest`, and `sha-<short>`.
+
 ## Development
 
 ### Build
