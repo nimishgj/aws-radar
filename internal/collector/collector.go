@@ -2,6 +2,7 @@ package collector
 
 import (
 	"context"
+	"strings"
 	"sync"
 	"time"
 
@@ -33,33 +34,109 @@ type Orchestrator struct {
 }
 
 // NewOrchestrator creates a new collector orchestrator
-func NewOrchestrator(regions []string, interval, timeout time.Duration) *Orchestrator {
-	return &Orchestrator{
-		collectors: []Collector{
-			NewEC2Collector(),
-			NewS3Collector(),
-			NewRDSCollector(),
-			NewLambdaCollector(),
-			NewECSCollector(),
-			NewELBCollector(),
-			NewEKSCollector(),
-			NewDynamoDBCollector(),
-			NewElastiCacheCollector(),
-			NewSQSCollector(),
-			NewSNSCollector(),
-			NewEBSCollector(),
-			NewVPCCollector(),
-			NewACMCollector(),
-		},
-		globalCollectors: []GlobalCollector{
-			NewCloudFrontCollector(),
-			NewRoute53Collector(),
-			NewIAMCollector(),
-		},
-		regions:  regions,
-		interval: interval,
-		timeout:  timeout,
+func NewOrchestrator(regions []string, interval, timeout time.Duration, enabledCollectors []string) *Orchestrator {
+	allCollectors := []Collector{
+		NewAPIGatewayCollector(),
+		NewAPIGatewayV2Collector(),
+		NewAutoScalingCollector(),
+		NewAthenaCollector(),
+		NewECRCollector(),
+		NewEC2Collector(),
+		NewEFSCollector(),
+		NewEventBridgeCollector(),
+		NewGlueCollector(),
+		NewS3Collector(),
+		NewRDSCollector(),
+		NewLambdaCollector(),
+		NewECSCollector(),
+		NewELBCollector(),
+		NewEKSCollector(),
+		NewDynamoDBCollector(),
+		NewElastiCacheCollector(),
+		NewOpenSearchCollector(),
+		NewSecretsManagerCollector(),
+		NewSfnCollector(),
+		NewSSMCollector(),
+		NewSQSCollector(),
+		NewSNSCollector(),
+		NewEBSCollector(),
+		NewVPCCollector(),
+		NewACMCollector(),
 	}
+	allGlobalCollectors := []GlobalCollector{
+		NewCloudFrontCollector(),
+		NewRoute53Collector(),
+		NewIAMCollector(),
+	}
+
+	enabled := normalizeCollectors(enabledCollectors)
+	if len(enabled) > 0 {
+		known := make(map[string]struct{}, len(allCollectors)+len(allGlobalCollectors))
+		for _, c := range allCollectors {
+			known[c.Name()] = struct{}{}
+		}
+		for _, c := range allGlobalCollectors {
+			known[c.Name()] = struct{}{}
+		}
+		for name := range enabled {
+			if _, ok := known[name]; !ok {
+				log.Warn().Str("collector", name).Msg("Unknown collector configured")
+			}
+		}
+	}
+
+	collectors := filterCollectors(allCollectors, enabled)
+	globalCollectors := filterGlobalCollectors(allGlobalCollectors, enabled)
+
+	if len(collectors) == 0 && len(globalCollectors) == 0 {
+		log.Warn().Msg("No collectors enabled; nothing will be collected")
+	}
+
+	return &Orchestrator{
+		collectors:       collectors,
+		globalCollectors: globalCollectors,
+		regions:          regions,
+		interval:         interval,
+		timeout:          timeout,
+	}
+}
+
+func normalizeCollectors(enabled []string) map[string]struct{} {
+	normalized := make(map[string]struct{})
+	for _, name := range enabled {
+		name = strings.ToLower(strings.TrimSpace(name))
+		if name == "" {
+			continue
+		}
+		normalized[name] = struct{}{}
+	}
+	return normalized
+}
+
+func filterCollectors(all []Collector, enabled map[string]struct{}) []Collector {
+	if len(enabled) == 0 {
+		return all
+	}
+	filtered := make([]Collector, 0, len(all))
+	for _, c := range all {
+		if _, ok := enabled[c.Name()]; ok {
+			filtered = append(filtered, c)
+		}
+	}
+	return filtered
+}
+
+func filterGlobalCollectors(all []GlobalCollector, enabled map[string]struct{}) []GlobalCollector {
+	if len(enabled) == 0 {
+		return all
+	}
+	filtered := make([]GlobalCollector, 0, len(all))
+	for _, c := range all {
+		if _, ok := enabled[c.Name()]; ok {
+			filtered = append(filtered, c)
+		}
+	}
+	return filtered
 }
 
 // Start begins the collection loop

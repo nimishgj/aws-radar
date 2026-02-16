@@ -11,6 +11,7 @@ type Config struct {
 	Server     ServerConfig     `mapstructure:"server"`
 	Collection CollectionConfig `mapstructure:"collection"`
 	AWS        AWSConfig        `mapstructure:"aws"`
+	Collectors []string         `mapstructure:"collectors"`
 	Logging    LoggingConfig    `mapstructure:"logging"`
 }
 
@@ -52,6 +53,37 @@ func Load() (*Config, error) {
 	viper.SetDefault("collection.interval", "60s")
 	viper.SetDefault("collection.timeout", "30s")
 	viper.SetDefault("aws.regions", []string{"us-east-1"})
+	viper.SetDefault("collectors", []string{
+		"apigateway",
+		"apigatewayv2",
+		"autoscaling",
+		"athena",
+		"ecr",
+		"ec2",
+		"efs",
+		"eventbridge",
+		"glue",
+		"s3",
+		"rds",
+		"lambda",
+		"ecs",
+		"elb",
+		"eks",
+		"dynamodb",
+		"elasticache",
+		"opensearch",
+		"secretsmanager",
+		"sfn",
+		"ssm",
+		"sqs",
+		"sns",
+		"ebs",
+		"vpc",
+		"acm",
+		"cloudfront",
+		"route53",
+		"iam",
+	})
 	viper.SetDefault("logging.level", "info")
 	viper.SetDefault("logging.format", "json")
 

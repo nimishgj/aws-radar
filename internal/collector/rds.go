@@ -37,20 +37,25 @@ func (c *RDSCollector) Collect(ctx context.Context, cfg aws.Config, region strin
 			dbClass := aws.ToString(instance.DBInstanceClass)
 			engine := aws.ToString(instance.Engine)
 			multiAZ := strconv.FormatBool(instance.MultiAZ != nil && *instance.MultiAZ)
+			status := aws.ToString(instance.DBInstanceStatus)
+			if status == "" {
+				status = "unknown"
+			}
 
-			key := dbClass + "|" + engine + "|" + multiAZ
+			key := dbClass + "|" + engine + "|" + multiAZ + "|" + status
 			counts[key]++
 		}
 	}
 
 	// Update metrics
 	for key, count := range counts {
-		parts := splitKey(key, 3)
+		parts := splitKey(key, 4)
 		metrics.RDSInstances.WithLabelValues(
 			region,
 			parts[0], // db_instance_class
 			parts[1], // engine
 			parts[2], // multi_az
+			parts[3], // status
 		).Set(count)
 	}
 
