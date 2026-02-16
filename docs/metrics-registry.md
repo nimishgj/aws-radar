@@ -69,6 +69,7 @@ All AWS resource metrics:
 | **Labels** | |
 | `region` | AWS region |
 | `version` | Kubernetes version |
+| `status` | Cluster status (`ACTIVE`, `CREATING`, `DELETING`, etc.) |
 
 ### Database Services
 
@@ -83,6 +84,7 @@ All AWS resource metrics:
 | `db_instance_class` | Instance class (e.g., `db.t3.micro`) |
 | `engine` | Database engine (`mysql`, `postgres`, `aurora`, etc.) |
 | `multi_az` | Multi-AZ deployment (`true`, `false`) |
+| `status` | Instance status (`available`, `backing-up`, `modifying`, etc.) |
 
 #### DynamoDB Tables
 
@@ -274,6 +276,134 @@ All AWS resource metrics:
 | **Type** | Gauge |
 | **Description** | Total number of IAM roles |
 | **Labels** | None (global service) |
+
+## Additional AWS Resource Metrics
+
+### API & Integration
+
+#### API Gateway REST APIs
+
+| Metric | `aws_apigateway_rest_apis_total` |
+|--------|---------------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of API Gateway REST APIs |
+| **Labels** | |
+| `region` | AWS region |
+
+#### API Gateway v2 APIs
+
+| Metric | `aws_apigatewayv2_apis_total` |
+|--------|-------------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of API Gateway v2 APIs |
+| **Labels** | |
+| `region` | AWS region |
+| `protocol` | API protocol (`HTTP`, `WEBSOCKET`) |
+
+### Compute & Scaling
+
+#### Auto Scaling Groups
+
+| Metric | `aws_autoscaling_groups_total` |
+|--------|--------------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of Auto Scaling Groups |
+| **Labels** | |
+| `region` | AWS region |
+
+### Data & Analytics
+
+#### Athena Workgroups
+
+| Metric | `aws_athena_workgroups_total` |
+|--------|-------------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of Athena workgroups |
+| **Labels** | |
+| `region` | AWS region |
+
+#### Glue Jobs
+
+| Metric | `aws_glue_jobs_total` |
+|--------|-----------------------|
+| **Type** | Gauge |
+| **Description** | Total number of Glue jobs |
+| **Labels** | |
+| `region` | AWS region |
+
+### Storage & Secrets
+
+#### EFS File Systems
+
+| Metric | `aws_efs_filesystems_total` |
+|--------|-----------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of EFS file systems |
+| **Labels** | |
+| `region` | AWS region |
+
+#### Secrets Manager Secrets
+
+| Metric | `aws_secretsmanager_secrets_total` |
+|--------|------------------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of Secrets Manager secrets |
+| **Labels** | |
+| `region` | AWS region |
+
+#### SSM Parameters
+
+| Metric | `aws_ssm_parameters_total` |
+|--------|----------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of SSM parameters |
+| **Labels** | |
+| `region` | AWS region |
+| `type` | Parameter type (`String`, `SecureString`, `StringList`) |
+
+### Containers & Registry
+
+#### ECR Repositories
+
+| Metric | `aws_ecr_repositories_total` |
+|--------|------------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of ECR repositories |
+| **Labels** | |
+| `region` | AWS region |
+
+### Search
+
+#### OpenSearch Domains
+
+| Metric | `aws_opensearch_domains_total` |
+|--------|--------------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of OpenSearch domains |
+| **Labels** | |
+| `region` | AWS region |
+
+### Workflow & Events
+
+#### Step Functions State Machines
+
+| Metric | `aws_sfn_state_machines_total` |
+|--------|--------------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of Step Functions state machines |
+| **Labels** | |
+| `region` | AWS region |
+| `type` | State machine type (`STANDARD`, `EXPRESS`) |
+
+#### EventBridge Rules
+
+| Metric | `aws_eventbridge_rules_total` |
+|--------|-------------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of EventBridge rules |
+| **Labels** | |
+| `region` | AWS region |
+| `event_bus` | Event bus name |
 
 ## Internal Metrics
 

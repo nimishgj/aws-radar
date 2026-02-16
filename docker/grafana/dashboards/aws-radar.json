@@ -75,7 +75,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ec2_instances_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote})",
+          "rawSql": "SELECT sum(value) FROM (SELECT argMax(Value, TimeUnix) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ec2_instances_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote}) GROUP BY Attributes)",
           "refId": "A"
         }
       ],
@@ -135,7 +135,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_lambda_functions_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote})",
+          "rawSql": "SELECT sum(value) FROM (SELECT argMax(Value, TimeUnix) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_lambda_functions_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote}) GROUP BY Attributes)",
           "refId": "A"
         }
       ],
@@ -195,7 +195,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_s3_buckets_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote})",
+          "rawSql": "SELECT sum(value) FROM (SELECT argMax(Value, TimeUnix) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_s3_buckets_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote}) GROUP BY Attributes)",
           "refId": "A"
         }
       ],
@@ -255,7 +255,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ebs_volumes_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote})",
+          "rawSql": "SELECT sum(value) FROM (SELECT argMax(Value, TimeUnix) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ebs_volumes_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote}) GROUP BY Attributes)",
           "refId": "A"
         }
       ],
@@ -315,7 +315,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_vpc_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote})",
+          "rawSql": "SELECT sum(value) FROM (SELECT argMax(Value, TimeUnix) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_vpc_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote}) GROUP BY Attributes)",
           "refId": "A"
         }
       ],
@@ -375,7 +375,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_security_groups_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote})",
+          "rawSql": "SELECT sum(value) FROM (SELECT argMax(Value, TimeUnix) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_security_groups_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote}) GROUP BY Attributes)",
           "refId": "A"
         }
       ],
@@ -435,7 +435,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_iam_users_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE",
+          "rawSql": "SELECT sum(value) FROM (SELECT argMax(Value, TimeUnix) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_iam_users_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE GROUP BY Attributes)",
           "refId": "A"
         }
       ],
@@ -495,7 +495,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_iam_roles_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE",
+          "rawSql": "SELECT sum(value) FROM (SELECT argMax(Value, TimeUnix) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_iam_roles_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE GROUP BY Attributes)",
           "refId": "A"
         }
       ],
@@ -555,7 +555,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_dynamodb_tables_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote})",
+          "rawSql": "SELECT sum(value) FROM (SELECT argMax(Value, TimeUnix) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_dynamodb_tables_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote}) GROUP BY Attributes)",
           "refId": "A"
         }
       ],
@@ -615,7 +615,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_sqs_queues_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote})",
+          "rawSql": "SELECT sum(value) FROM (SELECT argMax(Value, TimeUnix) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_sqs_queues_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote}) GROUP BY Attributes)",
           "refId": "A"
         }
       ],
@@ -675,7 +675,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_sns_topics_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote})",
+          "rawSql": "SELECT sum(value) FROM (SELECT argMax(Value, TimeUnix) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_sns_topics_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote}) GROUP BY Attributes)",
           "refId": "A"
         }
       ],
@@ -735,7 +735,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT sum(Value) FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_acm_certificates_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote})",
+          "rawSql": "SELECT sum(value) FROM (SELECT argMax(Value, TimeUnix) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_acm_certificates_total' AND TimeUnix >= now() - INTERVAL 5 MINUTE AND Attributes['region'] IN (${region:singlequote}) GROUP BY Attributes)",
           "refId": "A"
         }
       ],
@@ -752,7 +752,7 @@
       },
       "id": 200,
       "panels": [],
-      "title": "Compute - EC2 & Lambda",
+      "title": "Compute - (Legacy)",
       "type": "row"
     },
     {
@@ -813,7 +813,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 5
+        "y": 103
       },
       "id": 201,
       "options": {
@@ -836,7 +836,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ec2_instances_total' AND $__timeFilter(TimeUnix) GROUP BY time, region ORDER BY time",
+          "rawSql": "SELECT time, region, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ec2_instances_total' AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time",
           "refId": "A"
         }
       ],
@@ -915,7 +915,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 5
+        "y": 103
       },
       "id": 202,
       "options": {
@@ -938,7 +938,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['instance_type'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ec2_instances_total' AND $__timeFilter(TimeUnix) GROUP BY time, metric ORDER BY time",
+          "rawSql": "SELECT time, metric, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, Attributes['instance_type'] as metric, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ec2_instances_total' AND $__timeFilter(TimeUnix) GROUP BY time, metric, attrs) GROUP BY time, metric ORDER BY time",
           "refId": "A"
         }
       ],
@@ -1017,7 +1017,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 13
+        "y": 120
       },
       "id": 203,
       "options": {
@@ -1040,7 +1040,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_lambda_functions_total' AND $__timeFilter(TimeUnix) GROUP BY time, region ORDER BY time",
+          "rawSql": "SELECT time, region, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_lambda_functions_total' AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time",
           "refId": "A"
         }
       ],
@@ -1119,7 +1119,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 13
+        "y": 120
       },
       "id": 204,
       "options": {
@@ -1142,7 +1142,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['runtime'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_lambda_functions_total' AND length(Attributes['runtime']) > 0 AND $__timeFilter(TimeUnix) GROUP BY time, metric ORDER BY time",
+          "rawSql": "SELECT time, metric, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, Attributes['runtime'] as metric, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_lambda_functions_total' AND length(Attributes['runtime']) > 0 AND $__timeFilter(TimeUnix) GROUP BY time, metric, attrs) GROUP BY time, metric ORDER BY time",
           "refId": "A"
         }
       ],
@@ -1169,7 +1169,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 29
       },
       "id": 300,
       "panels": [],
@@ -1234,7 +1234,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 22
+        "y": 30
       },
       "id": 301,
       "options": {
@@ -1257,7 +1257,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_s3_buckets_total' AND $__timeFilter(TimeUnix) GROUP BY time, region ORDER BY time",
+          "rawSql": "SELECT time, region, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_s3_buckets_total' AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time",
           "refId": "A"
         }
       ],
@@ -1336,7 +1336,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 22
+        "y": 30
       },
       "id": 302,
       "options": {
@@ -1359,7 +1359,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['volume_type'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ebs_volumes_total' AND $__timeFilter(TimeUnix) GROUP BY time, metric ORDER BY time",
+          "rawSql": "SELECT time, metric, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, Attributes['volume_type'] as metric, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ebs_volumes_total' AND $__timeFilter(TimeUnix) GROUP BY time, metric, attrs) GROUP BY time, metric ORDER BY time",
           "refId": "A"
         }
       ],
@@ -1438,7 +1438,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 22
+        "y": 30
       },
       "id": 303,
       "options": {
@@ -1461,7 +1461,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_dynamodb_tables_total' AND $__timeFilter(TimeUnix) GROUP BY time, region ORDER BY time",
+          "rawSql": "SELECT time, region, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_dynamodb_tables_total' AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time",
           "refId": "A"
         }
       ],
@@ -1488,7 +1488,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 38
       },
       "id": 400,
       "panels": [],
@@ -1553,7 +1553,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 31
+        "y": 39
       },
       "id": 401,
       "options": {
@@ -1576,7 +1576,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_vpc_total' AND $__timeFilter(TimeUnix) GROUP BY time, region ORDER BY time",
+          "rawSql": "SELECT time, region, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_vpc_total' AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time",
           "refId": "A"
         }
       ],
@@ -1655,7 +1655,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 31
+        "y": 39
       },
       "id": 402,
       "options": {
@@ -1678,7 +1678,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_subnet_total' AND $__timeFilter(TimeUnix) GROUP BY time, region ORDER BY time",
+          "rawSql": "SELECT time, region, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_subnet_total' AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time",
           "refId": "A"
         }
       ],
@@ -1757,7 +1757,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 31
+        "y": 39
       },
       "id": 403,
       "options": {
@@ -1780,7 +1780,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_security_groups_total' AND $__timeFilter(TimeUnix) GROUP BY time, region ORDER BY time",
+          "rawSql": "SELECT time, region, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_security_groups_total' AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time",
           "refId": "A"
         }
       ],
@@ -1859,7 +1859,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 39
+        "y": 47
       },
       "id": 404,
       "options": {
@@ -1882,7 +1882,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_internet_gateways_total' AND $__timeFilter(TimeUnix) GROUP BY time, region ORDER BY time",
+          "rawSql": "SELECT time, region, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_internet_gateways_total' AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time",
           "refId": "A"
         }
       ],
@@ -1961,7 +1961,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 39
+        "y": 47
       },
       "id": 405,
       "options": {
@@ -1984,7 +1984,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_nat_gateways_total' AND $__timeFilter(TimeUnix) GROUP BY time, region ORDER BY time",
+          "rawSql": "SELECT time, region, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_nat_gateways_total' AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time",
           "refId": "A"
         }
       ],
@@ -2011,7 +2011,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 47
+        "y": 55
       },
       "id": 500,
       "panels": [],
@@ -2076,7 +2076,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 48
+        "y": 56
       },
       "id": 501,
       "options": {
@@ -2099,7 +2099,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, 'IAM Users' as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_iam_users_total' AND $__timeFilter(TimeUnix) GROUP BY time ORDER BY time",
+          "rawSql": "SELECT time, metric, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, 'IAM Users' as metric, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_iam_users_total' AND $__timeFilter(TimeUnix) GROUP BY time, metric, attrs) GROUP BY time, metric ORDER BY time",
           "refId": "A"
         }
       ],
@@ -2178,7 +2178,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 48
+        "y": 56
       },
       "id": 502,
       "options": {
@@ -2201,7 +2201,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, 'IAM Roles' as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_iam_roles_total' AND $__timeFilter(TimeUnix) GROUP BY time ORDER BY time",
+          "rawSql": "SELECT time, metric, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, 'IAM Roles' as metric, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_iam_roles_total' AND $__timeFilter(TimeUnix) GROUP BY time, metric, attrs) GROUP BY time, metric ORDER BY time",
           "refId": "A"
         }
       ],
@@ -2280,7 +2280,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 48
+        "y": 56
       },
       "id": 503,
       "options": {
@@ -2303,7 +2303,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['status'] as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_acm_certificates_total' AND $__timeFilter(TimeUnix) GROUP BY time, metric ORDER BY time",
+          "rawSql": "SELECT time, metric, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, Attributes['status'] as metric, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_acm_certificates_total' AND $__timeFilter(TimeUnix) GROUP BY time, metric, attrs) GROUP BY time, metric ORDER BY time",
           "refId": "A"
         }
       ],
@@ -2330,7 +2330,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 56
+        "y": 64
       },
       "id": 600,
       "panels": [],
@@ -2395,7 +2395,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 57
+        "y": 65
       },
       "id": 601,
       "options": {
@@ -2418,7 +2418,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_sqs_queues_total' AND $__timeFilter(TimeUnix) GROUP BY time, region ORDER BY time",
+          "rawSql": "SELECT time, region, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_sqs_queues_total' AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time",
           "refId": "A"
         }
       ],
@@ -2497,7 +2497,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 57
+        "y": 65
       },
       "id": 602,
       "options": {
@@ -2520,7 +2520,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_sns_topics_total' AND $__timeFilter(TimeUnix) GROUP BY time, region ORDER BY time",
+          "rawSql": "SELECT time, region, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_sns_topics_total' AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time",
           "refId": "A"
         }
       ],
@@ -2599,7 +2599,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 57
+        "y": 65
       },
       "id": 603,
       "options": {
@@ -2622,7 +2622,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, 'Route53 Zones' as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_route53_hosted_zones_total' AND $__timeFilter(TimeUnix) GROUP BY time ORDER BY time",
+          "rawSql": "SELECT time, metric, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, 'Route53 Zones' as metric, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_route53_hosted_zones_total' AND $__timeFilter(TimeUnix) GROUP BY time, metric, attrs) GROUP BY time, metric ORDER BY time",
           "refId": "A"
         }
       ],
@@ -2649,7 +2649,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 65
+        "y": 73
       },
       "id": 700,
       "panels": [],
@@ -2714,7 +2714,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 66
+        "y": 74
       },
       "id": 701,
       "options": {
@@ -2737,7 +2737,7 @@
           },
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT toStartOfMinute(TimeUnix) as time, replaceRegexpOne(MetricName, 'aws_(.*)_total', '\\\\1') as metric, sum(Value) as value FROM aws_radar.otel_metrics_gauge WHERE MetricName LIKE 'aws_%_total' AND MetricName NOT LIKE '%radar%' AND $__timeFilter(TimeUnix) AND (length(Attributes['region']) = 0 OR Attributes['region'] IN (${region:singlequote})) GROUP BY time, MetricName ORDER BY time",
+          "rawSql": "SELECT time, metric, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, replaceRegexpOne(MetricName, 'aws_(.*)_total', '\\1') as metric, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName LIKE 'aws_%_total' AND MetricName NOT LIKE '%radar%' AND $__timeFilter(TimeUnix) AND (length(Attributes['region']) = 0 OR Attributes['region'] IN (${region:singlequote})) GROUP BY time, metric, attrs) GROUP BY time, metric ORDER BY time",
           "refId": "A"
         }
       ],
@@ -2757,6 +2757,568 @@
           }
         }
       ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 84
+      },
+      "id": 702,
+      "panels": [],
+      "title": "Databases - RDS",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 85
+      },
+      "id": 703,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT time, region, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_rds_instances_total' AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time",
+          "refId": "A"
+        }
+      ],
+      "title": "RDS Instances Over Time (by Region)",
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "region"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 85
+      },
+      "id": 704,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT time, metric, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, Attributes['status'] as metric, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_rds_instances_total' AND length(Attributes['status']) > 0 AND $__timeFilter(TimeUnix) GROUP BY time, metric, attrs) GROUP BY time, metric ORDER BY time",
+          "refId": "A"
+        }
+      ],
+      "title": "RDS Instances Over Time (by Status)",
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "metric"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 93
+      },
+      "id": 705,
+      "panels": [],
+      "title": "Kubernetes - EKS",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 94
+      },
+      "id": 706,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT time, region, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, Attributes['region'] as region, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_eks_clusters_total' AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time",
+          "refId": "A"
+        }
+      ],
+      "title": "EKS Clusters Over Time (by Region)",
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "region"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 94
+      },
+      "id": 707,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT time, metric, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, Attributes['status'] as metric, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_eks_clusters_total' AND length(Attributes['status']) > 0 AND $__timeFilter(TimeUnix) GROUP BY time, metric, attrs) GROUP BY time, metric ORDER BY time",
+          "refId": "A"
+        }
+      ],
+      "title": "EKS Clusters Over Time (by Status)",
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "metric"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse-aws-radar"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 111
+      },
+      "id": 708,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse-aws-radar"
+          },
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT time, metric, sum(value) as value FROM (SELECT toStartOfMinute(TimeUnix) as time, Attributes['state'] as metric, argMax(Value, TimeUnix) as value, Attributes as attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ec2_instances_total' AND length(Attributes['state']) > 0 AND $__timeFilter(TimeUnix) GROUP BY time, metric, attrs) GROUP BY time, metric ORDER BY time",
+          "refId": "A"
+        }
+      ],
+      "title": "EC2 Instances Over Time (by State)",
+      "type": "timeseries",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "metric"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 102
+      },
+      "id": 709,
+      "panels": [],
+      "title": "Compute - EC2",
+      "type": "row"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 119
+      },
+      "id": 710,
+      "panels": [],
+      "title": "Compute - Lambda",
+      "type": "row"
     }
   ],
   "refresh": "1m",

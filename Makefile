@@ -1,4 +1,4 @@
-.PHONY: build run test test-race clean docker docker-up docker-down lint fmt fmt-check mod-check ci help
+.PHONY: build run test test-race clean docker docker-up docker-down docker-logs docker-logs-follow lint fmt fmt-check mod-check ci help
 
 # Variables
 BINARY_NAME=aws-radar
@@ -93,6 +93,11 @@ docker-down:
 
 # View logs
 docker-logs:
+	@echo "Showing logs..."
+	$(DOCKER_COMPOSE) logs -f
+
+# View logs (alias)
+docker-logs-follow:
 	@echo "Showing logs..."
 	$(DOCKER_COMPOSE) logs -f
 

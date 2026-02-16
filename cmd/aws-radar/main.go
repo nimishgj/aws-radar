@@ -41,6 +41,7 @@ func main() {
 		cfg.AWS.Regions,
 		cfg.Collection.Interval,
 		cfg.Collection.Timeout,
+		cfg.Collectors,
 	)
 	go orchestrator.Start(ctx)
 

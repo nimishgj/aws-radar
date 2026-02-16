@@ -46,13 +46,23 @@ func (c *EKSCollector) Collect(ctx context.Context, cfg aws.Config, region strin
 			}
 
 			version := aws.ToString(descOutput.Cluster.Version)
-			counts[version]++
+			if version == "" {
+				version = "unknown"
+			}
+			status := string(descOutput.Cluster.Status)
+			if status == "" {
+				status = "unknown"
+			}
+
+			key := version + "|" + status
+			counts[key]++
 		}
 	}
 
 	// Update metrics
-	for version, count := range counts {
-		metrics.EKSClusters.WithLabelValues(region, version).Set(count)
+	for key, count := range counts {
+		parts := splitKey(key, 2)
+		metrics.EKSClusters.WithLabelValues(region, parts[0], parts[1]).Set(count)
 	}
 
 	log.Debug().

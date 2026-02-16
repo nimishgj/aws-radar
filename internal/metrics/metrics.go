@@ -6,6 +6,50 @@ import (
 )
 
 var (
+	// API Gateway Metrics
+	APIGatewayRestAPIs = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_apigateway_rest_apis_total",
+			Help: "Total number of API Gateway REST APIs",
+		},
+		[]string{"region"},
+	)
+
+	APIGatewayV2APIs = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_apigatewayv2_apis_total",
+			Help: "Total number of API Gateway v2 APIs",
+		},
+		[]string{"region", "protocol"},
+	)
+
+	// Auto Scaling Metrics
+	AutoScalingGroups = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_autoscaling_groups_total",
+			Help: "Total number of Auto Scaling Groups",
+		},
+		[]string{"region"},
+	)
+
+	// Athena Metrics
+	AthenaWorkgroups = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_athena_workgroups_total",
+			Help: "Total number of Athena workgroups",
+		},
+		[]string{"region"},
+	)
+
+	// ECR Metrics
+	ECRRepositories = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ecr_repositories_total",
+			Help: "Total number of ECR repositories",
+		},
+		[]string{"region"},
+	)
+
 	// EC2 Metrics
 	EC2Instances = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
@@ -30,7 +74,7 @@ var (
 			Name: "aws_rds_instances_total",
 			Help: "Total number of RDS instances",
 		},
-		[]string{"region", "db_instance_class", "engine", "multi_az"},
+		[]string{"region", "db_instance_class", "engine", "multi_az", "status"},
 	)
 
 	// Lambda Metrics
@@ -65,7 +109,7 @@ var (
 			Name: "aws_eks_clusters_total",
 			Help: "Total number of EKS clusters",
 		},
-		[]string{"region", "version"},
+		[]string{"region", "version", "status"},
 	)
 
 	// ELB Metrics
@@ -180,6 +224,69 @@ var (
 		[]string{"region"},
 	)
 
+	// EFS Metrics
+	EFSFileSystems = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_efs_filesystems_total",
+			Help: "Total number of EFS file systems",
+		},
+		[]string{"region"},
+	)
+
+	// EventBridge Metrics
+	EventBridgeRules = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_eventbridge_rules_total",
+			Help: "Total number of EventBridge rules",
+		},
+		[]string{"region", "event_bus"},
+	)
+
+	// Glue Metrics
+	GlueJobs = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_glue_jobs_total",
+			Help: "Total number of Glue jobs",
+		},
+		[]string{"region"},
+	)
+
+	// OpenSearch Metrics
+	OpenSearchDomains = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_opensearch_domains_total",
+			Help: "Total number of OpenSearch domains",
+		},
+		[]string{"region"},
+	)
+
+	// Secrets Manager Metrics
+	SecretsManagerSecrets = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_secretsmanager_secrets_total",
+			Help: "Total number of Secrets Manager secrets",
+		},
+		[]string{"region"},
+	)
+
+	// SSM Metrics
+	SSMParameters = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ssm_parameters_total",
+			Help: "Total number of SSM parameters",
+		},
+		[]string{"region", "type"},
+	)
+
+	// Step Functions Metrics
+	SFNStateMachines = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_sfn_state_machines_total",
+			Help: "Total number of Step Functions state machines",
+		},
+		[]string{"region", "type"},
+	)
+
 	// Route53 Metrics
 	Route53HostedZones = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
@@ -236,7 +343,15 @@ var (
 
 // ResetAll resets all gauge metrics before a new collection cycle
 func ResetAll() {
+	APIGatewayRestAPIs.Reset()
+	APIGatewayV2APIs.Reset()
+	AutoScalingGroups.Reset()
+	AthenaWorkgroups.Reset()
+	ECRRepositories.Reset()
 	EC2Instances.Reset()
+	EFSFileSystems.Reset()
+	EventBridgeRules.Reset()
+	GlueJobs.Reset()
 	S3Buckets.Reset()
 	RDSInstances.Reset()
 	LambdaFunctions.Reset()
@@ -247,6 +362,10 @@ func ResetAll() {
 	ELBV2.Reset()
 	DynamoDBTables.Reset()
 	ElastiCacheClusters.Reset()
+	OpenSearchDomains.Reset()
+	SecretsManagerSecrets.Reset()
+	SFNStateMachines.Reset()
+	SSMParameters.Reset()
 	SQSQueues.Reset()
 	SNSTopics.Reset()
 	CloudFrontDistributions.Reset()
