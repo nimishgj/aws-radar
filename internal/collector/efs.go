@@ -19,7 +19,7 @@ func (c *EFSCollector) Name() string {
 	return "efs"
 }
 
-func (c *EFSCollector) Collect(ctx context.Context, cfg aws.Config, region string) error {
+func (c *EFSCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
 	client := efs.NewFromConfig(cfg)
 
 	var count float64
@@ -33,7 +33,7 @@ func (c *EFSCollector) Collect(ctx context.Context, cfg aws.Config, region strin
 		count += float64(len(page.FileSystems))
 	}
 
-	metrics.EFSFileSystems.WithLabelValues(region).Set(count)
+	metrics.EFSFileSystems.WithLabelValues(account, region).Set(count)
 
 	log.Debug().
 		Str("region", region).

@@ -19,7 +19,7 @@ func (c *APIGatewayCollector) Name() string {
 	return "apigateway"
 }
 
-func (c *APIGatewayCollector) Collect(ctx context.Context, cfg aws.Config, region string) error {
+func (c *APIGatewayCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
 	client := apigateway.NewFromConfig(cfg)
 
 	var count float64
@@ -33,7 +33,7 @@ func (c *APIGatewayCollector) Collect(ctx context.Context, cfg aws.Config, regio
 		count += float64(len(page.Items))
 	}
 
-	metrics.APIGatewayRestAPIs.WithLabelValues(region).Set(count)
+	metrics.APIGatewayRestAPIs.WithLabelValues(account, region).Set(count)
 
 	log.Debug().
 		Str("region", region).

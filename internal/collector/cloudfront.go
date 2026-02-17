@@ -20,7 +20,7 @@ func (c *CloudFrontCollector) Name() string {
 	return "cloudfront"
 }
 
-func (c *CloudFrontCollector) Collect(ctx context.Context, cfg aws.Config) error {
+func (c *CloudFrontCollector) Collect(ctx context.Context, cfg aws.Config, account string) error {
 	// CloudFront is a global service, use us-east-1
 	cfg.Region = "us-east-1"
 	client := cloudfront.NewFromConfig(cfg)
@@ -52,6 +52,7 @@ func (c *CloudFrontCollector) Collect(ctx context.Context, cfg aws.Config) error
 	for key, count := range counts {
 		parts := splitKey(key, 2)
 		metrics.CloudFrontDistributions.WithLabelValues(
+			account,
 			parts[0], // price_class
 			parts[1], // enabled
 		).Set(count)

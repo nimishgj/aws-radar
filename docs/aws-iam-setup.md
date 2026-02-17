@@ -71,7 +71,9 @@ AWS Radar requires **read-only access** to various AWS services to collect resou
                 "acm:ListCertificates",
                 "acm:DescribeCertificate",
                 "iam:ListUsers",
-                "iam:ListRoles"
+                "iam:ListRoles",
+                "iam:ListAccountAliases",
+                "sts:GetCallerIdentity"
             ],
             "Resource": "*"
         }
@@ -164,7 +166,9 @@ Create a file named `aws-radar-policy.json`:
                 "acm:ListCertificates",
                 "acm:DescribeCertificate",
                 "iam:ListUsers",
-                "iam:ListRoles"
+                "iam:ListRoles",
+                "iam:ListAccountAliases",
+                "sts:GetCallerIdentity"
             ],
             "Resource": "*"
         }

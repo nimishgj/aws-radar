@@ -19,7 +19,7 @@ func (c *AthenaCollector) Name() string {
 	return "athena"
 }
 
-func (c *AthenaCollector) Collect(ctx context.Context, cfg aws.Config, region string) error {
+func (c *AthenaCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
 	client := athena.NewFromConfig(cfg)
 
 	var count float64
@@ -33,7 +33,7 @@ func (c *AthenaCollector) Collect(ctx context.Context, cfg aws.Config, region st
 		count += float64(len(page.WorkGroups))
 	}
 
-	metrics.AthenaWorkgroups.WithLabelValues(region).Set(count)
+	metrics.AthenaWorkgroups.WithLabelValues(account, region).Set(count)
 
 	log.Debug().
 		Str("region", region).

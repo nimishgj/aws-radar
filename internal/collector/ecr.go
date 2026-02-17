@@ -19,7 +19,7 @@ func (c *ECRCollector) Name() string {
 	return "ecr"
 }
 
-func (c *ECRCollector) Collect(ctx context.Context, cfg aws.Config, region string) error {
+func (c *ECRCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
 	client := ecr.NewFromConfig(cfg)
 
 	var count float64
@@ -33,7 +33,7 @@ func (c *ECRCollector) Collect(ctx context.Context, cfg aws.Config, region strin
 		count += float64(len(page.Repositories))
 	}
 
-	metrics.ECRRepositories.WithLabelValues(region).Set(count)
+	metrics.ECRRepositories.WithLabelValues(account, region).Set(count)
 
 	log.Debug().
 		Str("region", region).

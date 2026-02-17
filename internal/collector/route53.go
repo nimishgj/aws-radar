@@ -19,7 +19,7 @@ func (c *Route53Collector) Name() string {
 	return "route53"
 }
 
-func (c *Route53Collector) Collect(ctx context.Context, cfg aws.Config) error {
+func (c *Route53Collector) Collect(ctx context.Context, cfg aws.Config, account string) error {
 	// Route53 is a global service
 	cfg.Region = "us-east-1"
 	client := route53.NewFromConfig(cfg)
@@ -37,7 +37,7 @@ func (c *Route53Collector) Collect(ctx context.Context, cfg aws.Config) error {
 		count += float64(len(page.HostedZones))
 	}
 
-	metrics.Route53HostedZones.WithLabelValues().Set(count)
+	metrics.Route53HostedZones.WithLabelValues(account).Set(count)
 
 	log.Debug().
 		Float64("hosted_zone_count", count).

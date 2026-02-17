@@ -19,7 +19,7 @@ func (c *AutoScalingCollector) Name() string {
 	return "autoscaling"
 }
 
-func (c *AutoScalingCollector) Collect(ctx context.Context, cfg aws.Config, region string) error {
+func (c *AutoScalingCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
 	client := autoscaling.NewFromConfig(cfg)
 
 	var count float64
@@ -33,7 +33,7 @@ func (c *AutoScalingCollector) Collect(ctx context.Context, cfg aws.Config, regi
 		count += float64(len(page.AutoScalingGroups))
 	}
 
-	metrics.AutoScalingGroups.WithLabelValues(region).Set(count)
+	metrics.AutoScalingGroups.WithLabelValues(account, region).Set(count)
 
 	log.Debug().
 		Str("region", region).
