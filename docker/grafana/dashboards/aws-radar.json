@@ -743,19 +743,6 @@
       "type": "stat"
     },
     {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 4
-      },
-      "id": 200,
-      "panels": [],
-      "title": "Compute - (Legacy)",
-      "type": "row"
-    },
-    {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
         "uid": "clickhouse-aws-radar"
