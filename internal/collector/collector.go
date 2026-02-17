@@ -221,7 +221,10 @@ func (o *Orchestrator) runCollector(ctx context.Context, c Collector, cfg aws.Co
 			Str("collector", c.Name()).
 			Str("region", region).
 			Msg("Collection failed")
+		metrics.CollectionUp.WithLabelValues(c.Name(), region).Set(0)
 		metrics.CollectionErrors.WithLabelValues(c.Name(), region).Inc()
+	} else {
+		metrics.CollectionUp.WithLabelValues(c.Name(), region).Set(1)
 	}
 
 	duration := time.Since(start).Seconds()
@@ -239,7 +242,10 @@ func (o *Orchestrator) runGlobalCollector(ctx context.Context, c GlobalCollector
 			Err(err).
 			Str("collector", c.Name()).
 			Msg("Global collection failed")
+		metrics.CollectionUp.WithLabelValues(c.Name(), "global").Set(0)
 		metrics.CollectionErrors.WithLabelValues(c.Name(), "global").Inc()
+	} else {
+		metrics.CollectionUp.WithLabelValues(c.Name(), "global").Set(1)
 	}
 
 	duration := time.Since(start).Seconds()

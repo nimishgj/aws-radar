@@ -332,6 +332,14 @@ var (
 		[]string{"collector"},
 	)
 
+	CollectionUp = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_radar_up",
+			Help: "1 if the last collection succeeded, 0 otherwise",
+		},
+		[]string{"collector", "region"},
+	)
+
 	CollectionErrors = promauto.NewCounterVec(
 		prometheus.CounterOpts{
 			Name: "aws_radar_collection_errors_total",
@@ -366,6 +374,7 @@ func ResetAll() {
 	SecretsManagerSecrets.Reset()
 	SFNStateMachines.Reset()
 	SSMParameters.Reset()
+	CollectionUp.Reset()
 	SQSQueues.Reset()
 	SNSTopics.Reset()
 	CloudFrontDistributions.Reset()
