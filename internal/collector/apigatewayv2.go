@@ -19,7 +19,7 @@ func (c *APIGatewayV2Collector) Name() string {
 	return "apigatewayv2"
 }
 
-func (c *APIGatewayV2Collector) Collect(ctx context.Context, cfg aws.Config, region string) error {
+func (c *APIGatewayV2Collector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
 	client := apigatewayv2.NewFromConfig(cfg)
 
 	counts := make(map[string]float64)
@@ -45,7 +45,7 @@ func (c *APIGatewayV2Collector) Collect(ctx context.Context, cfg aws.Config, reg
 	}
 
 	for protocol, count := range counts {
-		metrics.APIGatewayV2APIs.WithLabelValues(region, protocol).Set(count)
+		metrics.APIGatewayV2APIs.WithLabelValues(account, region, protocol).Set(count)
 	}
 
 	log.Debug().

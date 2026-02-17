@@ -19,7 +19,7 @@ func (c *EventBridgeCollector) Name() string {
 	return "eventbridge"
 }
 
-func (c *EventBridgeCollector) Collect(ctx context.Context, cfg aws.Config, region string) error {
+func (c *EventBridgeCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
 	client := eventbridge.NewFromConfig(cfg)
 
 	totalBuses := 0
@@ -55,7 +55,7 @@ func (c *EventBridgeCollector) Collect(ctx context.Context, cfg aws.Config, regi
 				ruleToken = rulePage.NextToken
 			}
 
-			metrics.EventBridgeRules.WithLabelValues(region, busName).Set(ruleCount)
+			metrics.EventBridgeRules.WithLabelValues(account, region, busName).Set(ruleCount)
 			totalBuses++
 		}
 		if page.NextToken == nil || len(*page.NextToken) == 0 {

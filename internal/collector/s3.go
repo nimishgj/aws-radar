@@ -19,7 +19,7 @@ func (c *S3Collector) Name() string {
 	return "s3"
 }
 
-func (c *S3Collector) Collect(ctx context.Context, cfg aws.Config, region string) error {
+func (c *S3Collector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
 	client := s3.NewFromConfig(cfg)
 
 	// S3 ListBuckets returns all buckets regardless of region
@@ -60,7 +60,7 @@ func (c *S3Collector) Collect(ctx context.Context, cfg aws.Config, region string
 
 	// Update metrics
 	for bucketRegion, count := range regionCounts {
-		metrics.S3Buckets.WithLabelValues(bucketRegion).Set(count)
+		metrics.S3Buckets.WithLabelValues(account, bucketRegion).Set(count)
 	}
 
 	log.Debug().

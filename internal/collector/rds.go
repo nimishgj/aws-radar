@@ -20,7 +20,7 @@ func (c *RDSCollector) Name() string {
 	return "rds"
 }
 
-func (c *RDSCollector) Collect(ctx context.Context, cfg aws.Config, region string) error {
+func (c *RDSCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
 	client := rds.NewFromConfig(cfg)
 
 	counts := make(map[string]float64)
@@ -50,8 +50,7 @@ func (c *RDSCollector) Collect(ctx context.Context, cfg aws.Config, region strin
 	// Update metrics
 	for key, count := range counts {
 		parts := splitKey(key, 4)
-		metrics.RDSInstances.WithLabelValues(
-			region,
+		metrics.RDSInstances.WithLabelValues(account, region,
 			parts[0], // db_instance_class
 			parts[1], // engine
 			parts[2], // multi_az

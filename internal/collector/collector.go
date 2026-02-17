@@ -8,6 +8,8 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/iam"
+	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/nimishgj/aws-radar/internal/metrics"
 	"github.com/rs/zerolog/log"
 )
@@ -15,13 +17,13 @@ import (
 // Collector interface for all AWS service collectors
 type Collector interface {
 	Name() string
-	Collect(ctx context.Context, cfg aws.Config, region string) error
+	Collect(ctx context.Context, cfg aws.Config, region, account string) error
 }
 
 // GlobalCollector interface for services that don't use regions (IAM, Route53, etc.)
 type GlobalCollector interface {
 	Name() string
-	Collect(ctx context.Context, cfg aws.Config) error
+	Collect(ctx context.Context, cfg aws.Config, account string) error
 }
 
 // Orchestrator manages all collectors and runs collection cycles
@@ -31,6 +33,7 @@ type Orchestrator struct {
 	regions          []string
 	interval         time.Duration
 	timeout          time.Duration
+	accountLabel     string
 }
 
 // NewOrchestrator creates a new collector orchestrator
@@ -176,6 +179,11 @@ func (o *Orchestrator) collect(ctx context.Context) {
 		log.Error().Err(err).Msg("Failed to load AWS config")
 		return
 	}
+	accountLabel := o.accountLabel
+	if accountLabel == "" {
+		accountLabel = o.resolveAccountLabel(ctx, cfg)
+		o.accountLabel = accountLabel
+	}
 
 	var wg sync.WaitGroup
 
@@ -185,7 +193,7 @@ func (o *Orchestrator) collect(ctx context.Context) {
 			wg.Add(1)
 			go func(c Collector, r string) {
 				defer wg.Done()
-				o.runCollector(ctx, c, cfg, r)
+				o.runCollector(ctx, c, cfg, r, accountLabel)
 			}(collector, region)
 		}
 	}
@@ -195,7 +203,7 @@ func (o *Orchestrator) collect(ctx context.Context) {
 		wg.Add(1)
 		go func(c GlobalCollector) {
 			defer wg.Done()
-			o.runGlobalCollector(ctx, c, cfg)
+			o.runGlobalCollector(ctx, c, cfg, accountLabel)
 		}(collector)
 	}
 
@@ -207,7 +215,7 @@ func (o *Orchestrator) collect(ctx context.Context) {
 		Msg("Collection cycle completed")
 }
 
-func (o *Orchestrator) runCollector(ctx context.Context, c Collector, cfg aws.Config, region string) {
+func (o *Orchestrator) runCollector(ctx context.Context, c Collector, cfg aws.Config, region, account string) {
 	collectorCtx, cancel := context.WithTimeout(ctx, o.timeout)
 	defer cancel()
 
@@ -215,39 +223,89 @@ func (o *Orchestrator) runCollector(ctx context.Context, c Collector, cfg aws.Co
 	regionCfg := cfg.Copy()
 	regionCfg.Region = region
 
-	if err := c.Collect(collectorCtx, regionCfg, region); err != nil {
+	if err := c.Collect(collectorCtx, regionCfg, region, account); err != nil {
 		log.Error().
 			Err(err).
 			Str("collector", c.Name()).
 			Str("region", region).
 			Msg("Collection failed")
-		metrics.CollectionUp.WithLabelValues(c.Name(), region).Set(0)
-		metrics.CollectionErrors.WithLabelValues(c.Name(), region).Inc()
+		metrics.CollectionUp.WithLabelValues(account, c.Name(), region).Set(0)
+		metrics.CollectionErrors.WithLabelValues(account, c.Name(), region).Inc()
 	} else {
-		metrics.CollectionUp.WithLabelValues(c.Name(), region).Set(1)
+		metrics.CollectionUp.WithLabelValues(account, c.Name(), region).Set(1)
 	}
 
 	duration := time.Since(start).Seconds()
-	metrics.CollectionDuration.WithLabelValues(c.Name()).Observe(duration)
+	metrics.CollectionDuration.WithLabelValues(account, c.Name()).Observe(duration)
 }
 
-func (o *Orchestrator) runGlobalCollector(ctx context.Context, c GlobalCollector, cfg aws.Config) {
+func (o *Orchestrator) runGlobalCollector(ctx context.Context, c GlobalCollector, cfg aws.Config, account string) {
 	collectorCtx, cancel := context.WithTimeout(ctx, o.timeout)
 	defer cancel()
 
 	start := time.Now()
 
-	if err := c.Collect(collectorCtx, cfg); err != nil {
+	if err := c.Collect(collectorCtx, cfg, account); err != nil {
 		log.Error().
 			Err(err).
 			Str("collector", c.Name()).
 			Msg("Global collection failed")
-		metrics.CollectionUp.WithLabelValues(c.Name(), "global").Set(0)
-		metrics.CollectionErrors.WithLabelValues(c.Name(), "global").Inc()
+		metrics.CollectionUp.WithLabelValues(account, c.Name(), "global").Set(0)
+		metrics.CollectionErrors.WithLabelValues(account, c.Name(), "global").Inc()
 	} else {
-		metrics.CollectionUp.WithLabelValues(c.Name(), "global").Set(1)
+		metrics.CollectionUp.WithLabelValues(account, c.Name(), "global").Set(1)
 	}
 
 	duration := time.Since(start).Seconds()
-	metrics.CollectionDuration.WithLabelValues(c.Name()).Observe(duration)
+	metrics.CollectionDuration.WithLabelValues(account, c.Name()).Observe(duration)
+}
+
+func (o *Orchestrator) resolveAccountLabel(ctx context.Context, cfg aws.Config) string {
+	region := cfg.Region
+	if region == "" {
+		if len(o.regions) > 0 {
+			region = o.regions[0]
+		} else {
+			region = "us-east-1"
+		}
+	}
+
+	resolvedCfg := cfg.Copy()
+	resolvedCfg.Region = region
+
+	accountID := ""
+	accountCtx, cancel := context.WithTimeout(ctx, o.timeout)
+	defer cancel()
+
+	stsClient := sts.NewFromConfig(resolvedCfg)
+	identity, err := stsClient.GetCallerIdentity(accountCtx, &sts.GetCallerIdentityInput{})
+	if err != nil {
+		log.Warn().Err(err).Msg("Failed to resolve AWS account identity")
+		return "unknown"
+	}
+	accountID = aws.ToString(identity.Account)
+
+	alias := ""
+	iamClient := iam.NewFromConfig(resolvedCfg)
+	aliasOut, err := iamClient.ListAccountAliases(accountCtx, &iam.ListAccountAliasesInput{})
+	if err != nil {
+		log.Warn().Err(err).Msg("Failed to resolve AWS account alias")
+	} else if len(aliasOut.AccountAliases) > 0 {
+		alias = aliasOut.AccountAliases[0]
+	}
+
+	label := accountID
+	if alias != "" {
+		label = alias
+	}
+	if label == "" {
+		label = "unknown"
+	}
+
+	log.Info().
+		Str("account", label).
+		Str("account_id", accountID).
+		Msg("Resolved AWS account label")
+
+	return label
 }

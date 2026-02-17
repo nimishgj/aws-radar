@@ -19,7 +19,7 @@ func (c *OpenSearchCollector) Name() string {
 	return "opensearch"
 }
 
-func (c *OpenSearchCollector) Collect(ctx context.Context, cfg aws.Config, region string) error {
+func (c *OpenSearchCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
 	client := opensearch.NewFromConfig(cfg)
 
 	output, err := client.ListDomainNames(ctx, &opensearch.ListDomainNamesInput{})
@@ -28,7 +28,7 @@ func (c *OpenSearchCollector) Collect(ctx context.Context, cfg aws.Config, regio
 	}
 
 	count := float64(len(output.DomainNames))
-	metrics.OpenSearchDomains.WithLabelValues(region).Set(count)
+	metrics.OpenSearchDomains.WithLabelValues(account, region).Set(count)
 
 	log.Debug().
 		Str("region", region).

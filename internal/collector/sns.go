@@ -19,7 +19,7 @@ func (c *SNSCollector) Name() string {
 	return "sns"
 }
 
-func (c *SNSCollector) Collect(ctx context.Context, cfg aws.Config, region string) error {
+func (c *SNSCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
 	client := sns.NewFromConfig(cfg)
 
 	var count float64 = 0
@@ -35,7 +35,7 @@ func (c *SNSCollector) Collect(ctx context.Context, cfg aws.Config, region strin
 		count += float64(len(page.Topics))
 	}
 
-	metrics.SNSTopics.WithLabelValues(region).Set(count)
+	metrics.SNSTopics.WithLabelValues(account, region).Set(count)
 
 	log.Debug().
 		Str("region", region).

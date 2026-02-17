@@ -19,7 +19,7 @@ func (c *ACMCollector) Name() string {
 	return "acm"
 }
 
-func (c *ACMCollector) Collect(ctx context.Context, cfg aws.Config, region string) error {
+func (c *ACMCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
 	client := acm.NewFromConfig(cfg)
 
 	counts := make(map[string]float64)
@@ -56,8 +56,7 @@ func (c *ACMCollector) Collect(ctx context.Context, cfg aws.Config, region strin
 	// Update metrics
 	for key, count := range counts {
 		parts := splitKey(key, 2)
-		metrics.ACMCertificates.WithLabelValues(
-			region,
+		metrics.ACMCertificates.WithLabelValues(account, region,
 			parts[0], // status
 			parts[1], // type
 		).Set(count)

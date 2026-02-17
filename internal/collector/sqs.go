@@ -20,7 +20,7 @@ func (c *SQSCollector) Name() string {
 	return "sqs"
 }
 
-func (c *SQSCollector) Collect(ctx context.Context, cfg aws.Config, region string) error {
+func (c *SQSCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
 	client := sqs.NewFromConfig(cfg)
 
 	counts := make(map[string]float64)
@@ -45,7 +45,7 @@ func (c *SQSCollector) Collect(ctx context.Context, cfg aws.Config, region strin
 
 	// Update metrics
 	for queueType, count := range counts {
-		metrics.SQSQueues.WithLabelValues(region, queueType).Set(count)
+		metrics.SQSQueues.WithLabelValues(account, region, queueType).Set(count)
 	}
 
 	log.Debug().

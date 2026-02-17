@@ -19,7 +19,7 @@ func (c *EKSCollector) Name() string {
 	return "eks"
 }
 
-func (c *EKSCollector) Collect(ctx context.Context, cfg aws.Config, region string) error {
+func (c *EKSCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
 	client := eks.NewFromConfig(cfg)
 
 	counts := make(map[string]float64)
@@ -62,7 +62,7 @@ func (c *EKSCollector) Collect(ctx context.Context, cfg aws.Config, region strin
 	// Update metrics
 	for key, count := range counts {
 		parts := splitKey(key, 2)
-		metrics.EKSClusters.WithLabelValues(region, parts[0], parts[1]).Set(count)
+		metrics.EKSClusters.WithLabelValues(account, region, parts[0], parts[1]).Set(count)
 	}
 
 	log.Debug().
