@@ -25,6 +25,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/iam v1.53.2
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.87.1
 	github.com/aws/aws-sdk-go-v2/service/opensearch v1.57.1
+	github.com/aws/aws-sdk-go-v2/service/organizations v1.50.3
 	github.com/aws/aws-sdk-go-v2/service/rds v1.113.2
 	github.com/aws/aws-sdk-go-v2/service/route53 v1.62.1
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.95.1
@@ -52,7 +53,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.11.17 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.17 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.19.17 // indirect
-	github.com/aws/aws-sdk-go-v2/service/organizations v1.50.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/signin v1.0.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.30.9 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.35.13 // indirect
