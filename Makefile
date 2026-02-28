@@ -16,7 +16,7 @@ GOFMT=$(GOCMD) fmt
 GOVET=$(GOCMD) vet
 
 # Docker parameters
-DOCKER_COMPOSE=docker compose -f docker/docker-compose.yaml
+DOCKER_COMPOSE=docker-compose -f docker/docker-compose.yaml
 
 # Build the binary
 build:
@@ -135,4 +135,4 @@ help:
 	@echo "  help          - Show this help message"
 
 # Default target
-.DEFAULT_GOAL := help
+.DEFAULT_GOAL := build
