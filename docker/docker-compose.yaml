@@ -22,18 +22,18 @@ services:
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.142.0
-    container_name: otel-collector
+    container_name: aws-radar-otel-collector
     command: ["--config=/etc/otelcol/config.yaml"]
     env_file:
       - infraspec.env
     volumes:
       - ./otel-collector-config.yaml:/etc/otelcol/config.yaml:ro
     ports:
-      - "18888:8888"
-      - "18889:8889"
-      - "14317:4317"
-      - "14318:4318"
-      - "23133:13133"
+      - "28888:8888"
+      - "28889:8889"
+      - "24317:4317"
+      - "24318:4318"
+      - "33133:13133"
     depends_on:
       aws-radar:
         condition: service_healthy
@@ -45,10 +45,10 @@ services:
 
   clickhouse:
     image: clickhouse/clickhouse-server:latest
-    container_name: clickhouse
+    container_name: aws-radar-clickhouse
     ports:
-      - "8123:8123"
-      - "9000:9000"
+      - "18123:8123"
+      - "19000:9000"
     volumes:
       - clickhouse-data:/var/lib/clickhouse
       - ./clickhouse/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
@@ -67,7 +67,7 @@ services:
 
   grafana:
     image: grafana/grafana:latest
-    container_name: grafana
+    container_name: aws-radar-grafana
     ports:
       - "3000:3000"
     environment:
