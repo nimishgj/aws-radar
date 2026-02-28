@@ -19,7 +19,7 @@ func (c *EC2Collector) Name() string {
 	return "ec2"
 }
 
-func (c *EC2Collector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
+func (c *EC2Collector) Collect(ctx context.Context, cfg aws.Config, region, account, accountName string) error {
 	client := ec2.NewFromConfig(cfg)
 
 	// Count instances by type, state, and availability zone
@@ -48,7 +48,7 @@ func (c *EC2Collector) Collect(ctx context.Context, cfg aws.Config, region, acco
 	// Update metrics
 	for key, count := range counts {
 		parts := splitKey(key, 3)
-		metrics.EC2Instances.WithLabelValues(account, region,
+		metrics.EC2Instances.WithLabelValues(account, accountName, region,
 			parts[0], // instance_type
 			parts[1], // state
 			parts[2], // availability_zone

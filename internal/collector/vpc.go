@@ -19,38 +19,38 @@ func (c *VPCCollector) Name() string {
 	return "vpc"
 }
 
-func (c *VPCCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
+func (c *VPCCollector) Collect(ctx context.Context, cfg aws.Config, region, account, accountName string) error {
 	client := ec2.NewFromConfig(cfg)
 
 	// Collect VPCs
-	if err := c.collectVPCs(ctx, client, region, account); err != nil {
+	if err := c.collectVPCs(ctx, client, region, account, accountName); err != nil {
 		log.Warn().Err(err).Str("region", region).Msg("Failed to collect VPCs")
 	}
 
 	// Collect Subnets
-	if err := c.collectSubnets(ctx, client, region, account); err != nil {
+	if err := c.collectSubnets(ctx, client, region, account, accountName); err != nil {
 		log.Warn().Err(err).Str("region", region).Msg("Failed to collect Subnets")
 	}
 
 	// Collect Security Groups
-	if err := c.collectSecurityGroups(ctx, client, region, account); err != nil {
+	if err := c.collectSecurityGroups(ctx, client, region, account, accountName); err != nil {
 		log.Warn().Err(err).Str("region", region).Msg("Failed to collect Security Groups")
 	}
 
 	// Collect NAT Gateways
-	if err := c.collectNATGateways(ctx, client, region, account); err != nil {
+	if err := c.collectNATGateways(ctx, client, region, account, accountName); err != nil {
 		log.Warn().Err(err).Str("region", region).Msg("Failed to collect NAT Gateways")
 	}
 
 	// Collect Internet Gateways
-	if err := c.collectInternetGateways(ctx, client, region, account); err != nil {
+	if err := c.collectInternetGateways(ctx, client, region, account, accountName); err != nil {
 		log.Warn().Err(err).Str("region", region).Msg("Failed to collect Internet Gateways")
 	}
 
 	return nil
 }
 
-func (c *VPCCollector) collectVPCs(ctx context.Context, client *ec2.Client, region, account string) error {
+func (c *VPCCollector) collectVPCs(ctx context.Context, client *ec2.Client, region, account, accountName string) error {
 	counts := make(map[string]float64)
 
 	paginator := ec2.NewDescribeVpcsPaginator(client, &ec2.DescribeVpcsInput{})
@@ -68,7 +68,7 @@ func (c *VPCCollector) collectVPCs(ctx context.Context, client *ec2.Client, regi
 	}
 
 	for state, count := range counts {
-		metrics.VPCs.WithLabelValues(account, region, state).Set(count)
+		metrics.VPCs.WithLabelValues(account, accountName, region, state).Set(count)
 	}
 
 	log.Debug().
@@ -79,7 +79,7 @@ func (c *VPCCollector) collectVPCs(ctx context.Context, client *ec2.Client, regi
 	return nil
 }
 
-func (c *VPCCollector) collectSubnets(ctx context.Context, client *ec2.Client, region, account string) error {
+func (c *VPCCollector) collectSubnets(ctx context.Context, client *ec2.Client, region, account, accountName string) error {
 	counts := make(map[string]float64)
 
 	paginator := ec2.NewDescribeSubnetsPaginator(client, &ec2.DescribeSubnetsInput{})
@@ -97,7 +97,7 @@ func (c *VPCCollector) collectSubnets(ctx context.Context, client *ec2.Client, r
 	}
 
 	for az, count := range counts {
-		metrics.Subnets.WithLabelValues(account, region, az).Set(count)
+		metrics.Subnets.WithLabelValues(account, accountName, region, az).Set(count)
 	}
 
 	log.Debug().
@@ -108,7 +108,7 @@ func (c *VPCCollector) collectSubnets(ctx context.Context, client *ec2.Client, r
 	return nil
 }
 
-func (c *VPCCollector) collectSecurityGroups(ctx context.Context, client *ec2.Client, region, account string) error {
+func (c *VPCCollector) collectSecurityGroups(ctx context.Context, client *ec2.Client, region, account, accountName string) error {
 	counts := make(map[string]float64)
 
 	paginator := ec2.NewDescribeSecurityGroupsPaginator(client, &ec2.DescribeSecurityGroupsInput{})
@@ -129,7 +129,7 @@ func (c *VPCCollector) collectSecurityGroups(ctx context.Context, client *ec2.Cl
 	}
 
 	for vpcId, count := range counts {
-		metrics.SecurityGroups.WithLabelValues(account, region, vpcId).Set(count)
+		metrics.SecurityGroups.WithLabelValues(account, accountName, region, vpcId).Set(count)
 	}
 
 	log.Debug().
@@ -140,7 +140,7 @@ func (c *VPCCollector) collectSecurityGroups(ctx context.Context, client *ec2.Cl
 	return nil
 }
 
-func (c *VPCCollector) collectNATGateways(ctx context.Context, client *ec2.Client, region, account string) error {
+func (c *VPCCollector) collectNATGateways(ctx context.Context, client *ec2.Client, region, account, accountName string) error {
 	counts := make(map[string]float64)
 
 	paginator := ec2.NewDescribeNatGatewaysPaginator(client, &ec2.DescribeNatGatewaysInput{})
@@ -158,7 +158,7 @@ func (c *VPCCollector) collectNATGateways(ctx context.Context, client *ec2.Clien
 	}
 
 	for state, count := range counts {
-		metrics.NATGateways.WithLabelValues(account, region, state).Set(count)
+		metrics.NATGateways.WithLabelValues(account, accountName, region, state).Set(count)
 	}
 
 	log.Debug().
@@ -169,7 +169,7 @@ func (c *VPCCollector) collectNATGateways(ctx context.Context, client *ec2.Clien
 	return nil
 }
 
-func (c *VPCCollector) collectInternetGateways(ctx context.Context, client *ec2.Client, region, account string) error {
+func (c *VPCCollector) collectInternetGateways(ctx context.Context, client *ec2.Client, region, account, accountName string) error {
 	var count float64 = 0
 
 	paginator := ec2.NewDescribeInternetGatewaysPaginator(client, &ec2.DescribeInternetGatewaysInput{})
@@ -183,7 +183,7 @@ func (c *VPCCollector) collectInternetGateways(ctx context.Context, client *ec2.
 		count += float64(len(page.InternetGateways))
 	}
 
-	metrics.InternetGateways.WithLabelValues(account, region).Set(count)
+	metrics.InternetGateways.WithLabelValues(account, accountName, region).Set(count)
 
 	log.Debug().
 		Str("region", region).

@@ -19,7 +19,7 @@ func (c *ECSCollector) Name() string {
 	return "ecs"
 }
 
-func (c *ECSCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
+func (c *ECSCollector) Collect(ctx context.Context, cfg aws.Config, region, account, accountName string) error {
 	client := ecs.NewFromConfig(cfg)
 
 	// List clusters
@@ -128,7 +128,7 @@ func (c *ECSCollector) Collect(ctx context.Context, cfg aws.Config, region, acco
 	// Update service metrics
 	for key, count := range serviceCounts {
 		parts := splitKey(key, 2)
-		metrics.ECSServices.WithLabelValues(account, region,
+		metrics.ECSServices.WithLabelValues(account, accountName, region,
 			parts[0], // cluster_name
 			parts[1], // launch_type
 		).Set(count)
@@ -137,7 +137,7 @@ func (c *ECSCollector) Collect(ctx context.Context, cfg aws.Config, region, acco
 	// Update task metrics
 	for key, count := range taskCounts {
 		parts := splitKey(key, 2)
-		metrics.ECSTasks.WithLabelValues(account, region,
+		metrics.ECSTasks.WithLabelValues(account, accountName, region,
 			parts[0], // cluster_name
 			parts[1], // launch_type
 		).Set(count)

@@ -12,7 +12,7 @@ var (
 			Name: "aws_apigateway_rest_apis_total",
 			Help: "Total number of API Gateway REST APIs",
 		},
-		[]string{"account", "region"},
+		[]string{"account", "account_name", "region"},
 	)
 
 	APIGatewayV2APIs = promauto.NewGaugeVec(
@@ -20,7 +20,7 @@ var (
 			Name: "aws_apigatewayv2_apis_total",
 			Help: "Total number of API Gateway v2 APIs",
 		},
-		[]string{"account", "region", "protocol"},
+		[]string{"account", "account_name", "region", "protocol"},
 	)
 
 	// Auto Scaling Metrics
@@ -29,7 +29,7 @@ var (
 			Name: "aws_autoscaling_groups_total",
 			Help: "Total number of Auto Scaling Groups",
 		},
-		[]string{"account", "region"},
+		[]string{"account", "account_name", "region"},
 	)
 
 	// Athena Metrics
@@ -38,7 +38,7 @@ var (
 			Name: "aws_athena_workgroups_total",
 			Help: "Total number of Athena workgroups",
 		},
-		[]string{"account", "region"},
+		[]string{"account", "account_name", "region"},
 	)
 
 	// ECR Metrics
@@ -47,7 +47,7 @@ var (
 			Name: "aws_ecr_repositories_total",
 			Help: "Total number of ECR repositories",
 		},
-		[]string{"account", "region"},
+		[]string{"account", "account_name", "region"},
 	)
 
 	// EC2 Metrics
@@ -56,7 +56,7 @@ var (
 			Name: "aws_ec2_instances_total",
 			Help: "Total number of EC2 instances",
 		},
-		[]string{"account", "region", "instance_type", "state", "availability_zone"},
+		[]string{"account", "account_name", "region", "instance_type", "state", "availability_zone"},
 	)
 
 	// S3 Metrics
@@ -65,7 +65,7 @@ var (
 			Name: "aws_s3_buckets_total",
 			Help: "Total number of S3 buckets",
 		},
-		[]string{"account", "region"},
+		[]string{"account", "account_name", "region"},
 	)
 
 	// RDS Metrics
@@ -74,7 +74,7 @@ var (
 			Name: "aws_rds_instances_total",
 			Help: "Total number of RDS instances",
 		},
-		[]string{"account", "region", "db_instance_class", "engine", "multi_az", "status"},
+		[]string{"account", "account_name", "region", "db_instance_class", "engine", "multi_az", "status"},
 	)
 
 	// Lambda Metrics
@@ -83,7 +83,7 @@ var (
 			Name: "aws_lambda_functions_total",
 			Help: "Total number of Lambda functions",
 		},
-		[]string{"account", "region", "runtime", "memory_size"},
+		[]string{"account", "account_name", "region", "runtime", "memory_size"},
 	)
 
 	// ECS Metrics
@@ -92,7 +92,7 @@ var (
 			Name: "aws_ecs_services_total",
 			Help: "Total number of ECS services",
 		},
-		[]string{"account", "region", "cluster_name", "launch_type"},
+		[]string{"account", "account_name", "region", "cluster_name", "launch_type"},
 	)
 
 	ECSTasks = promauto.NewGaugeVec(
@@ -100,7 +100,7 @@ var (
 			Name: "aws_ecs_tasks_total",
 			Help: "Total number of ECS tasks",
 		},
-		[]string{"account", "region", "cluster_name", "launch_type"},
+		[]string{"account", "account_name", "region", "cluster_name", "launch_type"},
 	)
 
 	// EKS Metrics
@@ -109,7 +109,7 @@ var (
 			Name: "aws_eks_clusters_total",
 			Help: "Total number of EKS clusters",
 		},
-		[]string{"account", "region", "version", "status"},
+		[]string{"account", "account_name", "region", "version", "status"},
 	)
 
 	// ELB Metrics
@@ -118,7 +118,7 @@ var (
 			Name: "aws_elb_classic_total",
 			Help: "Total number of Classic Load Balancers",
 		},
-		[]string{"account", "region", "scheme"},
+		[]string{"account", "account_name", "region", "scheme"},
 	)
 
 	ELBV2 = promauto.NewGaugeVec(
@@ -126,7 +126,7 @@ var (
 			Name: "aws_elbv2_total",
 			Help: "Total number of ALB/NLB load balancers",
 		},
-		[]string{"account", "region", "type", "scheme"},
+		[]string{"account", "account_name", "region", "type", "scheme"},
 	)
 
 	// DynamoDB Metrics
@@ -135,7 +135,7 @@ var (
 			Name: "aws_dynamodb_tables_total",
 			Help: "Total number of DynamoDB tables",
 		},
-		[]string{"account", "region", "billing_mode"},
+		[]string{"account", "account_name", "region", "billing_mode"},
 	)
 
 	// ElastiCache Metrics
@@ -144,7 +144,7 @@ var (
 			Name: "aws_elasticache_clusters_total",
 			Help: "Total number of ElastiCache clusters",
 		},
-		[]string{"account", "region", "engine", "cache_node_type"},
+		[]string{"account", "account_name", "region", "engine", "cache_node_type"},
 	)
 
 	// SQS Metrics
@@ -153,7 +153,7 @@ var (
 			Name: "aws_sqs_queues_total",
 			Help: "Total number of SQS queues",
 		},
-		[]string{"account", "region", "queue_type"},
+		[]string{"account", "account_name", "region", "queue_type"},
 	)
 
 	// SNS Metrics
@@ -162,7 +162,7 @@ var (
 			Name: "aws_sns_topics_total",
 			Help: "Total number of SNS topics",
 		},
-		[]string{"account", "region"},
+		[]string{"account", "account_name", "region"},
 	)
 
 	// CloudFront Metrics
@@ -171,7 +171,7 @@ var (
 			Name: "aws_cloudfront_distributions_total",
 			Help: "Total number of CloudFront distributions",
 		},
-		[]string{"account", "price_class", "enabled"},
+		[]string{"account", "account_name", "price_class", "enabled"},
 	)
 
 	// EBS Metrics
@@ -180,7 +180,7 @@ var (
 			Name: "aws_ebs_volumes_total",
 			Help: "Total number of EBS volumes",
 		},
-		[]string{"account", "region", "volume_type", "state"},
+		[]string{"account", "account_name", "region", "volume_type", "state"},
 	)
 
 	// VPC Metrics
@@ -189,7 +189,7 @@ var (
 			Name: "aws_vpc_total",
 			Help: "Total number of VPCs",
 		},
-		[]string{"account", "region", "state"},
+		[]string{"account", "account_name", "region", "state"},
 	)
 
 	Subnets = promauto.NewGaugeVec(
@@ -197,7 +197,7 @@ var (
 			Name: "aws_subnet_total",
 			Help: "Total number of subnets",
 		},
-		[]string{"account", "region", "availability_zone"},
+		[]string{"account", "account_name", "region", "availability_zone"},
 	)
 
 	SecurityGroups = promauto.NewGaugeVec(
@@ -205,7 +205,7 @@ var (
 			Name: "aws_security_groups_total",
 			Help: "Total number of security groups",
 		},
-		[]string{"account", "region", "vpc_id"},
+		[]string{"account", "account_name", "region", "vpc_id"},
 	)
 
 	NATGateways = promauto.NewGaugeVec(
@@ -213,7 +213,7 @@ var (
 			Name: "aws_nat_gateways_total",
 			Help: "Total number of NAT gateways",
 		},
-		[]string{"account", "region", "state"},
+		[]string{"account", "account_name", "region", "state"},
 	)
 
 	InternetGateways = promauto.NewGaugeVec(
@@ -221,7 +221,7 @@ var (
 			Name: "aws_internet_gateways_total",
 			Help: "Total number of Internet gateways",
 		},
-		[]string{"account", "region"},
+		[]string{"account", "account_name", "region"},
 	)
 
 	// EFS Metrics
@@ -230,7 +230,7 @@ var (
 			Name: "aws_efs_filesystems_total",
 			Help: "Total number of EFS file systems",
 		},
-		[]string{"account", "region"},
+		[]string{"account", "account_name", "region"},
 	)
 
 	// EventBridge Metrics
@@ -239,7 +239,7 @@ var (
 			Name: "aws_eventbridge_rules_total",
 			Help: "Total number of EventBridge rules",
 		},
-		[]string{"account", "region", "event_bus"},
+		[]string{"account", "account_name", "region", "event_bus"},
 	)
 
 	// Glue Metrics
@@ -248,7 +248,7 @@ var (
 			Name: "aws_glue_jobs_total",
 			Help: "Total number of Glue jobs",
 		},
-		[]string{"account", "region"},
+		[]string{"account", "account_name", "region"},
 	)
 
 	// OpenSearch Metrics
@@ -257,7 +257,7 @@ var (
 			Name: "aws_opensearch_domains_total",
 			Help: "Total number of OpenSearch domains",
 		},
-		[]string{"account", "region"},
+		[]string{"account", "account_name", "region"},
 	)
 
 	// Secrets Manager Metrics
@@ -266,7 +266,7 @@ var (
 			Name: "aws_secretsmanager_secrets_total",
 			Help: "Total number of Secrets Manager secrets",
 		},
-		[]string{"account", "region"},
+		[]string{"account", "account_name", "region"},
 	)
 
 	// SSM Metrics
@@ -275,7 +275,7 @@ var (
 			Name: "aws_ssm_parameters_total",
 			Help: "Total number of SSM parameters",
 		},
-		[]string{"account", "region", "type"},
+		[]string{"account", "account_name", "region", "type"},
 	)
 
 	// Step Functions Metrics
@@ -284,7 +284,7 @@ var (
 			Name: "aws_sfn_state_machines_total",
 			Help: "Total number of Step Functions state machines",
 		},
-		[]string{"account", "region", "type"},
+		[]string{"account", "account_name", "region", "type"},
 	)
 
 	// Route53 Metrics
@@ -293,7 +293,7 @@ var (
 			Name: "aws_route53_hosted_zones_total",
 			Help: "Total number of Route53 hosted zones",
 		},
-		[]string{"account"},
+		[]string{"account", "account_name"},
 	)
 
 	// ACM Metrics
@@ -302,7 +302,7 @@ var (
 			Name: "aws_acm_certificates_total",
 			Help: "Total number of ACM certificates",
 		},
-		[]string{"account", "region", "status", "type"},
+		[]string{"account", "account_name", "region", "status", "type"},
 	)
 
 	// IAM Metrics
@@ -311,7 +311,7 @@ var (
 			Name: "aws_iam_users_total",
 			Help: "Total number of IAM users",
 		},
-		[]string{"account"},
+		[]string{"account", "account_name"},
 	)
 
 	IAMRoles = promauto.NewGaugeVec(
@@ -319,7 +319,7 @@ var (
 			Name: "aws_iam_roles_total",
 			Help: "Total number of IAM roles",
 		},
-		[]string{"account"},
+		[]string{"account", "account_name"},
 	)
 
 	// Collection Metrics
@@ -329,7 +329,7 @@ var (
 			Help:    "Duration of AWS resource collection",
 			Buckets: prometheus.DefBuckets,
 		},
-		[]string{"account", "collector"},
+		[]string{"account", "account_name", "collector"},
 	)
 
 	CollectionUp = promauto.NewGaugeVec(
@@ -337,7 +337,7 @@ var (
 			Name: "aws_radar_up",
 			Help: "1 if the last collection succeeded, 0 otherwise",
 		},
-		[]string{"account", "collector", "region"},
+		[]string{"account", "account_name", "collector", "region"},
 	)
 
 	CollectionErrors = promauto.NewCounterVec(
@@ -345,7 +345,7 @@ var (
 			Name: "aws_radar_collection_errors_total",
 			Help: "Total number of collection errors",
 		},
-		[]string{"account", "collector", "region"},
+		[]string{"account", "account_name", "collector", "region"},
 	)
 )
 

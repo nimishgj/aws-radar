@@ -19,7 +19,7 @@ func (c *EBSCollector) Name() string {
 	return "ebs"
 }
 
-func (c *EBSCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
+func (c *EBSCollector) Collect(ctx context.Context, cfg aws.Config, region, account, accountName string) error {
 	client := ec2.NewFromConfig(cfg)
 
 	counts := make(map[string]float64)
@@ -44,7 +44,7 @@ func (c *EBSCollector) Collect(ctx context.Context, cfg aws.Config, region, acco
 	// Update metrics
 	for key, count := range counts {
 		parts := splitKey(key, 2)
-		metrics.EBSVolumes.WithLabelValues(account, region,
+		metrics.EBSVolumes.WithLabelValues(account, accountName, region,
 			parts[0], // volume_type
 			parts[1], // state
 		).Set(count)

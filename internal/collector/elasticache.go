@@ -19,7 +19,7 @@ func (c *ElastiCacheCollector) Name() string {
 	return "elasticache"
 }
 
-func (c *ElastiCacheCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
+func (c *ElastiCacheCollector) Collect(ctx context.Context, cfg aws.Config, region, account, accountName string) error {
 	client := elasticache.NewFromConfig(cfg)
 
 	counts := make(map[string]float64)
@@ -44,7 +44,7 @@ func (c *ElastiCacheCollector) Collect(ctx context.Context, cfg aws.Config, regi
 	// Update metrics
 	for key, count := range counts {
 		parts := splitKey(key, 2)
-		metrics.ElastiCacheClusters.WithLabelValues(account, region,
+		metrics.ElastiCacheClusters.WithLabelValues(account, accountName, region,
 			parts[0], // engine
 			parts[1], // cache_node_type
 		).Set(count)
