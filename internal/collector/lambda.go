@@ -20,7 +20,7 @@ func (c *LambdaCollector) Name() string {
 	return "lambda"
 }
 
-func (c *LambdaCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
+func (c *LambdaCollector) Collect(ctx context.Context, cfg aws.Config, region, account, accountName string) error {
 	client := lambda.NewFromConfig(cfg)
 
 	counts := make(map[string]float64)
@@ -48,7 +48,7 @@ func (c *LambdaCollector) Collect(ctx context.Context, cfg aws.Config, region, a
 	// Update metrics
 	for key, count := range counts {
 		parts := splitKey(key, 2)
-		metrics.LambdaFunctions.WithLabelValues(account, region,
+		metrics.LambdaFunctions.WithLabelValues(account, accountName, region,
 			parts[0], // runtime
 			parts[1], // memory_size
 		).Set(count)

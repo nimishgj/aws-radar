@@ -19,7 +19,7 @@ func (c *DynamoDBCollector) Name() string {
 	return "dynamodb"
 }
 
-func (c *DynamoDBCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
+func (c *DynamoDBCollector) Collect(ctx context.Context, cfg aws.Config, region, account, accountName string) error {
 	client := dynamodb.NewFromConfig(cfg)
 
 	counts := make(map[string]float64)
@@ -55,7 +55,7 @@ func (c *DynamoDBCollector) Collect(ctx context.Context, cfg aws.Config, region,
 
 	// Update metrics
 	for billingMode, count := range counts {
-		metrics.DynamoDBTables.WithLabelValues(account, region, billingMode).Set(count)
+		metrics.DynamoDBTables.WithLabelValues(account, accountName, region, billingMode).Set(count)
 	}
 
 	log.Debug().

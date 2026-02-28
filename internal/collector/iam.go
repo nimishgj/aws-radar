@@ -19,25 +19,25 @@ func (c *IAMCollector) Name() string {
 	return "iam"
 }
 
-func (c *IAMCollector) Collect(ctx context.Context, cfg aws.Config, account string) error {
+func (c *IAMCollector) Collect(ctx context.Context, cfg aws.Config, account, accountName string) error {
 	// IAM is a global service
 	cfg.Region = "us-east-1"
 	client := iam.NewFromConfig(cfg)
 
 	// Collect users
-	if err := c.collectUsers(ctx, client, account); err != nil {
+	if err := c.collectUsers(ctx, client, account, accountName); err != nil {
 		log.Warn().Err(err).Msg("Failed to collect IAM users")
 	}
 
 	// Collect roles
-	if err := c.collectRoles(ctx, client, account); err != nil {
+	if err := c.collectRoles(ctx, client, account, accountName); err != nil {
 		log.Warn().Err(err).Msg("Failed to collect IAM roles")
 	}
 
 	return nil
 }
 
-func (c *IAMCollector) collectUsers(ctx context.Context, client *iam.Client, account string) error {
+func (c *IAMCollector) collectUsers(ctx context.Context, client *iam.Client, account, accountName string) error {
 	var count float64 = 0
 
 	paginator := iam.NewListUsersPaginator(client, &iam.ListUsersInput{})
@@ -51,7 +51,7 @@ func (c *IAMCollector) collectUsers(ctx context.Context, client *iam.Client, acc
 		count += float64(len(page.Users))
 	}
 
-	metrics.IAMUsers.WithLabelValues(account).Set(count)
+	metrics.IAMUsers.WithLabelValues(account, accountName).Set(count)
 
 	log.Debug().
 		Float64("user_count", count).
@@ -60,7 +60,7 @@ func (c *IAMCollector) collectUsers(ctx context.Context, client *iam.Client, acc
 	return nil
 }
 
-func (c *IAMCollector) collectRoles(ctx context.Context, client *iam.Client, account string) error {
+func (c *IAMCollector) collectRoles(ctx context.Context, client *iam.Client, account, accountName string) error {
 	var count float64 = 0
 
 	paginator := iam.NewListRolesPaginator(client, &iam.ListRolesInput{})
@@ -74,7 +74,7 @@ func (c *IAMCollector) collectRoles(ctx context.Context, client *iam.Client, acc
 		count += float64(len(page.Roles))
 	}
 
-	metrics.IAMRoles.WithLabelValues(account).Set(count)
+	metrics.IAMRoles.WithLabelValues(account, accountName).Set(count)
 
 	log.Debug().
 		Float64("role_count", count).

@@ -93,6 +93,19 @@ make docker-up
 - Username: `admin`
 - Password: `admin`
 
+
+### Helm (Kubernetes)
+
+```bash
+helm repo add nimishgj https://nimishgj.github.io/helm-charts
+helm repo update
+helm install aws-radar nimishgj/aws-radar \
+  --set awsCredentials.accessKeyId=YOUR_KEY \
+  --set awsCredentials.secretAccessKey=YOUR_SECRET
+```
+
+Chart values are documented in the helm-charts repository: https://github.com/nimishgj/helm-charts
+
 ## Configuration
 
 ### config.yaml

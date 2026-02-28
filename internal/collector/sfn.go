@@ -19,7 +19,7 @@ func (c *SFNCollector) Name() string {
 	return "sfn"
 }
 
-func (c *SFNCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
+func (c *SFNCollector) Collect(ctx context.Context, cfg aws.Config, region, account, accountName string) error {
 	client := sfn.NewFromConfig(cfg)
 
 	counts := make(map[string]float64)
@@ -41,7 +41,7 @@ func (c *SFNCollector) Collect(ctx context.Context, cfg aws.Config, region, acco
 	}
 
 	for smType, count := range counts {
-		metrics.SFNStateMachines.WithLabelValues(account, region, smType).Set(count)
+		metrics.SFNStateMachines.WithLabelValues(account, accountName, region, smType).Set(count)
 	}
 
 	log.Debug().

@@ -19,7 +19,7 @@ func (c *GlueCollector) Name() string {
 	return "glue"
 }
 
-func (c *GlueCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
+func (c *GlueCollector) Collect(ctx context.Context, cfg aws.Config, region, account, accountName string) error {
 	client := glue.NewFromConfig(cfg)
 
 	var count float64
@@ -33,7 +33,7 @@ func (c *GlueCollector) Collect(ctx context.Context, cfg aws.Config, region, acc
 		count += float64(len(page.Jobs))
 	}
 
-	metrics.GlueJobs.WithLabelValues(account, region).Set(count)
+	metrics.GlueJobs.WithLabelValues(account, accountName, region).Set(count)
 
 	log.Debug().
 		Str("region", region).

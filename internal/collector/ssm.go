@@ -19,7 +19,7 @@ func (c *SSMCollector) Name() string {
 	return "ssm"
 }
 
-func (c *SSMCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
+func (c *SSMCollector) Collect(ctx context.Context, cfg aws.Config, region, account, accountName string) error {
 	client := ssm.NewFromConfig(cfg)
 
 	counts := make(map[string]float64)
@@ -41,7 +41,7 @@ func (c *SSMCollector) Collect(ctx context.Context, cfg aws.Config, region, acco
 	}
 
 	for paramType, count := range counts {
-		metrics.SSMParameters.WithLabelValues(account, region, paramType).Set(count)
+		metrics.SSMParameters.WithLabelValues(account, accountName, region, paramType).Set(count)
 	}
 
 	log.Debug().

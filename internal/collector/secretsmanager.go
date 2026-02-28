@@ -19,7 +19,7 @@ func (c *SecretsManagerCollector) Name() string {
 	return "secretsmanager"
 }
 
-func (c *SecretsManagerCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
+func (c *SecretsManagerCollector) Collect(ctx context.Context, cfg aws.Config, region, account, accountName string) error {
 	client := secretsmanager.NewFromConfig(cfg)
 
 	var count float64
@@ -33,7 +33,7 @@ func (c *SecretsManagerCollector) Collect(ctx context.Context, cfg aws.Config, r
 		count += float64(len(page.SecretList))
 	}
 
-	metrics.SecretsManagerSecrets.WithLabelValues(account, region).Set(count)
+	metrics.SecretsManagerSecrets.WithLabelValues(account, accountName, region).Set(count)
 
 	log.Debug().
 		Str("region", region).

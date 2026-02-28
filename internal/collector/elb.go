@@ -20,21 +20,21 @@ func (c *ELBCollector) Name() string {
 	return "elb"
 }
 
-func (c *ELBCollector) Collect(ctx context.Context, cfg aws.Config, region, account string) error {
+func (c *ELBCollector) Collect(ctx context.Context, cfg aws.Config, region, account, accountName string) error {
 	// Collect Classic Load Balancers
-	if err := c.collectClassic(ctx, cfg, region, account); err != nil {
+	if err := c.collectClassic(ctx, cfg, region, account, accountName); err != nil {
 		log.Warn().Err(err).Str("region", region).Msg("Failed to collect Classic ELB")
 	}
 
 	// Collect ALB/NLB
-	if err := c.collectV2(ctx, cfg, region, account); err != nil {
+	if err := c.collectV2(ctx, cfg, region, account, accountName); err != nil {
 		log.Warn().Err(err).Str("region", region).Msg("Failed to collect ELBv2")
 	}
 
 	return nil
 }
 
-func (c *ELBCollector) collectClassic(ctx context.Context, cfg aws.Config, region, account string) error {
+func (c *ELBCollector) collectClassic(ctx context.Context, cfg aws.Config, region, account, accountName string) error {
 	client := elb.NewFromConfig(cfg)
 
 	counts := make(map[string]float64)
@@ -53,7 +53,7 @@ func (c *ELBCollector) collectClassic(ctx context.Context, cfg aws.Config, regio
 	}
 
 	for scheme, count := range counts {
-		metrics.ELBClassic.WithLabelValues(account, region, scheme).Set(count)
+		metrics.ELBClassic.WithLabelValues(account, accountName, region, scheme).Set(count)
 	}
 
 	log.Debug().
@@ -64,7 +64,7 @@ func (c *ELBCollector) collectClassic(ctx context.Context, cfg aws.Config, regio
 	return nil
 }
 
-func (c *ELBCollector) collectV2(ctx context.Context, cfg aws.Config, region, account string) error {
+func (c *ELBCollector) collectV2(ctx context.Context, cfg aws.Config, region, account, accountName string) error {
 	client := elbv2.NewFromConfig(cfg)
 
 	counts := make(map[string]float64)
@@ -88,7 +88,7 @@ func (c *ELBCollector) collectV2(ctx context.Context, cfg aws.Config, region, ac
 
 	for key, count := range counts {
 		parts := splitKey(key, 2)
-		metrics.ELBV2.WithLabelValues(account, region,
+		metrics.ELBV2.WithLabelValues(account, accountName, region,
 			parts[0], // type
 			parts[1], // scheme
 		).Set(count)
