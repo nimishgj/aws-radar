@@ -45,4 +45,23 @@ func TestLoadDefaults(t *testing.T) {
 	if cfg.Logging.Level != "info" {
 		t.Fatalf("expected default logging level info, got %s", cfg.Logging.Level)
 	}
+
+	requiredCollectors := []string{
+		"codebuild", "codepipeline", "codedeploy",
+		"apprunner", "transfer", "msk", "redshift",
+		"guardduty", "securityhub", "inspector2", "macie", "waf",
+		"shield",
+	}
+	for _, collector := range requiredCollectors {
+		found := false
+		for _, enabled := range cfg.Collectors {
+			if enabled == collector {
+				found = true
+				break
+			}
+		}
+		if !found {
+			t.Fatalf("expected default collectors to include %q", collector)
+		}
+	}
 }

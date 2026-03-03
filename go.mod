@@ -8,9 +8,13 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/acm v1.37.19
 	github.com/aws/aws-sdk-go-v2/service/apigateway v1.38.4
 	github.com/aws/aws-sdk-go-v2/service/apigatewayv2 v1.33.5
+	github.com/aws/aws-sdk-go-v2/service/apprunner v1.39.11
 	github.com/aws/aws-sdk-go-v2/service/athena v1.57.0
 	github.com/aws/aws-sdk-go-v2/service/autoscaling v1.64.0
 	github.com/aws/aws-sdk-go-v2/service/cloudfront v1.59.0
+	github.com/aws/aws-sdk-go-v2/service/codebuild v1.68.10
+	github.com/aws/aws-sdk-go-v2/service/codedeploy v1.35.10
+	github.com/aws/aws-sdk-go-v2/service/codepipeline v1.46.18
 	github.com/aws/aws-sdk-go-v2/service/costexplorer v1.63.3
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.53.6
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.279.1
@@ -23,19 +27,28 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2 v1.54.6
 	github.com/aws/aws-sdk-go-v2/service/eventbridge v1.45.18
 	github.com/aws/aws-sdk-go-v2/service/glue v1.137.0
+	github.com/aws/aws-sdk-go-v2/service/guardduty v1.73.1
 	github.com/aws/aws-sdk-go-v2/service/iam v1.53.2
+	github.com/aws/aws-sdk-go-v2/service/inspector2 v1.47.1
+	github.com/aws/aws-sdk-go-v2/service/kafka v1.48.1
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.87.1
+	github.com/aws/aws-sdk-go-v2/service/macie2 v1.50.10
 	github.com/aws/aws-sdk-go-v2/service/opensearch v1.57.1
 	github.com/aws/aws-sdk-go-v2/service/organizations v1.50.3
 	github.com/aws/aws-sdk-go-v2/service/rds v1.113.2
+	github.com/aws/aws-sdk-go-v2/service/redshift v1.62.2
 	github.com/aws/aws-sdk-go-v2/service/route53 v1.62.1
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.95.1
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.41.1
+	github.com/aws/aws-sdk-go-v2/service/securityhub v1.68.0
 	github.com/aws/aws-sdk-go-v2/service/sfn v1.40.6
+	github.com/aws/aws-sdk-go-v2/service/shield v1.34.18
 	github.com/aws/aws-sdk-go-v2/service/sns v1.39.11
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.42.21
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.67.8
 	github.com/aws/aws-sdk-go-v2/service/sts v1.41.6
+	github.com/aws/aws-sdk-go-v2/service/transfer v1.69.2
+	github.com/aws/aws-sdk-go-v2/service/wafv2 v1.71.0
 	github.com/prometheus/client_golang v1.23.2
 	github.com/rs/zerolog v1.34.0
 	github.com/spf13/viper v1.21.0
