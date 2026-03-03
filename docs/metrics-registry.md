@@ -405,6 +405,128 @@ All AWS resource metrics:
 | `region` | AWS region |
 | `event_bus` | Event bus name |
 
+### Developer Tools
+
+#### CodeBuild Projects
+
+| Metric | `aws_codebuild_projects_total` |
+|--------|--------------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of CodeBuild projects |
+| **Labels** | |
+| `region` | AWS region |
+
+#### CodePipeline Pipelines
+
+| Metric | `aws_codepipeline_pipelines_total` |
+|--------|------------------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of CodePipeline pipelines |
+| **Labels** | |
+| `region` | AWS region |
+
+#### CodeDeploy Applications
+
+| Metric | `aws_codedeploy_applications_total` |
+|--------|-------------------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of CodeDeploy applications |
+| **Labels** | |
+| `region` | AWS region |
+
+### Containers, App Platform & Data
+
+#### App Runner Services
+
+| Metric | `aws_apprunner_services_total` |
+|--------|--------------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of App Runner services |
+| **Labels** | |
+| `region` | AWS region |
+
+#### Transfer Family Servers
+
+| Metric | `aws_transfer_servers_total` |
+|--------|------------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of AWS Transfer Family servers |
+| **Labels** | |
+| `region` | AWS region |
+
+#### MSK Clusters
+
+| Metric | `aws_msk_clusters_total` |
+|--------|--------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of MSK clusters |
+| **Labels** | |
+| `region` | AWS region |
+
+#### Redshift Clusters
+
+| Metric | `aws_redshift_clusters_total` |
+|--------|-------------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of Redshift clusters |
+| **Labels** | |
+| `region` | AWS region |
+
+### Security
+
+#### GuardDuty Detectors
+
+| Metric | `aws_guardduty_detectors_total` |
+|--------|---------------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of GuardDuty detectors |
+| **Labels** | |
+| `region` | AWS region |
+
+#### Security Hub Enabled Standards
+
+| Metric | `aws_securityhub_enabled_standards_total` |
+|--------|-------------------------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of enabled Security Hub standards |
+| **Labels** | |
+| `region` | AWS region |
+
+#### Inspector2 Covered Resources
+
+| Metric | `aws_inspector2_covered_resources_total` |
+|--------|------------------------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of covered resources from Inspector2 |
+| **Labels** | |
+| `region` | AWS region |
+
+#### Macie Classification Jobs
+
+| Metric | `aws_macie_classification_jobs_total` |
+|--------|---------------------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of Macie classification jobs |
+| **Labels** | |
+| `region` | AWS region |
+
+#### WAFv2 Web ACLs
+
+| Metric | `aws_wafv2_web_acls_total` |
+|--------|----------------------------|
+| **Type** | Gauge |
+| **Description** | Total number of WAFv2 web ACLs (regional scope) |
+| **Labels** | |
+| `region` | AWS region |
+
+#### Shield Subscriptions
+
+| Metric | `aws_shield_subscriptions_total` |
+|--------|----------------------------------|
+| **Type** | Gauge |
+| **Description** | Shield Advanced subscription status (`1` subscribed, `0` not subscribed) |
+| **Labels** | None (global service) |
+
 ## Internal Metrics
 
 These metrics provide observability into AWS Radar's own operation.

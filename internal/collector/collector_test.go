@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	appconfig "github.com/nimishgj/aws-radar/internal/config"
 	"github.com/nimishgj/aws-radar/internal/metrics"
 	"github.com/prometheus/client_golang/prometheus/testutil"
 )
@@ -143,5 +144,37 @@ func TestRunGlobalCollectorRecordsSuccess(t *testing.T) {
 	afterErrors := testutil.ToFloat64(metrics.CollectionErrors.WithLabelValues(account, accountName, c.Name(), "global"))
 	if afterErrors != beforeErrors {
 		t.Fatalf("expected no errors increment on success")
+	}
+}
+
+func TestNewOrchestratorIncludesBatchCollectors(t *testing.T) {
+	o := NewOrchestrator(
+		[]string{"us-east-1"},
+		time.Minute,
+		30*time.Second,
+		[]string{"codebuild", "redshift", "shield"},
+		appconfig.CostExplorerConfig{Enabled: true, Frequency: "daily"},
+	)
+
+	regionalNames := make(map[string]struct{}, len(o.collectors))
+	for _, c := range o.collectors {
+		regionalNames[c.Name()] = struct{}{}
+	}
+	if _, ok := regionalNames["codebuild"]; !ok {
+		t.Fatalf("expected codebuild collector to be enabled")
+	}
+	if _, ok := regionalNames["redshift"]; !ok {
+		t.Fatalf("expected redshift collector to be enabled")
+	}
+
+	globalNames := make(map[string]struct{}, len(o.globalCollectors))
+	for _, c := range o.globalCollectors {
+		globalNames[c.Name()] = struct{}{}
+	}
+	if _, ok := globalNames["shield"]; !ok {
+		t.Fatalf("expected shield global collector to be enabled")
+	}
+	if _, ok := globalNames["cost_explorer"]; !ok {
+		t.Fatalf("expected cost_explorer collector to be enabled when cost_explorer.enabled=true")
 	}
 }

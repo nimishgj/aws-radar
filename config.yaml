@@ -21,11 +21,18 @@ collectors:
   - apigatewayv2
   - autoscaling
   - athena
+  - codebuild
+  - codepipeline
+  - codedeploy
   - ecr
   - ec2
   - efs
   - eventbridge
   - glue
+  - apprunner
+  - transfer
+  - msk
+  - redshift
   - s3
   - rds
   - lambda
@@ -35,6 +42,11 @@ collectors:
   - dynamodb
   - elasticache
   - opensearch
+  - guardduty
+  - securityhub
+  - inspector2
+  - macie
+  - waf
   - secretsmanager
   - sfn
   - ssm
@@ -46,6 +58,7 @@ collectors:
   - cloudfront
   - route53
   - iam
+  - shield
 
 logging:
   level: info

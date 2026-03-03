@@ -260,6 +260,114 @@ var (
 		[]string{"account", "account_name", "region"},
 	)
 
+	// CodeBuild Metrics
+	CodeBuildProjects = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_codebuild_projects_total",
+			Help: "Total number of CodeBuild projects",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// CodePipeline Metrics
+	CodePipelinePipelines = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_codepipeline_pipelines_total",
+			Help: "Total number of CodePipeline pipelines",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// CodeDeploy Metrics
+	CodeDeployApplications = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_codedeploy_applications_total",
+			Help: "Total number of CodeDeploy applications",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// App Runner Metrics
+	AppRunnerServices = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_apprunner_services_total",
+			Help: "Total number of App Runner services",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// AWS Transfer Family Metrics
+	TransferServers = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_transfer_servers_total",
+			Help: "Total number of AWS Transfer Family servers",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// MSK Metrics
+	MSKClusters = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_msk_clusters_total",
+			Help: "Total number of MSK clusters",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// Redshift Metrics
+	RedshiftClusters = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_redshift_clusters_total",
+			Help: "Total number of Redshift clusters",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// GuardDuty Metrics
+	GuardDutyDetectors = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_guardduty_detectors_total",
+			Help: "Total number of GuardDuty detectors",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// Security Hub Metrics
+	SecurityHubStandards = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_securityhub_enabled_standards_total",
+			Help: "Total number of enabled Security Hub standards",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// Inspector2 Metrics
+	InspectorCoveredResources = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_inspector2_covered_resources_total",
+			Help: "Total number of Inspector2 covered resources",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// Macie Metrics
+	MacieClassificationJobs = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_macie_classification_jobs_total",
+			Help: "Total number of Macie classification jobs",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// WAFv2 Metrics
+	WAFWebACLs = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_wafv2_web_acls_total",
+			Help: "Total number of WAFv2 Web ACLs",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
 	// Secrets Manager Metrics
 	SecretsManagerSecrets = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
@@ -318,6 +426,15 @@ var (
 		prometheus.GaugeOpts{
 			Name: "aws_iam_roles_total",
 			Help: "Total number of IAM roles",
+		},
+		[]string{"account", "account_name"},
+	)
+
+	// Shield Metrics
+	ShieldSubscriptions = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_shield_subscriptions_total",
+			Help: "1 if Shield Advanced subscription exists, 0 otherwise",
 		},
 		[]string{"account", "account_name"},
 	)
@@ -388,6 +505,18 @@ func ResetAll() {
 	DynamoDBTables.Reset()
 	ElastiCacheClusters.Reset()
 	OpenSearchDomains.Reset()
+	CodeBuildProjects.Reset()
+	CodePipelinePipelines.Reset()
+	CodeDeployApplications.Reset()
+	AppRunnerServices.Reset()
+	TransferServers.Reset()
+	MSKClusters.Reset()
+	RedshiftClusters.Reset()
+	GuardDutyDetectors.Reset()
+	SecurityHubStandards.Reset()
+	InspectorCoveredResources.Reset()
+	MacieClassificationJobs.Reset()
+	WAFWebACLs.Reset()
 	SecretsManagerSecrets.Reset()
 	SFNStateMachines.Reset()
 	SSMParameters.Reset()
@@ -405,6 +534,7 @@ func ResetAll() {
 	ACMCertificates.Reset()
 	IAMUsers.Reset()
 	IAMRoles.Reset()
+	ShieldSubscriptions.Reset()
 	CostByService.Reset()
 	CostTotal.Reset()
 }

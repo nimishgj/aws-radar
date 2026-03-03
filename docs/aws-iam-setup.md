@@ -31,6 +31,7 @@ AWS Radar requires **read-only access** to various AWS services to collect resou
                 "apigateway:GET",
                 "autoscaling:DescribeAutoScalingGroups",
                 "athena:ListWorkGroups",
+                "apprunner:ListServices",
                 "ecr:DescribeRepositories",
                 "ec2:DescribeInstances",
                 "ec2:DescribeVpcs",
@@ -43,6 +44,12 @@ AWS Radar requires **read-only access** to various AWS services to collect resou
                 "events:ListEventBuses",
                 "events:ListRules",
                 "glue:GetJobs",
+                "codebuild:ListProjects",
+                "codepipeline:ListPipelines",
+                "codedeploy:ListApplications",
+                "transfer:ListServers",
+                "kafka:ListClustersV2",
+                "redshift:DescribeClusters",
                 "s3:ListAllMyBuckets",
                 "s3:GetBucketLocation",
                 "rds:DescribeDBInstances",
@@ -61,6 +68,11 @@ AWS Radar requires **read-only access** to various AWS services to collect resou
                 "dynamodb:DescribeTable",
                 "elasticache:DescribeCacheClusters",
                 "es:ListDomainNames",
+                "guardduty:ListDetectors",
+                "securityhub:GetEnabledStandards",
+                "inspector2:ListCoverage",
+                "macie2:ListClassificationJobs",
+                "wafv2:ListWebACLs",
                 "secretsmanager:ListSecrets",
                 "ssm:DescribeParameters",
                 "states:ListStateMachines",
@@ -73,6 +85,7 @@ AWS Radar requires **read-only access** to various AWS services to collect resou
                 "iam:ListUsers",
                 "iam:ListRoles",
                 "iam:ListAccountAliases",
+                "shield:DescribeSubscription",
                 "sts:GetCallerIdentity"
             ],
             "Resource": "*"
@@ -114,7 +127,7 @@ If you prefer using the AWS CLI, follow these steps:
 
 ### Step 1: Create the Policy File
 
-Create a file named `aws-radar-policy.json`:
+Create or update a file named `aws-radar-policy.json` with the policy shown below:
 
 ```json
 {
@@ -127,6 +140,7 @@ Create a file named `aws-radar-policy.json`:
                 "apigateway:GET",
                 "autoscaling:DescribeAutoScalingGroups",
                 "athena:ListWorkGroups",
+                "apprunner:ListServices",
                 "ecr:DescribeRepositories",
                 "ec2:DescribeInstances",
                 "ec2:DescribeVpcs",
@@ -139,6 +153,12 @@ Create a file named `aws-radar-policy.json`:
                 "events:ListEventBuses",
                 "events:ListRules",
                 "glue:GetJobs",
+                "codebuild:ListProjects",
+                "codepipeline:ListPipelines",
+                "codedeploy:ListApplications",
+                "transfer:ListServers",
+                "kafka:ListClustersV2",
+                "redshift:DescribeClusters",
                 "s3:ListAllMyBuckets",
                 "s3:GetBucketLocation",
                 "rds:DescribeDBInstances",
@@ -157,6 +177,11 @@ Create a file named `aws-radar-policy.json`:
                 "dynamodb:DescribeTable",
                 "elasticache:DescribeCacheClusters",
                 "es:ListDomainNames",
+                "guardduty:ListDetectors",
+                "securityhub:GetEnabledStandards",
+                "inspector2:ListCoverage",
+                "macie2:ListClassificationJobs",
+                "wafv2:ListWebACLs",
                 "secretsmanager:ListSecrets",
                 "ssm:DescribeParameters",
                 "states:ListStateMachines",
@@ -169,6 +194,7 @@ Create a file named `aws-radar-policy.json`:
                 "iam:ListUsers",
                 "iam:ListRoles",
                 "iam:ListAccountAliases",
+                "shield:DescribeSubscription",
                 "sts:GetCallerIdentity"
             ],
             "Resource": "*"
@@ -228,6 +254,21 @@ aws iam create-access-key --user-name aws-radar
 ```
 
 Save the `AccessKeyId` and `SecretAccessKey` from the output.
+
+### Updating an Existing `AWSRadarReadOnlyPolicy`
+
+If the policy already exists and is attached to your IAM user, update it by creating a new default policy version:
+
+```bash
+# Get your AWS account ID
+ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+
+# Update existing policy in place
+aws iam create-policy-version \
+    --policy-arn arn:aws:iam::${ACCOUNT_ID}:policy/AWSRadarReadOnlyPolicy \
+    --policy-document file://aws-radar-policy.json \
+    --set-as-default
+```
 
 ## Option 3: Using AWS Managed Policies (Alternative)
 
@@ -306,6 +347,19 @@ The following table lists all API actions required by AWS Radar:
 | **ElastiCache** | `DescribeCacheClusters` | Count ElastiCache clusters |
 | **SQS** | `ListQueues` | Count SQS queues |
 | **SNS** | `ListTopics` | Count SNS topics |
+| **App Runner** | `ListServices` | Count App Runner services |
+| **CodeBuild** | `ListProjects` | Count CodeBuild projects |
+| **CodePipeline** | `ListPipelines` | Count CodePipeline pipelines |
+| **CodeDeploy** | `ListApplications` | Count CodeDeploy applications |
+| **Transfer Family** | `ListServers` | Count Transfer Family servers |
+| **MSK (Kafka)** | `ListClustersV2` | Count MSK clusters |
+| **Redshift** | `DescribeClusters` | Count Redshift clusters |
+| **GuardDuty** | `ListDetectors` | Count GuardDuty detectors |
+| **Security Hub** | `GetEnabledStandards` | Count enabled Security Hub standards |
+| **Inspector2** | `ListCoverage` | Count Inspector2 covered resources |
+| **Macie** | `ListClassificationJobs` | Count Macie classification jobs |
+| **WAFv2** | `ListWebACLs` | Count regional WAFv2 web ACLs |
+| **Shield** | `DescribeSubscription` | Detect Shield Advanced subscription status |
 | **CloudFront** | `ListDistributions` | Count CloudFront distributions |
 | **Route53** | `ListHostedZones` | Count hosted zones |
 | **ACM** | `ListCertificates` | List certificates |

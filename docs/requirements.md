@@ -21,7 +21,7 @@ AWS Radar is a Go-based monitoring agent that collects AWS resource metrics and 
 
 | Component | Status | Details |
 |-----------|--------|---------|
-| AWS API Integration | Done | 25 collectors across 18 services |
+| AWS API Integration | Done | 40+ collectors across 30+ services |
 | Prometheus `/metrics` endpoint | Done | Exposes all metrics |
 | Multi-region support | Done | Configurable via config.yaml |
 | Parallel collection | Done | WaitGroups for concurrent execution |
@@ -91,7 +91,7 @@ aws-radar/
 ├── internal/
 │   ├── config/config.go            # Viper-based config
 │   ├── metrics/metrics.go          # Prometheus metrics
-│   ├── collector/                  # AWS collectors (18 files)
+│   ├── collector/                  # AWS collectors
 │   └── server/server.go            # HTTP server
 ├── docker/                         # Docker-related configs
 │   ├── docker-compose.yaml

@@ -38,17 +38,30 @@ AWS Radar periodically scans your AWS account and collects resource counts for v
 | API Gateway | REST API count by region; HTTP/WebSocket API count by region, protocol |
 | Auto Scaling | Auto Scaling Group count by region |
 | Athena | Workgroup count by region |
+| App Runner | Service count by region |
 | ECR | Repository count by region |
 | EC2 | Instance count by region, type, state |
 | EFS | File system count by region |
 | EventBridge | Rule count by region, event bus |
 | Glue | Job count by region |
+| CodeBuild | Project count by region |
+| CodePipeline | Pipeline count by region |
+| CodeDeploy | Application count by region |
 | Lambda | Function count by region, runtime |
+| Transfer Family | Server count by region |
+| MSK (Kafka) | Cluster count by region |
+| Redshift | Cluster count by region |
 | S3 | Bucket count by region |
 | RDS | Instance count by region, engine, class |
 | DynamoDB | Table count by region, billing mode |
 | EBS | Volume count by region, type |
 | VPC | VPC, Subnet, Security Group, Internet/NAT Gateway counts |
+| GuardDuty | Detector count by region |
+| Security Hub | Enabled standards count by region |
+| Inspector2 | Covered resources count by region |
+| Macie | Classification job count by region |
+| WAFv2 | Web ACL count by region |
+| Shield (global) | Subscription status (0 or 1) |
 | IAM | User and Role counts |
 | ECS | Cluster count by region |
 | EKS | Cluster count by region |
