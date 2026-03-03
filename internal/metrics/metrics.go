@@ -606,6 +606,302 @@ var (
 		[]string{"account", "account_name"},
 	)
 
+	AutoScalingGroupsWithLaunchTemplate = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_autoscaling_groups_with_launch_template_total",
+			Help: "Total number of Auto Scaling Groups configured with launch templates",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	AutoScalingPolicies = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_autoscaling_policies_total",
+			Help: "Total number of Auto Scaling policies",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	ELBV2Detailed = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_elbv2_detailed_total",
+			Help: "Total number of ALB/NLB by type, scheme, IP type and state",
+		},
+		[]string{"account", "account_name", "region", "type", "scheme", "ip_address_type", "state"},
+	)
+
+	ECSServicesByStatus = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ecs_services_by_status_total",
+			Help: "Total number of ECS services by status",
+		},
+		[]string{"account", "account_name", "region", "cluster_name", "launch_type", "status"},
+	)
+
+	ECSCapacityProviders = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ecs_capacity_providers_total",
+			Help: "Total number of ECS capacity providers by status",
+		},
+		[]string{"account", "account_name", "region", "status"},
+	)
+
+	ECSTaskDefinitions = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ecs_task_definitions_total",
+			Help: "Total number of ECS task definitions by status",
+		},
+		[]string{"account", "account_name", "region", "status"},
+	)
+
+	ECRPublicRepositories = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ecr_public_repositories_total",
+			Help: "Total number of ECR Public repositories",
+		},
+		[]string{"account", "account_name"},
+	)
+
+	Route53ResolverEndpoints = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_route53resolver_endpoints_total",
+			Help: "Total number of Route53 Resolver endpoints",
+		},
+		[]string{"account", "account_name", "region", "direction", "status"},
+	)
+
+	Route53ResolverRules = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_route53resolver_rules_total",
+			Help: "Total number of Route53 Resolver rules",
+		},
+		[]string{"account", "account_name", "region", "rule_type"},
+	)
+
+	VPCEndpoints = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_vpc_endpoints_total",
+			Help: "Total number of VPC endpoints",
+		},
+		[]string{"account", "account_name", "region", "endpoint_type", "state"},
+	)
+
+	TransitGateways = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_transit_gateways_total",
+			Help: "Total number of Transit Gateways",
+		},
+		[]string{"account", "account_name", "region", "state"},
+	)
+
+	VPNGateways = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_vpn_gateways_total",
+			Help: "Total number of VPN Gateways",
+		},
+		[]string{"account", "account_name", "region", "state"},
+	)
+
+	OrganizationsAccounts = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_organizations_accounts_total",
+			Help: "Total number of AWS Organizations accounts",
+		},
+		[]string{"account", "account_name", "state"},
+	)
+
+	OrganizationsOrganizationalUnits = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_organizations_organizational_units_total",
+			Help: "Total number of AWS Organizations OUs",
+		},
+		[]string{"account", "account_name"},
+	)
+
+	ControlTowerLandingZones = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_controltower_landing_zones_total",
+			Help: "Total number of AWS Control Tower landing zones",
+		},
+		[]string{"account", "account_name", "region", "status"},
+	)
+
+	ConfigRecorders = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_config_recorders_total",
+			Help: "Total number of AWS Config configuration recorders",
+		},
+		[]string{"account", "account_name", "region", "status"},
+	)
+
+	CloudTrailLakeEventDataStores = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_cloudtrail_lake_event_data_stores_total",
+			Help: "Total number of CloudTrail Lake event data stores",
+		},
+		[]string{"account", "account_name", "region", "status"},
+	)
+
+	KinesisVideoStreams = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_kinesisvideo_streams_total",
+			Help: "Total number of Kinesis Video Streams",
+		},
+		[]string{"account", "account_name", "region", "status"},
+	)
+
+	OpenSearchServerlessCollections = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_opensearch_serverless_collections_total",
+			Help: "Total number of OpenSearch Serverless collections",
+		},
+		[]string{"account", "account_name", "region", "status", "type"},
+	)
+
+	SESConfigSets = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ses_config_sets_total",
+			Help: "Total number of SES configuration sets",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	SESContactLists = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ses_contact_lists_total",
+			Help: "Total number of SES contact lists",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	S3AccessPoints = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_s3_access_points_total",
+			Help: "Total number of S3 Access Points",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	S3StorageLensConfigurations = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_s3_storage_lens_configurations_total",
+			Help: "Total number of S3 Storage Lens configurations",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	RDSProxies = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_rds_proxies_total",
+			Help: "Total number of RDS proxies",
+		},
+		[]string{"account", "account_name", "region", "engine_family", "status"},
+	)
+
+	RDSAuroraServerlessClusters = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_rds_aurora_serverless_clusters_total",
+			Help: "Total number of Aurora serverless clusters",
+		},
+		[]string{"account", "account_name", "region", "engine", "engine_mode"},
+	)
+
+	ElastiCacheServerlessCaches = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_elasticache_serverless_caches_total",
+			Help: "Total number of ElastiCache serverless caches",
+		},
+		[]string{"account", "account_name", "region", "engine", "status"},
+	)
+
+	BedrockCustomModels = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_bedrock_custom_models_total",
+			Help: "Total number of Bedrock custom models",
+		},
+		[]string{"account", "account_name", "region", "status"},
+	)
+
+	SageMakerEndpoints = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_sagemaker_endpoints_total",
+			Help: "Total number of SageMaker endpoints",
+		},
+		[]string{"account", "account_name", "region", "status"},
+	)
+
+	QuickSightDashboards = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_quicksight_dashboards_total",
+			Help: "Total number of QuickSight dashboards",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	WorkSpacesInstances = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_workspaces_instances_total",
+			Help: "Total number of WorkSpaces instances",
+		},
+		[]string{"account", "account_name", "region", "state"},
+	)
+
+	AppStreamFleets = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_appstream_fleets_total",
+			Help: "Total number of AppStream fleets",
+		},
+		[]string{"account", "account_name", "region", "state"},
+	)
+
+	ConnectInstances = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_connect_instances_total",
+			Help: "Total number of Amazon Connect instances",
+		},
+		[]string{"account", "account_name", "region", "status"},
+	)
+
+	AmplifyApps = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_amplify_apps_total",
+			Help: "Total number of Amplify apps",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	GlobalAccelerators = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_globalaccelerator_accelerators_total",
+			Help: "Total number of AWS Global Accelerator accelerators",
+		},
+		[]string{"account", "account_name", "ip_address_type", "enabled"},
+	)
+
+	DataSyncTasks = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_datasync_tasks_total",
+			Help: "Total number of AWS DataSync tasks",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	DMSReplicationInstances = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_dms_replication_instances_total",
+			Help: "Total number of AWS DMS replication instances",
+		},
+		[]string{"account", "account_name", "region", "status"},
+	)
+
+	DirectConnectConnections = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_directconnect_connections_total",
+			Help: "Total number of Direct Connect connections",
+		},
+		[]string{"account", "account_name", "state"},
+	)
+
 	// Pricing Metrics
 	CostByService = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
@@ -655,25 +951,40 @@ func ResetAll() {
 	APIGatewayRestAPIs.Reset()
 	APIGatewayV2APIs.Reset()
 	AutoScalingGroups.Reset()
+	AutoScalingGroupsWithLaunchTemplate.Reset()
+	AutoScalingPolicies.Reset()
 	AthenaWorkgroups.Reset()
 	ECRRepositories.Reset()
+	ECRPublicRepositories.Reset()
 	EC2Instances.Reset()
 	EFSFileSystems.Reset()
 	EventBridgeRules.Reset()
 	GlueJobs.Reset()
 	S3Buckets.Reset()
+	S3AccessPoints.Reset()
+	S3StorageLensConfigurations.Reset()
 	RDSInstances.Reset()
+	RDSProxies.Reset()
+	RDSAuroraServerlessClusters.Reset()
 	LambdaFunctions.Reset()
 	ECSServices.Reset()
 	ECSTasks.Reset()
+	ECSServicesByStatus.Reset()
+	ECSCapacityProviders.Reset()
+	ECSTaskDefinitions.Reset()
 	EKSClusters.Reset()
 	ELBClassic.Reset()
 	ELBV2.Reset()
+	ELBV2Detailed.Reset()
 	DynamoDBTables.Reset()
 	ElastiCacheClusters.Reset()
+	ElastiCacheServerlessCaches.Reset()
 	OpenSearchDomains.Reset()
+	OpenSearchServerlessCollections.Reset()
 	MQBrokers.Reset()
 	SESIdentities.Reset()
+	SESConfigSets.Reset()
+	SESContactLists.Reset()
 	CloudFormationStacks.Reset()
 	CloudFormationStacksByStatus.Reset()
 	DocumentDBClusters.Reset()
@@ -686,10 +997,12 @@ func ResetAll() {
 	KinesisStreams.Reset()
 	FirehoseDeliveryStreams.Reset()
 	KinesisAnalyticsApplications.Reset()
+	KinesisVideoStreams.Reset()
 	EMRClusters.Reset()
 	ElasticBeanstalkApplications.Reset()
 	KMSKeys.Reset()
 	CloudTrailTrails.Reset()
+	CloudTrailLakeEventDataStores.Reset()
 	BatchJobQueues.Reset()
 	CodeBuildProjects.Reset()
 	CodePipelinePipelines.Reset()
@@ -716,11 +1029,31 @@ func ResetAll() {
 	SecurityGroups.Reset()
 	NATGateways.Reset()
 	InternetGateways.Reset()
+	VPCEndpoints.Reset()
+	TransitGateways.Reset()
+	VPNGateways.Reset()
 	Route53HostedZones.Reset()
+	Route53ResolverEndpoints.Reset()
+	Route53ResolverRules.Reset()
 	ACMCertificates.Reset()
 	IAMUsers.Reset()
 	IAMRoles.Reset()
 	ShieldSubscriptions.Reset()
+	OrganizationsAccounts.Reset()
+	OrganizationsOrganizationalUnits.Reset()
+	ControlTowerLandingZones.Reset()
+	ConfigRecorders.Reset()
+	DirectConnectConnections.Reset()
+	BedrockCustomModels.Reset()
+	SageMakerEndpoints.Reset()
+	QuickSightDashboards.Reset()
+	WorkSpacesInstances.Reset()
+	AppStreamFleets.Reset()
+	ConnectInstances.Reset()
+	AmplifyApps.Reset()
+	GlobalAccelerators.Reset()
+	DataSyncTasks.Reset()
+	DMSReplicationInstances.Reset()
 	CostByService.Reset()
 	CostTotal.Reset()
 }

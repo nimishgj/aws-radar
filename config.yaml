@@ -21,6 +21,7 @@ collectors:
   - apigatewayv2
   - autoscaling
   - athena
+  - configservice
   - mq
   - ses
   - cloudformation
@@ -37,6 +38,9 @@ collectors:
   - elasticbeanstalk
   - kms
   - cloudtrail
+  - kinesisvideo
+  - opensearchserverless
+  - s3control
   - batch
   - codebuild
   - codepipeline
@@ -74,8 +78,23 @@ collectors:
   - acm
   - cloudfront
   - route53
+  - route53resolver
   - iam
   - shield
+  - ecrpublic
+  - directconnect
+  - organizations
+  - controltower
+  - bedrock
+  - sagemaker
+  - quicksight
+  - workspaces
+  - appstream
+  - connect
+  - amplify
+  - globalaccelerator
+  - datasync
+  - dms
 
 logging:
   level: info

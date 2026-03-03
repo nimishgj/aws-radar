@@ -32,5 +32,27 @@ func (c *SESCollector) Collect(ctx context.Context, cfg aws.Config, region, acco
 	}
 
 	metrics.SESIdentities.WithLabelValues(account, accountName, region).Set(count)
+
+	var configSetCount float64
+	configSetPaginator := sesv2.NewListConfigurationSetsPaginator(client, &sesv2.ListConfigurationSetsInput{})
+	for configSetPaginator.HasMorePages() {
+		page, err := configSetPaginator.NextPage(ctx)
+		if err != nil {
+			return err
+		}
+		configSetCount += float64(len(page.ConfigurationSets))
+	}
+	metrics.SESConfigSets.WithLabelValues(account, accountName, region).Set(configSetCount)
+
+	var contactListCount float64
+	contactListPaginator := sesv2.NewListContactListsPaginator(client, &sesv2.ListContactListsInput{})
+	for contactListPaginator.HasMorePages() {
+		page, err := contactListPaginator.NextPage(ctx)
+		if err != nil {
+			return err
+		}
+		contactListCount += float64(len(page.ContactLists))
+	}
+	metrics.SESContactLists.WithLabelValues(account, accountName, region).Set(contactListCount)
 	return nil
 }

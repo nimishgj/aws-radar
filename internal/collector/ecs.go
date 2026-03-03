@@ -5,6 +5,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
+	ecsTypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	"github.com/nimishgj/aws-radar/internal/metrics"
 	"github.com/rs/zerolog/log"
 )
@@ -27,6 +28,9 @@ func (c *ECSCollector) Collect(ctx context.Context, cfg aws.Config, region, acco
 
 	serviceCounts := make(map[string]float64)
 	taskCounts := make(map[string]float64)
+	serviceStatusCounts := make(map[string]float64)
+	capacityProviderCounts := make(map[string]float64)
+	taskDefinitionCounts := make(map[string]float64)
 
 	for clusterPaginator.HasMorePages() {
 		clusterPage, err := clusterPaginator.NextPage(ctx)
@@ -82,6 +86,13 @@ func (c *ECSCollector) Collect(ctx context.Context, cfg aws.Config, region, acco
 						}
 						key := clusterName + "|" + launchType
 						serviceCounts[key]++
+
+						status := aws.ToString(service.Status)
+						if status == "" {
+							status = "UNKNOWN"
+						}
+						statusKey := clusterName + "|" + launchType + "|" + status
+						serviceStatusCounts[statusKey]++
 					}
 				}
 			}
@@ -125,6 +136,45 @@ func (c *ECSCollector) Collect(ctx context.Context, cfg aws.Config, region, acco
 		}
 	}
 
+	// Capacity providers (account-level in region)
+	var capNextToken *string
+	for {
+		page, err := client.DescribeCapacityProviders(ctx, &ecs.DescribeCapacityProvidersInput{
+			NextToken:  capNextToken,
+			MaxResults: aws.Int32(10),
+		})
+		if err != nil {
+			log.Warn().Err(err).Str("region", region).Msg("Failed to describe ECS capacity providers")
+			break
+		}
+		for _, cp := range page.CapacityProviders {
+			status := string(cp.Status)
+			if status == "" {
+				status = "UNKNOWN"
+			}
+			capacityProviderCounts[status]++
+		}
+		if page.NextToken == nil || *page.NextToken == "" {
+			break
+		}
+		capNextToken = page.NextToken
+	}
+
+	// Task definitions by status
+	for _, tdStatus := range []ecsTypes.TaskDefinitionStatus{ecsTypes.TaskDefinitionStatusActive, ecsTypes.TaskDefinitionStatusInactive, ecsTypes.TaskDefinitionStatusDeleteInProgress} {
+		tdPaginator := ecs.NewListTaskDefinitionsPaginator(client, &ecs.ListTaskDefinitionsInput{
+			Status: tdStatus,
+		})
+		for tdPaginator.HasMorePages() {
+			page, err := tdPaginator.NextPage(ctx)
+			if err != nil {
+				log.Warn().Err(err).Str("region", region).Str("status", string(tdStatus)).Msg("Failed to list ECS task definitions")
+				break
+			}
+			taskDefinitionCounts[string(tdStatus)] += float64(len(page.TaskDefinitionArns))
+		}
+	}
+
 	// Update service metrics
 	for key, count := range serviceCounts {
 		parts := splitKey(key, 2)
@@ -143,10 +193,30 @@ func (c *ECSCollector) Collect(ctx context.Context, cfg aws.Config, region, acco
 		).Set(count)
 	}
 
+	for key, count := range serviceStatusCounts {
+		parts := splitKey(key, 3)
+		metrics.ECSServicesByStatus.WithLabelValues(account, accountName, region,
+			parts[0], // cluster_name
+			parts[1], // launch_type
+			parts[2], // status
+		).Set(count)
+	}
+
+	for status, count := range capacityProviderCounts {
+		metrics.ECSCapacityProviders.WithLabelValues(account, accountName, region, status).Set(count)
+	}
+
+	for status, count := range taskDefinitionCounts {
+		metrics.ECSTaskDefinitions.WithLabelValues(account, accountName, region, status).Set(count)
+	}
+
 	log.Debug().
 		Str("region", region).
 		Int("service_combinations", len(serviceCounts)).
 		Int("task_combinations", len(taskCounts)).
+		Int("service_status_combinations", len(serviceStatusCounts)).
+		Int("capacity_provider_statuses", len(capacityProviderCounts)).
+		Int("task_definition_statuses", len(taskDefinitionCounts)).
 		Msg("ECS collection completed")
 
 	return nil

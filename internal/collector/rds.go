@@ -47,6 +47,58 @@ func (c *RDSCollector) Collect(ctx context.Context, cfg aws.Config, region, acco
 		}
 	}
 
+	proxyCounts := make(map[string]float64)
+	proxyPaginator := rds.NewDescribeDBProxiesPaginator(client, &rds.DescribeDBProxiesInput{})
+	for proxyPaginator.HasMorePages() {
+		page, err := proxyPaginator.NextPage(ctx)
+		if err != nil {
+			return err
+		}
+		for _, proxy := range page.DBProxies {
+			engineFamily := aws.ToString(proxy.EngineFamily)
+			if engineFamily == "" {
+				engineFamily = "unknown"
+			}
+			status := string(proxy.Status)
+			if status == "" {
+				status = "unknown"
+			}
+			key := engineFamily + "|" + status
+			proxyCounts[key]++
+		}
+	}
+
+	auroraServerlessCounts := make(map[string]float64)
+	clusterPaginator := rds.NewDescribeDBClustersPaginator(client, &rds.DescribeDBClustersInput{})
+	for clusterPaginator.HasMorePages() {
+		page, err := clusterPaginator.NextPage(ctx)
+		if err != nil {
+			return err
+		}
+		for _, cluster := range page.DBClusters {
+			serverless := false
+			engineMode := aws.ToString(cluster.EngineMode)
+			if engineMode == "serverless" {
+				serverless = true
+			}
+			if cluster.ServerlessV2ScalingConfiguration != nil {
+				serverless = true
+			}
+			if !serverless {
+				continue
+			}
+			engine := aws.ToString(cluster.Engine)
+			if engine == "" {
+				engine = "unknown"
+			}
+			if engineMode == "" {
+				engineMode = "provisioned"
+			}
+			key := engine + "|" + engineMode
+			auroraServerlessCounts[key]++
+		}
+	}
+
 	// Update metrics
 	for key, count := range counts {
 		parts := splitKey(key, 4)
@@ -58,9 +110,21 @@ func (c *RDSCollector) Collect(ctx context.Context, cfg aws.Config, region, acco
 		).Set(count)
 	}
 
+	for key, count := range proxyCounts {
+		parts := splitKey(key, 2)
+		metrics.RDSProxies.WithLabelValues(account, accountName, region, parts[0], parts[1]).Set(count)
+	}
+
+	for key, count := range auroraServerlessCounts {
+		parts := splitKey(key, 2)
+		metrics.RDSAuroraServerlessClusters.WithLabelValues(account, accountName, region, parts[0], parts[1]).Set(count)
+	}
+
 	log.Debug().
 		Str("region", region).
 		Int("instance_combinations", len(counts)).
+		Int("proxy_combinations", len(proxyCounts)).
+		Int("aurora_serverless_combinations", len(auroraServerlessCounts)).
 		Msg("RDS collection completed")
 
 	return nil

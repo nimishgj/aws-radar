@@ -23,6 +23,7 @@ func (c *AutoScalingCollector) Collect(ctx context.Context, cfg aws.Config, regi
 	client := autoscaling.NewFromConfig(cfg)
 
 	var count float64
+	var launchTemplateCount float64
 	paginator := autoscaling.NewDescribeAutoScalingGroupsPaginator(client, &autoscaling.DescribeAutoScalingGroupsInput{})
 
 	for paginator.HasMorePages() {
@@ -30,14 +31,33 @@ func (c *AutoScalingCollector) Collect(ctx context.Context, cfg aws.Config, regi
 		if err != nil {
 			return err
 		}
-		count += float64(len(page.AutoScalingGroups))
+		for _, asg := range page.AutoScalingGroups {
+			count++
+			if asg.LaunchTemplate != nil || asg.MixedInstancesPolicy != nil {
+				launchTemplateCount++
+			}
+		}
 	}
 
 	metrics.AutoScalingGroups.WithLabelValues(account, accountName, region).Set(count)
+	metrics.AutoScalingGroupsWithLaunchTemplate.WithLabelValues(account, accountName, region).Set(launchTemplateCount)
+
+	var policyCount float64
+	policyPaginator := autoscaling.NewDescribePoliciesPaginator(client, &autoscaling.DescribePoliciesInput{})
+	for policyPaginator.HasMorePages() {
+		page, err := policyPaginator.NextPage(ctx)
+		if err != nil {
+			return err
+		}
+		policyCount += float64(len(page.ScalingPolicies))
+	}
+	metrics.AutoScalingPolicies.WithLabelValues(account, accountName, region).Set(policyCount)
 
 	log.Debug().
 		Str("region", region).
 		Float64("asg_count", count).
+		Float64("asg_with_launch_template_count", launchTemplateCount).
+		Float64("policy_count", policyCount).
 		Msg("Auto Scaling Group collection completed")
 
 	return nil

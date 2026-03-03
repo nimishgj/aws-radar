@@ -104,6 +104,41 @@ AWS Radar requires **read-only access** to various AWS services to collect resou
                 "iam:ListRoles",
                 "iam:ListAccountAliases",
                 "shield:DescribeSubscription",
+                "autoscaling:DescribePolicies",
+                "ecs:DescribeCapacityProviders",
+                "ecs:ListTaskDefinitions",
+                "ecr-public:DescribeRepositories",
+                "route53resolver:ListResolverEndpoints",
+                "route53resolver:ListResolverRules",
+                "ec2:DescribeVpcEndpoints",
+                "ec2:DescribeTransitGateways",
+                "ec2:DescribeVpnGateways",
+                "directconnect:DescribeConnections",
+                "organizations:ListAccounts",
+                "organizations:ListRoots",
+                "organizations:ListOrganizationalUnitsForParent",
+                "controltower:ListLandingZones",
+                "controltower:GetLandingZone",
+                "config:DescribeConfigurationRecorders",
+                "cloudtrail:ListEventDataStores",
+                "kinesisvideo:ListStreams",
+                "aoss:ListCollections",
+                "ses:ListConfigurationSets",
+                "ses:ListContactLists",
+                "s3:ListAccessPoints",
+                "s3:ListStorageLensConfigurations",
+                "rds:DescribeDBProxies",
+                "elasticache:DescribeServerlessCaches",
+                "bedrock:ListCustomModels",
+                "sagemaker:ListEndpoints",
+                "quicksight:ListDashboards",
+                "workspaces:DescribeWorkspaces",
+                "appstream:DescribeFleets",
+                "connect:ListInstances",
+                "amplify:ListApps",
+                "globalaccelerator:ListAccelerators",
+                "datasync:ListTasks",
+                "dms:DescribeReplicationInstances",
                 "sts:GetCallerIdentity"
             ],
             "Resource": "*"
@@ -231,6 +266,41 @@ Create or update a file named `aws-radar-policy.json` with the policy shown belo
                 "iam:ListRoles",
                 "iam:ListAccountAliases",
                 "shield:DescribeSubscription",
+                "autoscaling:DescribePolicies",
+                "ecs:DescribeCapacityProviders",
+                "ecs:ListTaskDefinitions",
+                "ecr-public:DescribeRepositories",
+                "route53resolver:ListResolverEndpoints",
+                "route53resolver:ListResolverRules",
+                "ec2:DescribeVpcEndpoints",
+                "ec2:DescribeTransitGateways",
+                "ec2:DescribeVpnGateways",
+                "directconnect:DescribeConnections",
+                "organizations:ListAccounts",
+                "organizations:ListRoots",
+                "organizations:ListOrganizationalUnitsForParent",
+                "controltower:ListLandingZones",
+                "controltower:GetLandingZone",
+                "config:DescribeConfigurationRecorders",
+                "cloudtrail:ListEventDataStores",
+                "kinesisvideo:ListStreams",
+                "aoss:ListCollections",
+                "ses:ListConfigurationSets",
+                "ses:ListContactLists",
+                "s3:ListAccessPoints",
+                "s3:ListStorageLensConfigurations",
+                "rds:DescribeDBProxies",
+                "elasticache:DescribeServerlessCaches",
+                "bedrock:ListCustomModels",
+                "sagemaker:ListEndpoints",
+                "quicksight:ListDashboards",
+                "workspaces:DescribeWorkspaces",
+                "appstream:DescribeFleets",
+                "connect:ListInstances",
+                "amplify:ListApps",
+                "globalaccelerator:ListAccelerators",
+                "datasync:ListTasks",
+                "dms:DescribeReplicationInstances",
                 "sts:GetCallerIdentity"
             ],
             "Resource": "*"
@@ -416,10 +486,45 @@ The following table lists all API actions required by AWS Radar:
 | **Shield** | `DescribeSubscription` | Detect Shield Advanced subscription status |
 | **CloudFront** | `ListDistributions` | Count CloudFront distributions |
 | **Route53** | `ListHostedZones` | Count hosted zones |
+| **Route53 Resolver** | `ListResolverEndpoints` | Count Route53 Resolver endpoints |
+| | `ListResolverRules` | Count Route53 Resolver rules |
 | **ACM** | `ListCertificates` | List certificates |
 | | `DescribeCertificate` | Get certificate details |
 | **IAM** | `ListUsers` | Count IAM users |
 | | `ListRoles` | Count IAM roles |
+| **Auto Scaling** | `DescribePolicies` | Count Auto Scaling policies |
+| **ECS** | `DescribeCapacityProviders` | Count ECS capacity providers |
+| | `ListTaskDefinitions` | Count ECS task definitions |
+| **ECR Public** | `DescribeRepositories` | Count ECR Public repositories |
+| **VPC / EC2 networking** | `DescribeVpcEndpoints` | Count VPC endpoints |
+| | `DescribeTransitGateways` | Count transit gateways |
+| | `DescribeVpnGateways` | Count VPN gateways |
+| **Direct Connect** | `DescribeConnections` | Count Direct Connect connections |
+| **Organizations** | `ListAccounts` | Count organization accounts by state |
+| | `ListRoots` | Discover organization roots |
+| | `ListOrganizationalUnitsForParent` | Count organizational units |
+| **Control Tower** | `ListLandingZones` | List landing zones |
+| | `GetLandingZone` | Read landing zone deployment status |
+| **Config** | `DescribeConfigurationRecorders` | Count configuration recorders |
+| **CloudTrail Lake** | `ListEventDataStores` | Count CloudTrail Lake event data stores |
+| **Kinesis Video Streams** | `ListStreams` | Count Kinesis Video streams |
+| **OpenSearch Serverless** | `ListCollections` | Count serverless collections |
+| **SES** | `ListConfigurationSets` | Count SES config sets |
+| | `ListContactLists` | Count SES contact lists |
+| **S3 (control plane)** | `ListAccessPoints` | Count S3 access points |
+| | `ListStorageLensConfigurations` | Count S3 Storage Lens configs |
+| **RDS** | `DescribeDBProxies` | Count RDS proxies |
+| **ElastiCache** | `DescribeServerlessCaches` | Count ElastiCache serverless caches |
+| **Bedrock** | `ListCustomModels` | Count Bedrock custom models |
+| **SageMaker** | `ListEndpoints` | Count SageMaker endpoints |
+| **QuickSight** | `ListDashboards` | Count QuickSight dashboards |
+| **WorkSpaces** | `DescribeWorkspaces` | Count WorkSpaces by state |
+| **AppStream 2.0** | `DescribeFleets` | Count AppStream fleets by state |
+| **Connect** | `ListInstances` | Count Connect instances |
+| **Amplify** | `ListApps` | Count Amplify apps |
+| **Global Accelerator** | `ListAccelerators` | Count global accelerators |
+| **DataSync** | `ListTasks` | Count DataSync tasks |
+| **DMS** | `DescribeReplicationInstances` | Count DMS replication instances |
 | **Cost Explorer** | `GetCostAndUsage` | Fetch cost by AWS service (attach separate AWSRadarCostExplorerPolicy when cost_explorer is enabled) |
 
 ## Security Best Practices
