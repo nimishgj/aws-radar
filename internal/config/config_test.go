@@ -47,6 +47,9 @@ func TestLoadDefaults(t *testing.T) {
 	}
 
 	requiredCollectors := []string{
+		"mq", "ses", "cloudformation", "documentdb", "neptune", "memorydb",
+		"timestream", "fsx", "backup", "kinesis", "firehose", "kinesisanalytics",
+		"emr", "elasticbeanstalk", "kms", "cloudtrail", "batch",
 		"codebuild", "codepipeline", "codedeploy",
 		"apprunner", "transfer", "msk", "redshift",
 		"guardduty", "securityhub", "inspector2", "macie", "waf",

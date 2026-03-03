@@ -260,6 +260,173 @@ var (
 		[]string{"account", "account_name", "region"},
 	)
 
+	// MQ Metrics
+	MQBrokers = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_mq_brokers_total",
+			Help: "Total number of Amazon MQ brokers",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// SES Metrics
+	SESIdentities = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ses_identities_total",
+			Help: "Total number of SES identities",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// CloudFormation Metrics
+	CloudFormationStacks = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_cloudformation_stacks_total",
+			Help: "Total number of CloudFormation stacks",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	CloudFormationStacksByStatus = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_cloudformation_stacks_by_status_total",
+			Help: "Total number of CloudFormation stacks by stack status",
+		},
+		[]string{"account", "account_name", "region", "status"},
+	)
+
+	// DocumentDB Metrics
+	DocumentDBClusters = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_documentdb_clusters_total",
+			Help: "Total number of DocumentDB clusters",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// Neptune Metrics
+	NeptuneClusters = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_neptune_clusters_total",
+			Help: "Total number of Neptune clusters",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// MemoryDB Metrics
+	MemoryDBClusters = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_memorydb_clusters_total",
+			Help: "Total number of MemoryDB clusters",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// Timestream Metrics
+	TimestreamDatabases = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_timestream_databases_total",
+			Help: "Total number of Timestream databases",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	TimestreamTables = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_timestream_tables_total",
+			Help: "Total number of Timestream tables",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// FSx Metrics
+	FSxFileSystems = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_fsx_filesystems_total",
+			Help: "Total number of FSx file systems",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// Backup Metrics
+	BackupVaults = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_backup_vaults_total",
+			Help: "Total number of AWS Backup vaults",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// Kinesis Metrics
+	KinesisStreams = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_kinesis_streams_total",
+			Help: "Total number of Kinesis Data Streams",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	FirehoseDeliveryStreams = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_firehose_delivery_streams_total",
+			Help: "Total number of Kinesis Data Firehose delivery streams",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	KinesisAnalyticsApplications = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_kinesisanalytics_applications_total",
+			Help: "Total number of Kinesis Data Analytics applications",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// EMR Metrics
+	EMRClusters = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_emr_clusters_total",
+			Help: "Total number of EMR clusters",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// Elastic Beanstalk Metrics
+	ElasticBeanstalkApplications = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_elasticbeanstalk_applications_total",
+			Help: "Total number of Elastic Beanstalk applications",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// KMS Metrics
+	KMSKeys = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_kms_keys_total",
+			Help: "Total number of KMS keys",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// CloudTrail Metrics
+	CloudTrailTrails = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_cloudtrail_trails_total",
+			Help: "Total number of CloudTrail trails",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// Batch Metrics
+	BatchJobQueues = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_batch_job_queues_total",
+			Help: "Total number of AWS Batch job queues",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
 	// CodeBuild Metrics
 	CodeBuildProjects = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
@@ -505,6 +672,25 @@ func ResetAll() {
 	DynamoDBTables.Reset()
 	ElastiCacheClusters.Reset()
 	OpenSearchDomains.Reset()
+	MQBrokers.Reset()
+	SESIdentities.Reset()
+	CloudFormationStacks.Reset()
+	CloudFormationStacksByStatus.Reset()
+	DocumentDBClusters.Reset()
+	NeptuneClusters.Reset()
+	MemoryDBClusters.Reset()
+	TimestreamDatabases.Reset()
+	TimestreamTables.Reset()
+	FSxFileSystems.Reset()
+	BackupVaults.Reset()
+	KinesisStreams.Reset()
+	FirehoseDeliveryStreams.Reset()
+	KinesisAnalyticsApplications.Reset()
+	EMRClusters.Reset()
+	ElasticBeanstalkApplications.Reset()
+	KMSKeys.Reset()
+	CloudTrailTrails.Reset()
+	BatchJobQueues.Reset()
 	CodeBuildProjects.Reset()
 	CodePipelinePipelines.Reset()
 	CodeDeployApplications.Reset()

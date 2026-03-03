@@ -32,6 +32,24 @@ AWS Radar requires **read-only access** to various AWS services to collect resou
                 "autoscaling:DescribeAutoScalingGroups",
                 "athena:ListWorkGroups",
                 "apprunner:ListServices",
+                "mq:ListBrokers",
+                "ses:ListEmailIdentities",
+                "cloudformation:ListStacks",
+                "rds:DescribeDBClusters",
+                "memorydb:DescribeClusters",
+                "timestream:DescribeEndpoints",
+                "timestream:ListDatabases",
+                "timestream:ListTables",
+                "fsx:DescribeFileSystems",
+                "backup:ListBackupVaults",
+                "kinesis:ListStreams",
+                "firehose:ListDeliveryStreams",
+                "kinesisanalytics:ListApplications",
+                "elasticmapreduce:ListClusters",
+                "elasticbeanstalk:DescribeApplications",
+                "kms:ListKeys",
+                "cloudtrail:DescribeTrails",
+                "batch:DescribeJobQueues",
                 "ecr:DescribeRepositories",
                 "ec2:DescribeInstances",
                 "ec2:DescribeVpcs",
@@ -141,6 +159,24 @@ Create or update a file named `aws-radar-policy.json` with the policy shown belo
                 "autoscaling:DescribeAutoScalingGroups",
                 "athena:ListWorkGroups",
                 "apprunner:ListServices",
+                "mq:ListBrokers",
+                "ses:ListEmailIdentities",
+                "cloudformation:ListStacks",
+                "rds:DescribeDBClusters",
+                "memorydb:DescribeClusters",
+                "timestream:DescribeEndpoints",
+                "timestream:ListDatabases",
+                "timestream:ListTables",
+                "fsx:DescribeFileSystems",
+                "backup:ListBackupVaults",
+                "kinesis:ListStreams",
+                "firehose:ListDeliveryStreams",
+                "kinesisanalytics:ListApplications",
+                "elasticmapreduce:ListClusters",
+                "elasticbeanstalk:DescribeApplications",
+                "kms:ListKeys",
+                "cloudtrail:DescribeTrails",
+                "batch:DescribeJobQueues",
                 "ecr:DescribeRepositories",
                 "ec2:DescribeInstances",
                 "ec2:DescribeVpcs",
@@ -347,6 +383,24 @@ The following table lists all API actions required by AWS Radar:
 | **ElastiCache** | `DescribeCacheClusters` | Count ElastiCache clusters |
 | **SQS** | `ListQueues` | Count SQS queues |
 | **SNS** | `ListTopics` | Count SNS topics |
+| **MQ** | `ListBrokers` | Count Amazon MQ brokers |
+| **SES** | `ListEmailIdentities` | Count SES identities |
+| **CloudFormation** | `ListStacks` | Count CloudFormation stacks |
+| **DocumentDB / Neptune** | `DescribeDBClusters` | Count DocumentDB and Neptune clusters |
+| **MemoryDB** | `DescribeClusters` | Count MemoryDB clusters |
+| **Timestream** | `DescribeEndpoints` | Resolve endpoint for Timestream APIs |
+| | `ListDatabases` | Count Timestream databases |
+| | `ListTables` | Count Timestream tables |
+| **FSx** | `DescribeFileSystems` | Count FSx file systems |
+| **Backup** | `ListBackupVaults` | Count AWS Backup vaults |
+| **Kinesis Data Streams** | `ListStreams` | Count Kinesis streams |
+| **Kinesis Data Firehose** | `ListDeliveryStreams` | Count Firehose delivery streams |
+| **Kinesis Data Analytics** | `ListApplications` | Count Kinesis Analytics applications |
+| **EMR** | `ListClusters` | Count EMR clusters |
+| **Elastic Beanstalk** | `DescribeApplications` | Count Elastic Beanstalk applications |
+| **KMS** | `ListKeys` | Count KMS keys |
+| **CloudTrail** | `DescribeTrails` | Count CloudTrail trails |
+| **AWS Batch** | `DescribeJobQueues` | Count AWS Batch job queues |
 | **App Runner** | `ListServices` | Count App Runner services |
 | **CodeBuild** | `ListProjects` | Count CodeBuild projects |
 | **CodePipeline** | `ListPipelines` | Count CodePipeline pipelines |
