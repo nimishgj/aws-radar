@@ -61,6 +61,7 @@ AWS Radar periodically scans your AWS account and collects resource counts for v
 | ACM | Certificate count by region, status |
 | Route53 | Hosted zone count |
 | ELB | Load balancer count by region, type |
+| Cost Explorer (optional) | Unblended cost by service and total cost |
 
 ## Quick Start
 
@@ -112,13 +113,19 @@ Chart values are documented in the helm-charts repository: https://github.com/ni
 
 ```yaml
 collection:
-  interval: 60  # Collection interval in seconds
+  interval: 60s
+  timeout: 30s
 
-regions:
-  - us-east-1
-  - us-west-2
-  - eu-west-1
-  # Add more regions as needed
+aws:
+  regions:
+    - us-east-1
+    - us-west-2
+    - eu-west-1
+    # Add more regions as needed
+
+cost_explorer:
+  enabled: false
+  frequency: daily  # hourly | daily | weekly | monthly
 
 collectors:
   - ec2
@@ -213,14 +220,19 @@ aws-radar/
 
 ## Metrics
 
-All metrics are prefixed with `aws_` and have the suffix `_total`. Example metrics:
+All metrics are prefixed with `aws_`. Most inventory metrics use the suffix `_total`. Example metrics:
 
 ```
 aws_ec2_instances_total{region="us-east-1",instance_type="t3.micro",state="running"} 5
 aws_lambda_functions_total{region="us-east-1",runtime="python3.9"} 10
 aws_s3_buckets_total{region="us-east-1"} 25
 aws_vpc_total{region="us-east-1"} 3
+aws_cost_total_unblended_usd{account_name="Development",period_start="2026-03-03"} 0.12
 ```
+
+Most inventory metrics end with `_total`; cost metrics use:
+- `aws_cost_service_unblended_usd`
+- `aws_cost_total_unblended_usd`
 
 ## Contributing
 

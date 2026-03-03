@@ -36,6 +36,12 @@ func TestLoadDefaults(t *testing.T) {
 	if len(cfg.AWS.Regions) != 1 || cfg.AWS.Regions[0] != "us-east-1" {
 		t.Fatalf("expected default region us-east-1, got %v", cfg.AWS.Regions)
 	}
+	if cfg.CostExplorer.Enabled {
+		t.Fatalf("expected cost_explorer.enabled default false, got true")
+	}
+	if cfg.CostExplorer.Frequency != "daily" {
+		t.Fatalf("expected cost_explorer.frequency default daily, got %s", cfg.CostExplorer.Frequency)
+	}
 	if cfg.Logging.Level != "info" {
 		t.Fatalf("expected default logging level info, got %s", cfg.Logging.Level)
 	}

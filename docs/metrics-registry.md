@@ -409,6 +409,33 @@ All AWS resource metrics:
 
 These metrics provide observability into AWS Radar's own operation.
 
+## Cost Metrics (Optional `cost_explorer`)
+
+These metrics are emitted only when `cost_explorer.enabled: true`.
+
+### Cost by Service
+
+| Metric | `aws_cost_service_unblended_usd` |
+|--------|----------------------------------|
+| **Type** | Gauge |
+| **Description** | Unblended cost grouped by AWS service (USD) |
+| **Labels** | |
+| `account` | AWS account ID |
+| `account_name` | Account alias or Organizations account name |
+| `service` | Cost Explorer service dimension value |
+| `period_start` | Cost period start date (`YYYY-MM-DD`) |
+
+### Total Cost
+
+| Metric | `aws_cost_total_unblended_usd` |
+|--------|--------------------------------|
+| **Type** | Gauge |
+| **Description** | Total unblended cost across all services (USD) |
+| **Labels** | |
+| `account` | AWS account ID |
+| `account_name` | Account alias or Organizations account name |
+| `period_start` | Cost period start date (`YYYY-MM-DD`) |
+
 ### Collection Duration
 
 | Metric | `aws_radar_collection_duration_seconds` |
