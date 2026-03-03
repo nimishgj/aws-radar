@@ -322,6 +322,23 @@ var (
 		[]string{"account", "account_name"},
 	)
 
+	// Pricing Metrics
+	CostByService = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_cost_service_unblended_usd",
+			Help: "Daily unblended cost by AWS service in USD",
+		},
+		[]string{"account", "account_name", "service", "period_start"},
+	)
+
+	CostTotal = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_cost_total_unblended_usd",
+			Help: "Daily total unblended AWS cost in USD",
+		},
+		[]string{"account", "account_name", "period_start"},
+	)
+
 	// Collection Metrics
 	CollectionDuration = promauto.NewHistogramVec(
 		prometheus.HistogramOpts{
@@ -388,4 +405,6 @@ func ResetAll() {
 	ACMCertificates.Reset()
 	IAMUsers.Reset()
 	IAMRoles.Reset()
+	CostByService.Reset()
+	CostTotal.Reset()
 }

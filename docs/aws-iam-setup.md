@@ -93,8 +93,9 @@ AWS Radar requires **read-only access** to various AWS services to collect resou
 3. Click **Next**
 4. Select **Attach policies directly**
 5. Search for and select `AWSRadarReadOnlyPolicy`
-6. Click **Next**
-7. Review and click **Create user**
+6. If you enable `cost_explorer` in AWS Radar config, also attach `AWSRadarCostExplorerPolicy` (create below)
+7. Click **Next**
+8. Review and click **Create user**
 
 ### Step 3: Create Access Keys
 
@@ -196,6 +197,32 @@ aws iam attach-user-policy \
     --user-name aws-radar \
     --policy-arn arn:aws:iam::${ACCOUNT_ID}:policy/AWSRadarReadOnlyPolicy
 
+# Optional: add Cost Explorer access if cost_explorer is enabled
+cat > aws-radar-cost-explorer-policy.json << 'EOF'
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowCostExplorerRead",
+      "Effect": "Allow",
+      "Action": [
+        "ce:GetCostAndUsage"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+
+aws iam create-policy \
+    --policy-name AWSRadarCostExplorerPolicy \
+    --policy-document file://aws-radar-cost-explorer-policy.json \
+    --description "Allow AWS Radar cost_explorer collector to read Cost Explorer data"
+
+aws iam attach-user-policy \
+    --user-name aws-radar \
+    --policy-arn arn:aws:iam::${ACCOUNT_ID}:policy/AWSRadarCostExplorerPolicy
+
 # Create access keys
 aws iam create-access-key --user-name aws-radar
 ```
@@ -285,6 +312,7 @@ The following table lists all API actions required by AWS Radar:
 | | `DescribeCertificate` | Get certificate details |
 | **IAM** | `ListUsers` | Count IAM users |
 | | `ListRoles` | Count IAM roles |
+| **Cost Explorer** | `GetCostAndUsage` | Fetch cost by AWS service (attach separate AWSRadarCostExplorerPolicy when cost_explorer is enabled) |
 
 ## Security Best Practices
 
@@ -305,6 +333,11 @@ aws iam detach-user-policy \
     --user-name aws-radar \
     --policy-arn arn:aws:iam::${ACCOUNT_ID}:policy/AWSRadarReadOnlyPolicy
 
+# Detach optional Cost Explorer policy (if attached)
+aws iam detach-user-policy \
+    --user-name aws-radar \
+    --policy-arn arn:aws:iam::${ACCOUNT_ID}:policy/AWSRadarCostExplorerPolicy
+
 # Delete access keys (list them first)
 aws iam list-access-keys --user-name aws-radar
 aws iam delete-access-key --user-name aws-radar --access-key-id AKIAXXXXXXXXXXXXXXXX
@@ -314,4 +347,7 @@ aws iam delete-user --user-name aws-radar
 
 # Delete the policy
 aws iam delete-policy --policy-arn arn:aws:iam::${ACCOUNT_ID}:policy/AWSRadarReadOnlyPolicy
+
+# Delete optional Cost Explorer policy
+aws iam delete-policy --policy-arn arn:aws:iam::${ACCOUNT_ID}:policy/AWSRadarCostExplorerPolicy
 ```

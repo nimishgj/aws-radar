@@ -134,6 +134,10 @@ aws:
     - us-west-2
     - eu-west-1
 
+cost_explorer:
+  enabled: false
+  frequency: daily # hourly | daily | weekly | monthly
+
 logging:
   level: info
   format: json

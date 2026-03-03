@@ -12,6 +12,10 @@ aws:
     - us-east-1
     - ap-south-1
 
+cost_explorer:
+  enabled: true
+  frequency: hourly # hourly | daily | weekly | monthly
+
 collectors:
   - apigateway
   - apigatewayv2

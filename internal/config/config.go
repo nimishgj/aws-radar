@@ -8,11 +8,12 @@ import (
 )
 
 type Config struct {
-	Server     ServerConfig     `mapstructure:"server"`
-	Collection CollectionConfig `mapstructure:"collection"`
-	AWS        AWSConfig        `mapstructure:"aws"`
-	Collectors []string         `mapstructure:"collectors"`
-	Logging    LoggingConfig    `mapstructure:"logging"`
+	Server       ServerConfig       `mapstructure:"server"`
+	Collection   CollectionConfig   `mapstructure:"collection"`
+	AWS          AWSConfig          `mapstructure:"aws"`
+	CostExplorer CostExplorerConfig `mapstructure:"cost_explorer"`
+	Collectors   []string           `mapstructure:"collectors"`
+	Logging      LoggingConfig      `mapstructure:"logging"`
 }
 
 type ServerConfig struct {
@@ -28,6 +29,11 @@ type CollectionConfig struct {
 
 type AWSConfig struct {
 	Regions []string `mapstructure:"regions"`
+}
+
+type CostExplorerConfig struct {
+	Enabled   bool   `mapstructure:"enabled"`
+	Frequency string `mapstructure:"frequency"`
 }
 
 type LoggingConfig struct {
@@ -53,6 +59,8 @@ func Load() (*Config, error) {
 	viper.SetDefault("collection.interval", "60s")
 	viper.SetDefault("collection.timeout", "30s")
 	viper.SetDefault("aws.regions", []string{"us-east-1"})
+	viper.SetDefault("cost_explorer.enabled", false)
+	viper.SetDefault("cost_explorer.frequency", "daily")
 	viper.SetDefault("collectors", []string{
 		"apigateway",
 		"apigatewayv2",

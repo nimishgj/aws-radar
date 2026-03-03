@@ -8,10 +8,11 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
+	awscfg "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/aws/aws-sdk-go-v2/service/organizations"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
+	appconfig "github.com/nimishgj/aws-radar/internal/config"
 	"github.com/nimishgj/aws-radar/internal/metrics"
 	"github.com/rs/zerolog/log"
 )
@@ -40,7 +41,12 @@ type Orchestrator struct {
 }
 
 // NewOrchestrator creates a new collector orchestrator
-func NewOrchestrator(regions []string, interval, timeout time.Duration, enabledCollectors []string) *Orchestrator {
+func NewOrchestrator(
+	regions []string,
+	interval, timeout time.Duration,
+	enabledCollectors []string,
+	costExplorer appconfig.CostExplorerConfig,
+) *Orchestrator {
 	allCollectors := []Collector{
 		NewAPIGatewayCollector(),
 		NewAPIGatewayV2Collector(),
@@ -93,6 +99,9 @@ func NewOrchestrator(regions []string, interval, timeout time.Duration, enabledC
 
 	collectors := filterCollectors(allCollectors, enabled)
 	globalCollectors := filterGlobalCollectors(allGlobalCollectors, enabled)
+	if costExplorer.Enabled {
+		globalCollectors = append(globalCollectors, NewCostCollector(costExplorer.Frequency))
+	}
 
 	if len(collectors) == 0 && len(globalCollectors) == 0 {
 		log.Warn().Msg("No collectors enabled; nothing will be collected")
@@ -177,7 +186,7 @@ func (o *Orchestrator) collect(ctx context.Context) {
 	metrics.ResetAll()
 
 	// Load AWS config
-	cfg, err := config.LoadDefaultConfig(ctx)
+	cfg, err := awscfg.LoadDefaultConfig(ctx)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to load AWS config")
 		return
