@@ -21,6 +21,23 @@ collectors:
   - apigatewayv2
   - autoscaling
   - athena
+  - mq
+  - ses
+  - cloudformation
+  - documentdb
+  - neptune
+  - memorydb
+  - timestream
+  - fsx
+  - backup
+  - kinesis
+  - firehose
+  - kinesisanalytics
+  - emr
+  - elasticbeanstalk
+  - kms
+  - cloudtrail
+  - batch
   - codebuild
   - codepipeline
   - codedeploy

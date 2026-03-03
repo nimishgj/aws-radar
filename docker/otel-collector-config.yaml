@@ -1,4 +1,11 @@
 receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
   prometheus:
     config:
       scrape_configs:
@@ -69,7 +76,18 @@ service:
     logs:
       level: debug
   pipelines:
+
     metrics:
-      receivers: [prometheus]
+      receivers: [prometheus, otlp]
+      processors: [memory_limiter, resource, batch]
+      exporters: [clickhouse, otlphttp/infraspec, debug]
+
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, batch]
+      exporters: [clickhouse, otlphttp/infraspec, debug]
+
+    traces:
+      receivers: [otlp]
       processors: [memory_limiter, resource, batch]
       exporters: [clickhouse, otlphttp/infraspec, debug]
