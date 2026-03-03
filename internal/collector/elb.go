@@ -68,6 +68,7 @@ func (c *ELBCollector) collectV2(ctx context.Context, cfg aws.Config, region, ac
 	client := elbv2.NewFromConfig(cfg)
 
 	counts := make(map[string]float64)
+	detailedCounts := make(map[string]float64)
 
 	paginator := elbv2.NewDescribeLoadBalancersPaginator(client, &elbv2.DescribeLoadBalancersInput{})
 
@@ -80,9 +81,14 @@ func (c *ELBCollector) collectV2(ctx context.Context, cfg aws.Config, region, ac
 		for _, lb := range page.LoadBalancers {
 			lbType := string(lb.Type)
 			scheme := string(lb.Scheme)
+			ipType := string(lb.IpAddressType)
+			state := string(lb.State.Code)
 
 			key := lbType + "|" + scheme
 			counts[key]++
+
+			detailedKey := lbType + "|" + scheme + "|" + ipType + "|" + state
+			detailedCounts[detailedKey]++
 		}
 	}
 
@@ -94,9 +100,20 @@ func (c *ELBCollector) collectV2(ctx context.Context, cfg aws.Config, region, ac
 		).Set(count)
 	}
 
+	for key, count := range detailedCounts {
+		parts := splitKey(key, 4)
+		metrics.ELBV2Detailed.WithLabelValues(account, accountName, region,
+			parts[0], // type
+			parts[1], // scheme
+			parts[2], // ip_address_type
+			parts[3], // state
+		).Set(count)
+	}
+
 	log.Debug().
 		Str("region", region).
 		Int("elbv2_combinations", len(counts)).
+		Int("elbv2_detailed_combinations", len(detailedCounts)).
 		Msg("ELBv2 collection completed")
 
 	return nil

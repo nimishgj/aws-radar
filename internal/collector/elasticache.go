@@ -23,6 +23,7 @@ func (c *ElastiCacheCollector) Collect(ctx context.Context, cfg aws.Config, regi
 	client := elasticache.NewFromConfig(cfg)
 
 	counts := make(map[string]float64)
+	serverlessCounts := make(map[string]float64)
 
 	paginator := elasticache.NewDescribeCacheClustersPaginator(client, &elasticache.DescribeCacheClustersInput{})
 
@@ -41,6 +42,26 @@ func (c *ElastiCacheCollector) Collect(ctx context.Context, cfg aws.Config, regi
 		}
 	}
 
+	serverlessPaginator := elasticache.NewDescribeServerlessCachesPaginator(client, &elasticache.DescribeServerlessCachesInput{})
+	for serverlessPaginator.HasMorePages() {
+		page, err := serverlessPaginator.NextPage(ctx)
+		if err != nil {
+			return err
+		}
+		for _, cache := range page.ServerlessCaches {
+			engine := aws.ToString(cache.Engine)
+			if engine == "" {
+				engine = "unknown"
+			}
+			status := aws.ToString(cache.Status)
+			if status == "" {
+				status = "unknown"
+			}
+			key := engine + "|" + status
+			serverlessCounts[key]++
+		}
+	}
+
 	// Update metrics
 	for key, count := range counts {
 		parts := splitKey(key, 2)
@@ -50,9 +71,15 @@ func (c *ElastiCacheCollector) Collect(ctx context.Context, cfg aws.Config, regi
 		).Set(count)
 	}
 
+	for key, count := range serverlessCounts {
+		parts := splitKey(key, 2)
+		metrics.ElastiCacheServerlessCaches.WithLabelValues(account, accountName, region, parts[0], parts[1]).Set(count)
+	}
+
 	log.Debug().
 		Str("region", region).
 		Int("cluster_combinations", len(counts)).
+		Int("serverless_combinations", len(serverlessCounts)).
 		Msg("ElastiCache collection completed")
 
 	return nil

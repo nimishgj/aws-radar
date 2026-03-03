@@ -47,6 +47,21 @@ func (c *VPCCollector) Collect(ctx context.Context, cfg aws.Config, region, acco
 		log.Warn().Err(err).Str("region", region).Msg("Failed to collect Internet Gateways")
 	}
 
+	// Collect VPC Endpoints
+	if err := c.collectVPCEndpoints(ctx, client, region, account, accountName); err != nil {
+		log.Warn().Err(err).Str("region", region).Msg("Failed to collect VPC Endpoints")
+	}
+
+	// Collect Transit Gateways
+	if err := c.collectTransitGateways(ctx, client, region, account, accountName); err != nil {
+		log.Warn().Err(err).Str("region", region).Msg("Failed to collect Transit Gateways")
+	}
+
+	// Collect VPN Gateways
+	if err := c.collectVPNGateways(ctx, client, region, account, accountName); err != nil {
+		log.Warn().Err(err).Str("region", region).Msg("Failed to collect VPN Gateways")
+	}
+
 	return nil
 }
 
@@ -190,5 +205,80 @@ func (c *VPCCollector) collectInternetGateways(ctx context.Context, client *ec2.
 		Float64("internet_gateway_count", count).
 		Msg("Internet Gateway collection completed")
 
+	return nil
+}
+
+func (c *VPCCollector) collectVPCEndpoints(ctx context.Context, client *ec2.Client, region, account, accountName string) error {
+	counts := make(map[string]float64)
+
+	paginator := ec2.NewDescribeVpcEndpointsPaginator(client, &ec2.DescribeVpcEndpointsInput{})
+	for paginator.HasMorePages() {
+		page, err := paginator.NextPage(ctx)
+		if err != nil {
+			return err
+		}
+		for _, ep := range page.VpcEndpoints {
+			epType := string(ep.VpcEndpointType)
+			if epType == "" {
+				epType = "unknown"
+			}
+			state := string(ep.State)
+			if state == "" {
+				state = "unknown"
+			}
+			key := epType + "|" + state
+			counts[key]++
+		}
+	}
+
+	for key, count := range counts {
+		parts := splitKey(key, 2)
+		metrics.VPCEndpoints.WithLabelValues(account, accountName, region, parts[0], parts[1]).Set(count)
+	}
+	return nil
+}
+
+func (c *VPCCollector) collectTransitGateways(ctx context.Context, client *ec2.Client, region, account, accountName string) error {
+	counts := make(map[string]float64)
+
+	paginator := ec2.NewDescribeTransitGatewaysPaginator(client, &ec2.DescribeTransitGatewaysInput{})
+	for paginator.HasMorePages() {
+		page, err := paginator.NextPage(ctx)
+		if err != nil {
+			return err
+		}
+		for _, tgw := range page.TransitGateways {
+			state := string(tgw.State)
+			if state == "" {
+				state = "unknown"
+			}
+			counts[state]++
+		}
+	}
+
+	for state, count := range counts {
+		metrics.TransitGateways.WithLabelValues(account, accountName, region, state).Set(count)
+	}
+	return nil
+}
+
+func (c *VPCCollector) collectVPNGateways(ctx context.Context, client *ec2.Client, region, account, accountName string) error {
+	counts := make(map[string]float64)
+
+	output, err := client.DescribeVpnGateways(ctx, &ec2.DescribeVpnGatewaysInput{})
+	if err != nil {
+		return err
+	}
+	for _, vgw := range output.VpnGateways {
+		state := string(vgw.State)
+		if state == "" {
+			state = "unknown"
+		}
+		counts[state]++
+	}
+
+	for state, count := range counts {
+		metrics.VPNGateways.WithLabelValues(account, accountName, region, state).Set(count)
+	}
 	return nil
 }

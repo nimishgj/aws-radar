@@ -50,10 +50,14 @@ func TestLoadDefaults(t *testing.T) {
 		"mq", "ses", "cloudformation", "documentdb", "neptune", "memorydb",
 		"timestream", "fsx", "backup", "kinesis", "firehose", "kinesisanalytics",
 		"emr", "elasticbeanstalk", "kms", "cloudtrail", "batch",
+		"kinesisvideo", "opensearchserverless", "s3control",
 		"codebuild", "codepipeline", "codedeploy",
 		"apprunner", "transfer", "msk", "redshift",
 		"guardduty", "securityhub", "inspector2", "macie", "waf",
-		"shield",
+		"route53resolver", "configservice", "organizations", "controltower",
+		"ecrpublic", "directconnect", "bedrock", "sagemaker", "quicksight",
+		"workspaces", "appstream", "connect", "amplify", "globalaccelerator",
+		"datasync", "dms", "shield",
 	}
 	for _, collector := range requiredCollectors {
 		found := false
