@@ -118,6 +118,12 @@ func NewOrchestrator(
 		NewDataSyncCollector(),
 		NewDMSCollector(),
 		NewRoute53ResolverCollector(),
+		NewCognitoCollector(),
+		NewNetworkFirewallCollector(),
+		NewFMSCollector(),
+		NewACMPCACollector(),
+		NewServiceCatalogCollector(),
+		NewLicenseManagerCollector(),
 	}
 	allGlobalCollectors := []GlobalCollector{
 		NewCloudFrontCollector(),
@@ -233,6 +239,15 @@ func (o *Orchestrator) collect(ctx context.Context) {
 
 	// Reset all metrics before collecting
 	metrics.ResetAll()
+
+	// Pre-initialize all metrics with 0 defaults so Grafana shows 0
+	// instead of "no data" when collectors error or find no resources.
+	if o.accountID != "" {
+		for _, region := range o.regions {
+			metrics.InitRegionalDefaults(o.accountID, o.accountName, region)
+		}
+		metrics.InitGlobalDefaults(o.accountID, o.accountName)
+	}
 
 	// Load AWS config
 	cfg, err := awscfg.LoadDefaultConfig(ctx)

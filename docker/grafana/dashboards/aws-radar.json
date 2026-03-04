@@ -17017,6 +17017,242 @@
           }
         }
       ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 441 },
+      "id": 870,
+      "panels": [],
+      "title": "Deep Metrics - SNS/SQS/SSM",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "pointSize": 5, "showPoints": "auto", "stacking": { "group": "A", "mode": "none" } }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 442 },
+      "id": 871,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT time, series, sum(value) AS value FROM (SELECT toStartOfMinute(TimeUnix) AS time, if(length(Attributes['fifo']) > 0, Attributes['fifo'], 'unknown') AS series, argMax(Value, TimeUnix) AS value, Attributes AS attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_sns_topics_by_type_total' AND Attributes['account_name'] IN (${account:singlequote}) AND Attributes['region'] IN (${region:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, series, attrs) GROUP BY time, series ORDER BY time", "refId": "A" }],
+      "title": "SNS Topics by Type (FIFO)",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["series"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "pointSize": 5, "showPoints": "auto", "stacking": { "group": "A", "mode": "none" } }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 442 },
+      "id": 872,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT time, region, sum(value) AS value FROM (SELECT toStartOfMinute(TimeUnix) AS time, Attributes['region'] AS region, argMax(Value, TimeUnix) AS value, Attributes AS attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_sns_subscriptions_total' AND Attributes['account_name'] IN (${account:singlequote}) AND Attributes['region'] IN (${region:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time", "refId": "A" }],
+      "title": "SNS Total Subscriptions",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["region"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "pointSize": 5, "showPoints": "auto", "stacking": { "group": "A", "mode": "none" } }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 450 },
+      "id": 873,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT time, series, sum(value) AS value FROM (SELECT toStartOfMinute(TimeUnix) AS time, if(length(Attributes['queue_type']) > 0, Attributes['queue_type'], 'unknown') AS series, argMax(Value, TimeUnix) AS value, Attributes AS attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_sqs_messages_total' AND Attributes['account_name'] IN (${account:singlequote}) AND Attributes['region'] IN (${region:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, series, attrs) GROUP BY time, series ORDER BY time", "refId": "A" }],
+      "title": "SQS Messages by Queue Type",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["series"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "pointSize": 5, "showPoints": "auto", "stacking": { "group": "A", "mode": "none" } }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 450 },
+      "id": 874,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT time, region, sum(value) AS value FROM (SELECT toStartOfMinute(TimeUnix) AS time, Attributes['region'] AS region, argMax(Value, TimeUnix) AS value, Attributes AS attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_sqs_queues_with_dlq_total' AND Attributes['account_name'] IN (${account:singlequote}) AND Attributes['region'] IN (${region:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time", "refId": "A" }],
+      "title": "SQS Queues with DLQ",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["region"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "pointSize": 5, "showPoints": "auto", "stacking": { "group": "A", "mode": "none" } }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 458 },
+      "id": 875,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT time, series, sum(value) AS value FROM (SELECT toStartOfMinute(TimeUnix) AS time, if(length(Attributes['owner']) > 0, Attributes['owner'], 'unknown') AS series, argMax(Value, TimeUnix) AS value, Attributes AS attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ssm_documents_total' AND Attributes['account_name'] IN (${account:singlequote}) AND Attributes['region'] IN (${region:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, series, attrs) GROUP BY time, series ORDER BY time", "refId": "A" }],
+      "title": "SSM Documents by Owner",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["series"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "pointSize": 5, "showPoints": "auto", "stacking": { "group": "A", "mode": "none" } }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 458 },
+      "id": 876,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT time, series, sum(value) AS value FROM (SELECT toStartOfMinute(TimeUnix) AS time, if(length(Attributes['enabled']) > 0, Attributes['enabled'], 'unknown') AS series, argMax(Value, TimeUnix) AS value, Attributes AS attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ssm_maintenance_windows_total' AND Attributes['account_name'] IN (${account:singlequote}) AND Attributes['region'] IN (${region:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, series, attrs) GROUP BY time, series ORDER BY time", "refId": "A" }],
+      "title": "SSM Maintenance Windows by State",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["series"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "pointSize": 5, "showPoints": "auto", "stacking": { "group": "A", "mode": "none" } }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 466 },
+      "id": 877,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT time, region, sum(value) AS value FROM (SELECT toStartOfMinute(TimeUnix) AS time, Attributes['region'] AS region, argMax(Value, TimeUnix) AS value, Attributes AS attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ssm_associations_total' AND Attributes['account_name'] IN (${account:singlequote}) AND Attributes['region'] IN (${region:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time", "refId": "A" }],
+      "title": "SSM Associations",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["region"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "pointSize": 5, "showPoints": "auto", "stacking": { "group": "A", "mode": "none" } }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 466 },
+      "id": 878,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT time, region, sum(value) AS value FROM (SELECT toStartOfMinute(TimeUnix) AS time, Attributes['region'] AS region, argMax(Value, TimeUnix) AS value, Attributes AS attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_ssm_patch_baselines_total' AND Attributes['account_name'] IN (${account:singlequote}) AND Attributes['region'] IN (${region:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time", "refId": "A" }],
+      "title": "SSM Patch Baselines",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["region"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 474 },
+      "id": 880,
+      "panels": [],
+      "title": "Cognito, Firewall & Governance Services",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "pointSize": 5, "showPoints": "auto", "stacking": { "group": "A", "mode": "none" } }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 475 },
+      "id": 881,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT time, series, sum(value) AS value FROM (SELECT toStartOfMinute(TimeUnix) AS time, if(length(Attributes['status']) > 0, Attributes['status'], 'unknown') AS series, argMax(Value, TimeUnix) AS value, Attributes AS attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_cognito_user_pools_total' AND Attributes['account_name'] IN (${account:singlequote}) AND Attributes['region'] IN (${region:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, series, attrs) GROUP BY time, series ORDER BY time", "refId": "A" }],
+      "title": "Cognito User Pools by Status",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["series"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "pointSize": 5, "showPoints": "auto", "stacking": { "group": "A", "mode": "none" } }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 475 },
+      "id": 882,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT time, series, sum(value) AS value FROM (SELECT toStartOfMinute(TimeUnix) AS time, if(length(Attributes['user_pool_name']) > 0, Attributes['user_pool_name'], 'unknown') AS series, argMax(Value, TimeUnix) AS value, Attributes AS attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_cognito_user_pool_users_total' AND Attributes['account_name'] IN (${account:singlequote}) AND Attributes['region'] IN (${region:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, series, attrs) GROUP BY time, series ORDER BY time", "refId": "A" }],
+      "title": "Cognito Users per Pool",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["series"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "pointSize": 5, "showPoints": "auto", "stacking": { "group": "A", "mode": "none" } }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 475 },
+      "id": 883,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT time, region, sum(value) AS value FROM (SELECT toStartOfMinute(TimeUnix) AS time, Attributes['region'] AS region, argMax(Value, TimeUnix) AS value, Attributes AS attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_cognito_identity_pools_total' AND Attributes['account_name'] IN (${account:singlequote}) AND Attributes['region'] IN (${region:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time", "refId": "A" }],
+      "title": "Cognito Identity Pools",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["region"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "pointSize": 5, "showPoints": "auto", "stacking": { "group": "A", "mode": "none" } }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 483 },
+      "id": 884,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT time, region, sum(value) AS value FROM (SELECT toStartOfMinute(TimeUnix) AS time, Attributes['region'] AS region, argMax(Value, TimeUnix) AS value, Attributes AS attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_networkfirewall_firewalls_total' AND Attributes['account_name'] IN (${account:singlequote}) AND Attributes['region'] IN (${region:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time", "refId": "A" }],
+      "title": "Network Firewall - Firewalls",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["region"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "pointSize": 5, "showPoints": "auto", "stacking": { "group": "A", "mode": "none" } }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 483 },
+      "id": 885,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT time, region, sum(value) AS value FROM (SELECT toStartOfMinute(TimeUnix) AS time, Attributes['region'] AS region, argMax(Value, TimeUnix) AS value, Attributes AS attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_networkfirewall_policies_total' AND Attributes['account_name'] IN (${account:singlequote}) AND Attributes['region'] IN (${region:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time", "refId": "A" }],
+      "title": "Network Firewall - Policies",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["region"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "pointSize": 5, "showPoints": "auto", "stacking": { "group": "A", "mode": "none" } }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 483 },
+      "id": 886,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT time, series, sum(value) AS value FROM (SELECT toStartOfMinute(TimeUnix) AS time, if(length(Attributes['type']) > 0, Attributes['type'], 'unknown') AS series, argMax(Value, TimeUnix) AS value, Attributes AS attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_networkfirewall_rule_groups_total' AND Attributes['account_name'] IN (${account:singlequote}) AND Attributes['region'] IN (${region:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, series, attrs) GROUP BY time, series ORDER BY time", "refId": "A" }],
+      "title": "Network Firewall - Rule Groups",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["series"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "pointSize": 5, "showPoints": "auto", "stacking": { "group": "A", "mode": "none" } }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 491 },
+      "id": 887,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT time, series, sum(value) AS value FROM (SELECT toStartOfMinute(TimeUnix) AS time, if(length(Attributes['resource_type']) > 0, Attributes['resource_type'], 'unknown') AS series, argMax(Value, TimeUnix) AS value, Attributes AS attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_fms_policies_total' AND Attributes['account_name'] IN (${account:singlequote}) AND Attributes['region'] IN (${region:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, series, attrs) GROUP BY time, series ORDER BY time", "refId": "A" }],
+      "title": "FMS Policies by Resource Type",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["series"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "pointSize": 5, "showPoints": "auto", "stacking": { "group": "A", "mode": "none" } }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 491 },
+      "id": 888,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT time, series, sum(value) AS value FROM (SELECT toStartOfMinute(TimeUnix) AS time, concat(if(length(Attributes['status']) > 0, Attributes['status'], 'unknown'), ' / ', if(length(Attributes['type']) > 0, Attributes['type'], 'unknown')) AS series, argMax(Value, TimeUnix) AS value, Attributes AS attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_acmpca_certificate_authorities_total' AND Attributes['account_name'] IN (${account:singlequote}) AND Attributes['region'] IN (${region:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, series, attrs) GROUP BY time, series ORDER BY time", "refId": "A" }],
+      "title": "ACM PCA Certificate Authorities",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["series"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "pointSize": 5, "showPoints": "auto", "stacking": { "group": "A", "mode": "none" } }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 491 },
+      "id": 889,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT time, region, sum(value) AS value FROM (SELECT toStartOfMinute(TimeUnix) AS time, Attributes['region'] AS region, argMax(Value, TimeUnix) AS value, Attributes AS attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_licensemanager_license_configurations_total' AND Attributes['account_name'] IN (${account:singlequote}) AND Attributes['region'] IN (${region:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time", "refId": "A" }],
+      "title": "License Manager Configurations",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["region"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "pointSize": 5, "showPoints": "auto", "stacking": { "group": "A", "mode": "none" } }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 499 },
+      "id": 890,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT time, region, sum(value) AS value FROM (SELECT toStartOfMinute(TimeUnix) AS time, Attributes['region'] AS region, argMax(Value, TimeUnix) AS value, Attributes AS attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_servicecatalog_portfolios_total' AND Attributes['account_name'] IN (${account:singlequote}) AND Attributes['region'] IN (${region:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time", "refId": "A" }],
+      "title": "Service Catalog Portfolios",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["region"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "pointSize": 5, "showPoints": "auto", "stacking": { "group": "A", "mode": "none" } }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 499 },
+      "id": 891,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT time, region, sum(value) AS value FROM (SELECT toStartOfMinute(TimeUnix) AS time, Attributes['region'] AS region, argMax(Value, TimeUnix) AS value, Attributes AS attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_servicecatalog_products_total' AND Attributes['account_name'] IN (${account:singlequote}) AND Attributes['region'] IN (${region:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, region, attrs) GROUP BY time, region ORDER BY time", "refId": "A" }],
+      "title": "Service Catalog Products",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["region"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "pointSize": 5, "showPoints": "auto", "stacking": { "group": "A", "mode": "none" } }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 499 },
+      "id": 892,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT time, series, sum(value) AS value FROM (SELECT toStartOfMinute(TimeUnix) AS time, if(length(Attributes['status']) > 0, Attributes['status'], 'unknown') AS series, argMax(Value, TimeUnix) AS value, Attributes AS attrs FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_servicecatalog_provisioned_products_total' AND Attributes['account_name'] IN (${account:singlequote}) AND Attributes['region'] IN (${region:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, series, attrs) GROUP BY time, series ORDER BY time", "refId": "A" }],
+      "title": "Service Catalog Provisioned Products by Status",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["series"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
     }
   ],
   "refresh": "1m",
