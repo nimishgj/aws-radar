@@ -103,6 +103,22 @@ var (
 		[]string{"account", "account_name", "region", "cluster_name", "launch_type"},
 	)
 
+	ECSTasksByStatus = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ecs_tasks_by_status_total",
+			Help: "Total number of ECS tasks by last and desired status",
+		},
+		[]string{"account", "account_name", "region", "cluster_name", "launch_type", "last_status", "desired_status"},
+	)
+
+	ECSClusterDepth = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ecs_cluster_depth",
+			Help: "ECS cluster-level depth metrics",
+		},
+		[]string{"account", "account_name", "region", "cluster_name", "metric"},
+	)
+
 	// EKS Metrics
 	EKSClusters = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
@@ -127,6 +143,46 @@ var (
 			Help: "Total number of ALB/NLB load balancers",
 		},
 		[]string{"account", "account_name", "region", "type", "scheme"},
+	)
+
+	ELBV2Listeners = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_elbv2_listeners_total",
+			Help: "Total number of ELBv2 listeners by load balancer type and protocol",
+		},
+		[]string{"account", "account_name", "region", "type", "scheme", "protocol"},
+	)
+
+	ELBV2TargetGroups = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_elbv2_target_groups_total",
+			Help: "Total number of ELBv2 target groups by load balancer type and target type",
+		},
+		[]string{"account", "account_name", "region", "type", "target_type"},
+	)
+
+	ELBV2RulesPerALB = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_elbv2_rules_per_alb",
+			Help: "Number of listener rules per ALB",
+		},
+		[]string{"account", "account_name", "region", "load_balancer_name"},
+	)
+
+	ELBV2AvailabilityZonesPerLB = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_elbv2_availability_zones_per_lb",
+			Help: "Number of availability zones configured per ELBv2 load balancer",
+		},
+		[]string{"account", "account_name", "region", "load_balancer_name", "type", "scheme"},
+	)
+
+	ELBV2SubnetsPerLB = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_elbv2_subnets_per_lb",
+			Help: "Number of subnets configured per ELBv2 load balancer",
+		},
+		[]string{"account", "account_name", "region", "load_balancer_name", "type", "scheme"},
 	)
 
 	// DynamoDB Metrics
@@ -622,6 +678,62 @@ var (
 		[]string{"account", "account_name", "region"},
 	)
 
+	AutoScalingPoliciesByType = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_autoscaling_policies_by_type_total",
+			Help: "Total number of Auto Scaling policies by policy type",
+		},
+		[]string{"account", "account_name", "region", "policy_type"},
+	)
+
+	AutoScalingGroupsByMixedInstances = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_autoscaling_groups_by_mixed_instances_total",
+			Help: "Total number of Auto Scaling groups by mixed instances policy presence",
+		},
+		[]string{"account", "account_name", "region", "has_mixed_instances_policy"},
+	)
+
+	AutoScalingLaunchTemplateUsage = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_autoscaling_launch_template_usage_total",
+			Help: "Total number of Auto Scaling groups by launch template and version",
+		},
+		[]string{"account", "account_name", "region", "launch_template_id", "launch_template_version"},
+	)
+
+	AutoScalingLifecycleHooks = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_autoscaling_lifecycle_hooks_total",
+			Help: "Total number of Auto Scaling lifecycle hooks",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	AutoScalingWarmPools = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_autoscaling_warm_pools_total",
+			Help: "Total number of Auto Scaling groups with warm pools",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	AutoScalingWarmPoolInstances = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_autoscaling_warm_pool_instances_total",
+			Help: "Total number of Auto Scaling warm pool instances",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	AutoScalingInstanceRefreshes = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_autoscaling_instance_refreshes_total",
+			Help: "Total number of Auto Scaling instance refreshes by status",
+		},
+		[]string{"account", "account_name", "region", "status"},
+	)
+
 	ELBV2Detailed = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "aws_elbv2_detailed_total",
@@ -646,12 +758,36 @@ var (
 		[]string{"account", "account_name", "region", "status"},
 	)
 
+	ECSCapacityProvidersDetailed = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ecs_capacity_providers_detailed_total",
+			Help: "Total number of ECS capacity providers by type and status",
+		},
+		[]string{"account", "account_name", "region", "capacity_provider_type", "status"},
+	)
+
+	ECSDefaultCapacityProviderStrategy = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ecs_default_capacity_provider_strategy_total",
+			Help: "Number of ECS clusters using each capacity provider in default strategy",
+		},
+		[]string{"account", "account_name", "region", "cluster_name", "capacity_provider"},
+	)
+
 	ECSTaskDefinitions = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "aws_ecs_task_definitions_total",
 			Help: "Total number of ECS task definitions by status",
 		},
 		[]string{"account", "account_name", "region", "status"},
+	)
+
+	ECSTaskDefinitionsDetailed = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ecs_task_definitions_detailed_total",
+			Help: "Total number of ECS task definitions by family, revision and runtime platform",
+		},
+		[]string{"account", "account_name", "region", "status", "family", "revision", "os_family", "cpu_architecture"},
 	)
 
 	ECRPublicRepositories = promauto.NewGaugeVec(
@@ -774,6 +910,70 @@ var (
 		[]string{"account", "account_name", "region"},
 	)
 
+	SESIdentitiesByVerificationStatus = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ses_identities_by_verification_status_total",
+			Help: "Total number of SES identities by verification status",
+		},
+		[]string{"account", "account_name", "region", "verification_status"},
+	)
+
+	SESIdentityAuthStatus = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ses_identity_auth_status_total",
+			Help: "Total number of SES identities by DKIM, SPF and MAIL FROM status",
+		},
+		[]string{"account", "account_name", "region", "dkim_status", "spf_status", "mail_from_status"},
+	)
+
+	SESConfigSetEventDestinations = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ses_config_set_event_destinations_total",
+			Help: "Total number of SES configuration set event destinations",
+		},
+		[]string{"account", "account_name", "region", "event_destination_type"},
+	)
+
+	SESSuppressedDestinations = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ses_suppressed_destinations_total",
+			Help: "Total number of SES suppressed destinations by reason",
+		},
+		[]string{"account", "account_name", "region", "reason"},
+	)
+
+	SESDedicatedIPPools = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ses_dedicated_ip_pools_total",
+			Help: "Total number of SES dedicated IP pools",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	SESConfigSetsBySendingPool = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ses_config_sets_by_sending_pool_total",
+			Help: "Total number of SES configuration sets by dedicated sending pool",
+		},
+		[]string{"account", "account_name", "region", "sending_pool"},
+	)
+
+	SESAccountSettings = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ses_account_settings",
+			Help: "SES account setting values",
+		},
+		[]string{"account", "account_name", "region", "setting"},
+	)
+
+	SESSendingQuota = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ses_sending_quota",
+			Help: "SES sending quota values",
+		},
+		[]string{"account", "account_name", "region", "quota_type"},
+	)
+
 	S3AccessPoints = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "aws_s3_access_points_total",
@@ -806,12 +1006,84 @@ var (
 		[]string{"account", "account_name", "region", "engine", "engine_mode"},
 	)
 
+	RDSInstancesByEngineVersion = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_rds_instances_by_engine_version_total",
+			Help: "Total number of RDS instances by engine and engine version",
+		},
+		[]string{"account", "account_name", "region", "engine", "engine_version"},
+	)
+
+	RDSInstancesByClass = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_rds_instances_by_class_total",
+			Help: "Total number of RDS instances by DB instance class",
+		},
+		[]string{"account", "account_name", "region", "db_instance_class"},
+	)
+
+	RDSInstancesByMultiAZ = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_rds_instances_by_multi_az_total",
+			Help: "Total number of RDS instances by Multi-AZ setting",
+		},
+		[]string{"account", "account_name", "region", "multi_az"},
+	)
+
+	RDSReadReplicas = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_rds_read_replicas_total",
+			Help: "Total number of RDS read replica instances by engine",
+		},
+		[]string{"account", "account_name", "region", "engine"},
+	)
+
+	RDSProxyTargets = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_rds_proxy_targets_total",
+			Help: "Total number of RDS proxy targets by engine family and target type",
+		},
+		[]string{"account", "account_name", "region", "engine_family", "target_type"},
+	)
+
+	RDSAuroraServerlessV2Capacity = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_rds_aurora_serverless_v2_capacity",
+			Help: "Aurora Serverless v2 min and max capacity values",
+		},
+		[]string{"account", "account_name", "region", "cluster_identifier", "metric"},
+	)
+
+	RDSAuroraServerlessByStatus = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_rds_aurora_serverless_by_status_total",
+			Help: "Total number of Aurora serverless clusters by status",
+		},
+		[]string{"account", "account_name", "region", "status"},
+	)
+
 	ElastiCacheServerlessCaches = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "aws_elasticache_serverless_caches_total",
 			Help: "Total number of ElastiCache serverless caches",
 		},
 		[]string{"account", "account_name", "region", "engine", "status"},
+	)
+
+	ElastiCacheReplicationGroups = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_elasticache_replication_groups_total",
+			Help: "Total number of ElastiCache replication groups",
+		},
+		[]string{"account", "account_name", "region", "engine", "status", "cluster_enabled"},
+	)
+
+	ElastiCacheGlobalReplicationGroups = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_elasticache_global_replication_groups_total",
+			Help: "Total number of ElastiCache global replication groups by status",
+		},
+		[]string{"account", "account_name", "region", "status"},
 	)
 
 	BedrockCustomModels = promauto.NewGaugeVec(
@@ -953,6 +1225,13 @@ func ResetAll() {
 	AutoScalingGroups.Reset()
 	AutoScalingGroupsWithLaunchTemplate.Reset()
 	AutoScalingPolicies.Reset()
+	AutoScalingPoliciesByType.Reset()
+	AutoScalingGroupsByMixedInstances.Reset()
+	AutoScalingLaunchTemplateUsage.Reset()
+	AutoScalingLifecycleHooks.Reset()
+	AutoScalingWarmPools.Reset()
+	AutoScalingWarmPoolInstances.Reset()
+	AutoScalingInstanceRefreshes.Reset()
 	AthenaWorkgroups.Reset()
 	ECRRepositories.Reset()
 	ECRPublicRepositories.Reset()
@@ -966,25 +1245,52 @@ func ResetAll() {
 	RDSInstances.Reset()
 	RDSProxies.Reset()
 	RDSAuroraServerlessClusters.Reset()
+	RDSInstancesByEngineVersion.Reset()
+	RDSInstancesByClass.Reset()
+	RDSInstancesByMultiAZ.Reset()
+	RDSReadReplicas.Reset()
+	RDSProxyTargets.Reset()
+	RDSAuroraServerlessV2Capacity.Reset()
+	RDSAuroraServerlessByStatus.Reset()
 	LambdaFunctions.Reset()
 	ECSServices.Reset()
 	ECSTasks.Reset()
+	ECSTasksByStatus.Reset()
+	ECSClusterDepth.Reset()
 	ECSServicesByStatus.Reset()
 	ECSCapacityProviders.Reset()
+	ECSCapacityProvidersDetailed.Reset()
+	ECSDefaultCapacityProviderStrategy.Reset()
 	ECSTaskDefinitions.Reset()
+	ECSTaskDefinitionsDetailed.Reset()
 	EKSClusters.Reset()
 	ELBClassic.Reset()
 	ELBV2.Reset()
 	ELBV2Detailed.Reset()
+	ELBV2Listeners.Reset()
+	ELBV2TargetGroups.Reset()
+	ELBV2RulesPerALB.Reset()
+	ELBV2AvailabilityZonesPerLB.Reset()
+	ELBV2SubnetsPerLB.Reset()
 	DynamoDBTables.Reset()
 	ElastiCacheClusters.Reset()
 	ElastiCacheServerlessCaches.Reset()
+	ElastiCacheReplicationGroups.Reset()
+	ElastiCacheGlobalReplicationGroups.Reset()
 	OpenSearchDomains.Reset()
 	OpenSearchServerlessCollections.Reset()
 	MQBrokers.Reset()
 	SESIdentities.Reset()
 	SESConfigSets.Reset()
 	SESContactLists.Reset()
+	SESIdentitiesByVerificationStatus.Reset()
+	SESIdentityAuthStatus.Reset()
+	SESConfigSetEventDestinations.Reset()
+	SESSuppressedDestinations.Reset()
+	SESDedicatedIPPools.Reset()
+	SESConfigSetsBySendingPool.Reset()
+	SESAccountSettings.Reset()
+	SESSendingQuota.Reset()
 	CloudFormationStacks.Reset()
 	CloudFormationStacksByStatus.Reset()
 	DocumentDBClusters.Reset()

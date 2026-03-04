@@ -78,13 +78,19 @@ AWS Radar requires **read-only access** to various AWS services to collect resou
                 "ecs:DescribeServices",
                 "ecs:ListTasks",
                 "ecs:DescribeTasks",
+                "ecs:DescribeTaskDefinition",
                 "eks:ListClusters",
                 "eks:DescribeCluster",
                 "elasticloadbalancing:DescribeLoadBalancers",
                 "elasticloadbalancingv2:DescribeLoadBalancers",
+                "elasticloadbalancingv2:DescribeListeners",
+                "elasticloadbalancingv2:DescribeTargetGroups",
+                "elasticloadbalancingv2:DescribeRules",
                 "dynamodb:ListTables",
                 "dynamodb:DescribeTable",
                 "elasticache:DescribeCacheClusters",
+                "elasticache:DescribeReplicationGroups",
+                "elasticache:DescribeGlobalReplicationGroups",
                 "es:ListDomainNames",
                 "guardduty:ListDetectors",
                 "securityhub:GetEnabledStandards",
@@ -105,6 +111,9 @@ AWS Radar requires **read-only access** to various AWS services to collect resou
                 "iam:ListAccountAliases",
                 "shield:DescribeSubscription",
                 "autoscaling:DescribePolicies",
+                "autoscaling:DescribeLifecycleHooks",
+                "autoscaling:DescribeWarmPool",
+                "autoscaling:DescribeInstanceRefreshes",
                 "ecs:DescribeCapacityProviders",
                 "ecs:ListTaskDefinitions",
                 "ecr-public:DescribeRepositories",
@@ -125,9 +134,16 @@ AWS Radar requires **read-only access** to various AWS services to collect resou
                 "aoss:ListCollections",
                 "ses:ListConfigurationSets",
                 "ses:ListContactLists",
+                "ses:GetEmailIdentity",
+                "ses:GetConfigurationSet",
+                "ses:GetConfigurationSetEventDestinations",
+                "ses:ListSuppressedDestinations",
+                "ses:ListDedicatedIpPools",
+                "ses:GetAccount",
                 "s3:ListAccessPoints",
                 "s3:ListStorageLensConfigurations",
                 "rds:DescribeDBProxies",
+                "rds:DescribeDBProxyTargets",
                 "elasticache:DescribeServerlessCaches",
                 "bedrock:ListCustomModels",
                 "sagemaker:ListEndpoints",
@@ -240,13 +256,19 @@ Create or update a file named `aws-radar-policy.json` with the policy shown belo
                 "ecs:DescribeServices",
                 "ecs:ListTasks",
                 "ecs:DescribeTasks",
+                "ecs:DescribeTaskDefinition",
                 "eks:ListClusters",
                 "eks:DescribeCluster",
                 "elasticloadbalancing:DescribeLoadBalancers",
                 "elasticloadbalancingv2:DescribeLoadBalancers",
+                "elasticloadbalancingv2:DescribeListeners",
+                "elasticloadbalancingv2:DescribeTargetGroups",
+                "elasticloadbalancingv2:DescribeRules",
                 "dynamodb:ListTables",
                 "dynamodb:DescribeTable",
                 "elasticache:DescribeCacheClusters",
+                "elasticache:DescribeReplicationGroups",
+                "elasticache:DescribeGlobalReplicationGroups",
                 "es:ListDomainNames",
                 "guardduty:ListDetectors",
                 "securityhub:GetEnabledStandards",
@@ -267,6 +289,9 @@ Create or update a file named `aws-radar-policy.json` with the policy shown belo
                 "iam:ListAccountAliases",
                 "shield:DescribeSubscription",
                 "autoscaling:DescribePolicies",
+                "autoscaling:DescribeLifecycleHooks",
+                "autoscaling:DescribeWarmPool",
+                "autoscaling:DescribeInstanceRefreshes",
                 "ecs:DescribeCapacityProviders",
                 "ecs:ListTaskDefinitions",
                 "ecr-public:DescribeRepositories",
@@ -287,9 +312,16 @@ Create or update a file named `aws-radar-policy.json` with the policy shown belo
                 "aoss:ListCollections",
                 "ses:ListConfigurationSets",
                 "ses:ListContactLists",
+                "ses:GetEmailIdentity",
+                "ses:GetConfigurationSet",
+                "ses:GetConfigurationSetEventDestinations",
+                "ses:ListSuppressedDestinations",
+                "ses:ListDedicatedIpPools",
+                "ses:GetAccount",
                 "s3:ListAccessPoints",
                 "s3:ListStorageLensConfigurations",
                 "rds:DescribeDBProxies",
+                "rds:DescribeDBProxyTargets",
                 "elasticache:DescribeServerlessCaches",
                 "bedrock:ListCustomModels",
                 "sagemaker:ListEndpoints",
@@ -448,6 +480,9 @@ The following table lists all API actions required by AWS Radar:
 | | `DescribeCluster` | Get cluster version |
 | **ELB** | `DescribeLoadBalancers` | Count Classic ELBs |
 | **ELBv2** | `DescribeLoadBalancers` | Count ALB/NLB |
+| | `DescribeListeners` | Count listeners by protocol |
+| | `DescribeTargetGroups` | Count target groups by target type |
+| | `DescribeRules` | Count listener rules per ALB |
 | **DynamoDB** | `ListTables` | List DynamoDB tables |
 | | `DescribeTable` | Get table billing mode |
 | **ElastiCache** | `DescribeCacheClusters` | Count ElastiCache clusters |
@@ -493,8 +528,12 @@ The following table lists all API actions required by AWS Radar:
 | **IAM** | `ListUsers` | Count IAM users |
 | | `ListRoles` | Count IAM roles |
 | **Auto Scaling** | `DescribePolicies` | Count Auto Scaling policies |
+| | `DescribeLifecycleHooks` | Count lifecycle hooks per Auto Scaling group |
+| | `DescribeWarmPool` | Count warm pool groups and instances |
+| | `DescribeInstanceRefreshes` | Count instance refreshes by status |
 | **ECS** | `DescribeCapacityProviders` | Count ECS capacity providers |
 | | `ListTaskDefinitions` | Count ECS task definitions |
+| | `DescribeTaskDefinition` | Classify task definitions by family/revision/runtime platform |
 | **ECR Public** | `DescribeRepositories` | Count ECR Public repositories |
 | **VPC / EC2 networking** | `DescribeVpcEndpoints` | Count VPC endpoints |
 | | `DescribeTransitGateways` | Count transit gateways |
@@ -511,10 +550,19 @@ The following table lists all API actions required by AWS Radar:
 | **OpenSearch Serverless** | `ListCollections` | Count serverless collections |
 | **SES** | `ListConfigurationSets` | Count SES config sets |
 | | `ListContactLists` | Count SES contact lists |
+| | `GetEmailIdentity` | Classify identities by verification/DKIM/mail-from status |
+| | `GetConfigurationSet` | Read dedicated IP pool association per configuration set |
+| | `GetConfigurationSetEventDestinations` | Count event destinations by type |
+| | `ListSuppressedDestinations` | Count suppression list entries by reason |
+| | `ListDedicatedIpPools` | Count dedicated IP pools |
+| | `GetAccount` | Read sending enabled/production access/quota values |
 | **S3 (control plane)** | `ListAccessPoints` | Count S3 access points |
 | | `ListStorageLensConfigurations` | Count S3 Storage Lens configs |
 | **RDS** | `DescribeDBProxies` | Count RDS proxies |
+| | `DescribeDBProxyTargets` | Count RDS proxy targets by type |
 | **ElastiCache** | `DescribeServerlessCaches` | Count ElastiCache serverless caches |
+| | `DescribeReplicationGroups` | Count replication groups by engine/status/cluster mode |
+| | `DescribeGlobalReplicationGroups` | Count global replication groups by status |
 | **Bedrock** | `ListCustomModels` | Count Bedrock custom models |
 | **SageMaker** | `ListEndpoints` | Count SageMaker endpoints |
 | **QuickSight** | `ListDashboards` | Count QuickSight dashboards |
@@ -535,6 +583,45 @@ The following table lists all API actions required by AWS Radar:
 4. **Use IAM roles when possible**: If running on AWS (EC2, ECS, Lambda), use IAM roles instead of access keys
 5. **Enable MFA**: Consider requiring MFA for sensitive operations on the AWS account
 6. **Monitor usage**: Enable CloudTrail to monitor API usage by the aws-radar user
+
+## Advanced Dimension Metrics (ELB/ECS/ASG/RDS/SES)
+
+When the latest collectors are enabled, AWS Radar also emits these additional metrics used by the advanced Grafana panels:
+
+- `aws_elbv2_listeners_total`
+- `aws_elbv2_target_groups_total`
+- `aws_elbv2_rules_per_alb`
+- `aws_elbv2_availability_zones_per_lb`
+- `aws_elbv2_subnets_per_lb`
+- `aws_ecs_tasks_by_status_total`
+- `aws_ecs_cluster_depth`
+- `aws_ecs_capacity_providers_detailed_total`
+- `aws_ecs_default_capacity_provider_strategy_total`
+- `aws_ecs_task_definitions_detailed_total`
+- `aws_autoscaling_policies_by_type_total`
+- `aws_autoscaling_groups_by_mixed_instances_total`
+- `aws_autoscaling_launch_template_usage_total`
+- `aws_autoscaling_lifecycle_hooks_total`
+- `aws_autoscaling_warm_pools_total`
+- `aws_autoscaling_warm_pool_instances_total`
+- `aws_autoscaling_instance_refreshes_total`
+- `aws_rds_instances_by_engine_version_total`
+- `aws_rds_instances_by_class_total`
+- `aws_rds_instances_by_multi_az_total`
+- `aws_rds_read_replicas_total`
+- `aws_rds_proxy_targets_total`
+- `aws_rds_aurora_serverless_v2_capacity`
+- `aws_rds_aurora_serverless_by_status_total`
+- `aws_elasticache_replication_groups_total`
+- `aws_elasticache_global_replication_groups_total`
+- `aws_ses_identities_by_verification_status_total`
+- `aws_ses_identity_auth_status_total`
+- `aws_ses_config_set_event_destinations_total`
+- `aws_ses_suppressed_destinations_total`
+- `aws_ses_dedicated_ip_pools_total`
+- `aws_ses_config_sets_by_sending_pool_total`
+- `aws_ses_account_settings`
+- `aws_ses_sending_quota`
 
 ## Cleanup
 
