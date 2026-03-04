@@ -1191,6 +1191,175 @@ var (
 		[]string{"account", "account_name", "period_start"},
 	)
 
+	// Cognito Metrics
+	CognitoUserPools = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_cognito_user_pools_total",
+			Help: "Total number of Cognito user pools",
+		},
+		[]string{"account", "account_name", "region", "status"},
+	)
+
+	CognitoUserPoolUsers = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_cognito_user_pool_users_total",
+			Help: "Estimated number of users per Cognito user pool",
+		},
+		[]string{"account", "account_name", "region", "user_pool_name"},
+	)
+
+	CognitoIdentityPools = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_cognito_identity_pools_total",
+			Help: "Total number of Cognito identity pools",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// Network Firewall Metrics
+	NetworkFirewallFirewalls = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_networkfirewall_firewalls_total",
+			Help: "Total number of AWS Network Firewall firewalls",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	NetworkFirewallPolicies = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_networkfirewall_policies_total",
+			Help: "Total number of AWS Network Firewall policies",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	NetworkFirewallRuleGroups = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_networkfirewall_rule_groups_total",
+			Help: "Total number of AWS Network Firewall rule groups",
+		},
+		[]string{"account", "account_name", "region", "type"},
+	)
+
+	// Firewall Manager Metrics
+	FMSPolicies = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_fms_policies_total",
+			Help: "Total number of Firewall Manager policies",
+		},
+		[]string{"account", "account_name", "region", "resource_type"},
+	)
+
+	// Private CA Metrics
+	ACMPCACertificateAuthorities = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_acmpca_certificate_authorities_total",
+			Help: "Total number of ACM Private Certificate Authorities",
+		},
+		[]string{"account", "account_name", "region", "status", "type"},
+	)
+
+	// Service Catalog Metrics
+	ServiceCatalogPortfolios = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_servicecatalog_portfolios_total",
+			Help: "Total number of Service Catalog portfolios",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	ServiceCatalogProducts = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_servicecatalog_products_total",
+			Help: "Total number of Service Catalog products",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	ServiceCatalogProvisionedProducts = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_servicecatalog_provisioned_products_total",
+			Help: "Total number of Service Catalog provisioned products",
+		},
+		[]string{"account", "account_name", "region", "status"},
+	)
+
+	// License Manager Metrics
+	LicenseManagerConfigurations = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_licensemanager_license_configurations_total",
+			Help: "Total number of License Manager configurations",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// SNS Depth Metrics
+	SNSSubscriptions = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_sns_subscriptions_total",
+			Help: "Total number of confirmed SNS subscriptions",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	SNSTopicsByType = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_sns_topics_by_type_total",
+			Help: "Total number of SNS topics by type (FIFO vs standard)",
+		},
+		[]string{"account", "account_name", "region", "fifo"},
+	)
+
+	// SQS Depth Metrics
+	SQSMessages = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_sqs_messages_total",
+			Help: "Total approximate number of messages across SQS queues",
+		},
+		[]string{"account", "account_name", "region", "queue_type"},
+	)
+
+	SQSQueuesWithDLQ = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_sqs_queues_with_dlq_total",
+			Help: "Total number of SQS queues with dead-letter queue configured",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	// SSM Depth Metrics
+	SSMDocuments = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ssm_documents_total",
+			Help: "Total number of SSM documents",
+		},
+		[]string{"account", "account_name", "region", "owner"},
+	)
+
+	SSMMaintenanceWindows = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ssm_maintenance_windows_total",
+			Help: "Total number of SSM maintenance windows",
+		},
+		[]string{"account", "account_name", "region", "enabled"},
+	)
+
+	SSMAssociations = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ssm_associations_total",
+			Help: "Total number of SSM associations",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
+	SSMPatchBaselines = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ssm_patch_baselines_total",
+			Help: "Total number of SSM patch baselines",
+		},
+		[]string{"account", "account_name", "region"},
+	)
+
 	// Collection Metrics
 	CollectionDuration = promauto.NewHistogramVec(
 		prometheus.HistogramOpts{
@@ -1362,4 +1531,193 @@ func ResetAll() {
 	DMSReplicationInstances.Reset()
 	CostByService.Reset()
 	CostTotal.Reset()
+	CognitoUserPools.Reset()
+	CognitoUserPoolUsers.Reset()
+	CognitoIdentityPools.Reset()
+	NetworkFirewallFirewalls.Reset()
+	NetworkFirewallPolicies.Reset()
+	NetworkFirewallRuleGroups.Reset()
+	FMSPolicies.Reset()
+	ACMPCACertificateAuthorities.Reset()
+	ServiceCatalogPortfolios.Reset()
+	ServiceCatalogProducts.Reset()
+	ServiceCatalogProvisionedProducts.Reset()
+	LicenseManagerConfigurations.Reset()
+	SNSSubscriptions.Reset()
+	SNSTopicsByType.Reset()
+	SQSMessages.Reset()
+	SQSQueuesWithDLQ.Reset()
+	SSMDocuments.Reset()
+	SSMMaintenanceWindows.Reset()
+	SSMAssociations.Reset()
+	SSMPatchBaselines.Reset()
+}
+
+// InitRegionalDefaults ensures every regional metric has at least one 0-valued
+// time series so that Grafana panels show "0" instead of "no data" when there
+// are no resources or a collector errors out.
+func InitRegionalDefaults(account, accountName, region string) {
+	n := "none" // sentinel label for dimensional metrics
+
+	// Simple counters (account, account_name, region only)
+	APIGatewayRestAPIs.WithLabelValues(account, accountName, region).Add(0)
+	AthenaWorkgroups.WithLabelValues(account, accountName, region).Add(0)
+	AutoScalingGroups.WithLabelValues(account, accountName, region).Add(0)
+	AutoScalingGroupsWithLaunchTemplate.WithLabelValues(account, accountName, region).Add(0)
+	AutoScalingPolicies.WithLabelValues(account, accountName, region).Add(0)
+	AutoScalingLifecycleHooks.WithLabelValues(account, accountName, region).Add(0)
+	AutoScalingWarmPools.WithLabelValues(account, accountName, region).Add(0)
+	AutoScalingWarmPoolInstances.WithLabelValues(account, accountName, region).Add(0)
+	BackupVaults.WithLabelValues(account, accountName, region).Add(0)
+	BatchJobQueues.WithLabelValues(account, accountName, region).Add(0)
+	CodeBuildProjects.WithLabelValues(account, accountName, region).Add(0)
+	CodePipelinePipelines.WithLabelValues(account, accountName, region).Add(0)
+	CodeDeployApplications.WithLabelValues(account, accountName, region).Add(0)
+	AppRunnerServices.WithLabelValues(account, accountName, region).Add(0)
+	TransferServers.WithLabelValues(account, accountName, region).Add(0)
+	MSKClusters.WithLabelValues(account, accountName, region).Add(0)
+	RedshiftClusters.WithLabelValues(account, accountName, region).Add(0)
+	GuardDutyDetectors.WithLabelValues(account, accountName, region).Add(0)
+	SecurityHubStandards.WithLabelValues(account, accountName, region).Add(0)
+	InspectorCoveredResources.WithLabelValues(account, accountName, region).Add(0)
+	MacieClassificationJobs.WithLabelValues(account, accountName, region).Add(0)
+	WAFWebACLs.WithLabelValues(account, accountName, region).Add(0)
+	SecretsManagerSecrets.WithLabelValues(account, accountName, region).Add(0)
+	CloudFormationStacks.WithLabelValues(account, accountName, region).Add(0)
+	DocumentDBClusters.WithLabelValues(account, accountName, region).Add(0)
+	NeptuneClusters.WithLabelValues(account, accountName, region).Add(0)
+	MemoryDBClusters.WithLabelValues(account, accountName, region).Add(0)
+	TimestreamDatabases.WithLabelValues(account, accountName, region).Add(0)
+	TimestreamTables.WithLabelValues(account, accountName, region).Add(0)
+	FSxFileSystems.WithLabelValues(account, accountName, region).Add(0)
+	KinesisStreams.WithLabelValues(account, accountName, region).Add(0)
+	FirehoseDeliveryStreams.WithLabelValues(account, accountName, region).Add(0)
+	KinesisAnalyticsApplications.WithLabelValues(account, accountName, region).Add(0)
+	EMRClusters.WithLabelValues(account, accountName, region).Add(0)
+	ElasticBeanstalkApplications.WithLabelValues(account, accountName, region).Add(0)
+	KMSKeys.WithLabelValues(account, accountName, region).Add(0)
+	CloudTrailTrails.WithLabelValues(account, accountName, region).Add(0)
+	OpenSearchDomains.WithLabelValues(account, accountName, region).Add(0)
+	MQBrokers.WithLabelValues(account, accountName, region).Add(0)
+	SESIdentities.WithLabelValues(account, accountName, region).Add(0)
+	SESConfigSets.WithLabelValues(account, accountName, region).Add(0)
+	SESContactLists.WithLabelValues(account, accountName, region).Add(0)
+	SESDedicatedIPPools.WithLabelValues(account, accountName, region).Add(0)
+	EFSFileSystems.WithLabelValues(account, accountName, region).Add(0)
+	GlueJobs.WithLabelValues(account, accountName, region).Add(0)
+	ECRRepositories.WithLabelValues(account, accountName, region).Add(0)
+	InternetGateways.WithLabelValues(account, accountName, region).Add(0)
+	AmplifyApps.WithLabelValues(account, accountName, region).Add(0)
+	DataSyncTasks.WithLabelValues(account, accountName, region).Add(0)
+	QuickSightDashboards.WithLabelValues(account, accountName, region).Add(0)
+	SNSTopics.WithLabelValues(account, accountName, region).Add(0)
+	SNSSubscriptions.WithLabelValues(account, accountName, region).Add(0)
+	SQSQueuesWithDLQ.WithLabelValues(account, accountName, region).Add(0)
+	SSMAssociations.WithLabelValues(account, accountName, region).Add(0)
+	SSMPatchBaselines.WithLabelValues(account, accountName, region).Add(0)
+	NetworkFirewallFirewalls.WithLabelValues(account, accountName, region).Add(0)
+	NetworkFirewallPolicies.WithLabelValues(account, accountName, region).Add(0)
+	ServiceCatalogPortfolios.WithLabelValues(account, accountName, region).Add(0)
+	ServiceCatalogProducts.WithLabelValues(account, accountName, region).Add(0)
+	LicenseManagerConfigurations.WithLabelValues(account, accountName, region).Add(0)
+	CognitoIdentityPools.WithLabelValues(account, accountName, region).Add(0)
+	S3Buckets.WithLabelValues(account, accountName, region).Add(0)
+	S3AccessPoints.WithLabelValues(account, accountName, region).Add(0)
+	S3StorageLensConfigurations.WithLabelValues(account, accountName, region).Add(0)
+
+	// Dimensional metrics — use "none" so panels show 0 when no resources exist
+	APIGatewayV2APIs.WithLabelValues(account, accountName, region, n).Add(0)
+	EC2Instances.WithLabelValues(account, accountName, region, n, n, n).Add(0)
+	RDSInstances.WithLabelValues(account, accountName, region, n, n, n, n).Add(0)
+	RDSProxies.WithLabelValues(account, accountName, region, n, n).Add(0)
+	RDSAuroraServerlessClusters.WithLabelValues(account, accountName, region, n, n).Add(0)
+	RDSInstancesByEngineVersion.WithLabelValues(account, accountName, region, n, n).Add(0)
+	RDSInstancesByClass.WithLabelValues(account, accountName, region, n).Add(0)
+	RDSInstancesByMultiAZ.WithLabelValues(account, accountName, region, n).Add(0)
+	RDSReadReplicas.WithLabelValues(account, accountName, region, n).Add(0)
+	RDSProxyTargets.WithLabelValues(account, accountName, region, n, n).Add(0)
+	RDSAuroraServerlessByStatus.WithLabelValues(account, accountName, region, n).Add(0)
+	LambdaFunctions.WithLabelValues(account, accountName, region, n, n).Add(0)
+	ECSServices.WithLabelValues(account, accountName, region, n, n).Add(0)
+	ECSTasks.WithLabelValues(account, accountName, region, n, n).Add(0)
+	ECSTasksByStatus.WithLabelValues(account, accountName, region, n, n, n, n).Add(0)
+	ECSServicesByStatus.WithLabelValues(account, accountName, region, n, n, n).Add(0)
+	ECSCapacityProviders.WithLabelValues(account, accountName, region, n).Add(0)
+	ECSCapacityProvidersDetailed.WithLabelValues(account, accountName, region, n, n).Add(0)
+	ECSTaskDefinitions.WithLabelValues(account, accountName, region, n).Add(0)
+	EKSClusters.WithLabelValues(account, accountName, region, n, n).Add(0)
+	ELBClassic.WithLabelValues(account, accountName, region, n).Add(0)
+	ELBV2.WithLabelValues(account, accountName, region, n, n).Add(0)
+	ELBV2Detailed.WithLabelValues(account, accountName, region, n, n, n, n).Add(0)
+	ELBV2Listeners.WithLabelValues(account, accountName, region, n, n, n).Add(0)
+	ELBV2TargetGroups.WithLabelValues(account, accountName, region, n, n).Add(0)
+	DynamoDBTables.WithLabelValues(account, accountName, region, n).Add(0)
+	ElastiCacheClusters.WithLabelValues(account, accountName, region, n, n).Add(0)
+	ElastiCacheServerlessCaches.WithLabelValues(account, accountName, region, n, n).Add(0)
+	ElastiCacheReplicationGroups.WithLabelValues(account, accountName, region, n, n, n).Add(0)
+	ElastiCacheGlobalReplicationGroups.WithLabelValues(account, accountName, region, n).Add(0)
+	SQSQueues.WithLabelValues(account, accountName, region, n).Add(0)
+	SQSMessages.WithLabelValues(account, accountName, region, n).Add(0)
+	EBSVolumes.WithLabelValues(account, accountName, region, n, n).Add(0)
+	VPCs.WithLabelValues(account, accountName, region, n).Add(0)
+	Subnets.WithLabelValues(account, accountName, region, n).Add(0)
+	SecurityGroups.WithLabelValues(account, accountName, region, n).Add(0)
+	NATGateways.WithLabelValues(account, accountName, region, n).Add(0)
+	VPCEndpoints.WithLabelValues(account, accountName, region, n, n).Add(0)
+	TransitGateways.WithLabelValues(account, accountName, region, n).Add(0)
+	VPNGateways.WithLabelValues(account, accountName, region, n).Add(0)
+	Route53ResolverEndpoints.WithLabelValues(account, accountName, region, n, n).Add(0)
+	Route53ResolverRules.WithLabelValues(account, accountName, region, n).Add(0)
+	ACMCertificates.WithLabelValues(account, accountName, region, n, n).Add(0)
+	ControlTowerLandingZones.WithLabelValues(account, accountName, region, n).Add(0)
+	ConfigRecorders.WithLabelValues(account, accountName, region, n).Add(0)
+	CloudTrailLakeEventDataStores.WithLabelValues(account, accountName, region, n).Add(0)
+	KinesisVideoStreams.WithLabelValues(account, accountName, region, n).Add(0)
+	OpenSearchServerlessCollections.WithLabelValues(account, accountName, region, n, n).Add(0)
+	CloudFormationStacksByStatus.WithLabelValues(account, accountName, region, n).Add(0)
+	EventBridgeRules.WithLabelValues(account, accountName, region, n).Add(0)
+	SSMParameters.WithLabelValues(account, accountName, region, n).Add(0)
+	SFNStateMachines.WithLabelValues(account, accountName, region, n).Add(0)
+	AutoScalingPoliciesByType.WithLabelValues(account, accountName, region, n).Add(0)
+	AutoScalingGroupsByMixedInstances.WithLabelValues(account, accountName, region, n).Add(0)
+	AutoScalingInstanceRefreshes.WithLabelValues(account, accountName, region, n).Add(0)
+	SESIdentitiesByVerificationStatus.WithLabelValues(account, accountName, region, n).Add(0)
+	SESIdentityAuthStatus.WithLabelValues(account, accountName, region, n, n, n).Add(0)
+	SESConfigSetEventDestinations.WithLabelValues(account, accountName, region, n).Add(0)
+	SESSuppressedDestinations.WithLabelValues(account, accountName, region, n).Add(0)
+	SESConfigSetsBySendingPool.WithLabelValues(account, accountName, region, n).Add(0)
+	SESAccountSettings.WithLabelValues(account, accountName, region, n).Add(0)
+	SESSendingQuota.WithLabelValues(account, accountName, region, n).Add(0)
+	BedrockCustomModels.WithLabelValues(account, accountName, region, n).Add(0)
+	SageMakerEndpoints.WithLabelValues(account, accountName, region, n).Add(0)
+	WorkSpacesInstances.WithLabelValues(account, accountName, region, n).Add(0)
+	AppStreamFleets.WithLabelValues(account, accountName, region, n).Add(0)
+	ConnectInstances.WithLabelValues(account, accountName, region, n).Add(0)
+	DMSReplicationInstances.WithLabelValues(account, accountName, region, n).Add(0)
+	NetworkFirewallRuleGroups.WithLabelValues(account, accountName, region, n).Add(0)
+	FMSPolicies.WithLabelValues(account, accountName, region, n).Add(0)
+	ACMPCACertificateAuthorities.WithLabelValues(account, accountName, region, n, n).Add(0)
+	ServiceCatalogProvisionedProducts.WithLabelValues(account, accountName, region, n).Add(0)
+	CognitoUserPools.WithLabelValues(account, accountName, region, n).Add(0)
+	CognitoUserPoolUsers.WithLabelValues(account, accountName, region, n).Add(0)
+	SNSTopicsByType.WithLabelValues(account, accountName, region, n).Add(0)
+	SSMDocuments.WithLabelValues(account, accountName, region, n).Add(0)
+	SSMMaintenanceWindows.WithLabelValues(account, accountName, region, n).Add(0)
+}
+
+// InitGlobalDefaults ensures every global metric has at least one 0-valued
+// time series.
+func InitGlobalDefaults(account, accountName string) {
+	n := "none"
+
+	Route53HostedZones.WithLabelValues(account, accountName).Add(0)
+	IAMUsers.WithLabelValues(account, accountName).Add(0)
+	IAMRoles.WithLabelValues(account, accountName).Add(0)
+	ShieldSubscriptions.WithLabelValues(account, accountName).Add(0)
+	ECRPublicRepositories.WithLabelValues(account, accountName).Add(0)
+	OrganizationsOrganizationalUnits.WithLabelValues(account, accountName).Add(0)
+	CloudFrontDistributions.WithLabelValues(account, accountName, n, n).Add(0)
+	OrganizationsAccounts.WithLabelValues(account, accountName, n).Add(0)
+	DirectConnectConnections.WithLabelValues(account, accountName, n).Add(0)
+	GlobalAccelerators.WithLabelValues(account, accountName, n, n).Add(0)
 }

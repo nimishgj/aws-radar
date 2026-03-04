@@ -99,9 +99,27 @@ AWS Radar requires **read-only access** to various AWS services to collect resou
                 "wafv2:ListWebACLs",
                 "secretsmanager:ListSecrets",
                 "ssm:DescribeParameters",
+                "ssm:ListDocuments",
+                "ssm:DescribeMaintenanceWindows",
+                "ssm:ListAssociations",
+                "ssm:DescribePatchBaselines",
                 "states:ListStateMachines",
                 "sqs:ListQueues",
+                "sqs:GetQueueAttributes",
                 "sns:ListTopics",
+                "sns:GetTopicAttributes",
+                "cognito-idp:ListUserPools",
+                "cognito-idp:DescribeUserPool",
+                "cognito-identity:ListIdentityPools",
+                "network-firewall:ListFirewalls",
+                "network-firewall:ListFirewallPolicies",
+                "network-firewall:ListRuleGroups",
+                "fms:ListPolicies",
+                "acm-pca:ListCertificateAuthorities",
+                "servicecatalog:ListPortfolios",
+                "servicecatalog:SearchProductsAsAdmin",
+                "servicecatalog:SearchProvisionedProducts",
+                "license-manager:ListLicenseConfigurations",
                 "cloudfront:ListDistributions",
                 "route53:ListHostedZones",
                 "acm:ListCertificates",
@@ -277,9 +295,27 @@ Create or update a file named `aws-radar-policy.json` with the policy shown belo
                 "wafv2:ListWebACLs",
                 "secretsmanager:ListSecrets",
                 "ssm:DescribeParameters",
+                "ssm:ListDocuments",
+                "ssm:DescribeMaintenanceWindows",
+                "ssm:ListAssociations",
+                "ssm:DescribePatchBaselines",
                 "states:ListStateMachines",
                 "sqs:ListQueues",
+                "sqs:GetQueueAttributes",
                 "sns:ListTopics",
+                "sns:GetTopicAttributes",
+                "cognito-idp:ListUserPools",
+                "cognito-idp:DescribeUserPool",
+                "cognito-identity:ListIdentityPools",
+                "network-firewall:ListFirewalls",
+                "network-firewall:ListFirewallPolicies",
+                "network-firewall:ListRuleGroups",
+                "fms:ListPolicies",
+                "acm-pca:ListCertificateAuthorities",
+                "servicecatalog:ListPortfolios",
+                "servicecatalog:SearchProductsAsAdmin",
+                "servicecatalog:SearchProvisionedProducts",
+                "license-manager:ListLicenseConfigurations",
                 "cloudfront:ListDistributions",
                 "route53:ListHostedZones",
                 "acm:ListCertificates",
@@ -487,7 +523,9 @@ The following table lists all API actions required by AWS Radar:
 | | `DescribeTable` | Get table billing mode |
 | **ElastiCache** | `DescribeCacheClusters` | Count ElastiCache clusters |
 | **SQS** | `ListQueues` | Count SQS queues |
+| | `GetQueueAttributes` | Get message counts, DLQ config per queue |
 | **SNS** | `ListTopics` | Count SNS topics |
+| | `GetTopicAttributes` | Get subscription counts, FIFO status per topic |
 | **MQ** | `ListBrokers` | Count Amazon MQ brokers |
 | **SES** | `ListEmailIdentities` | Count SES identities |
 | **CloudFormation** | `ListStacks` | Count CloudFormation stacks |
@@ -573,6 +611,23 @@ The following table lists all API actions required by AWS Radar:
 | **Global Accelerator** | `ListAccelerators` | Count global accelerators |
 | **DataSync** | `ListTasks` | Count DataSync tasks |
 | **DMS** | `DescribeReplicationInstances` | Count DMS replication instances |
+| **SSM** | `DescribeParameters` | Count SSM parameters by type |
+| | `ListDocuments` | Count SSM documents by owner |
+| | `DescribeMaintenanceWindows` | Count maintenance windows by state |
+| | `ListAssociations` | Count SSM associations |
+| | `DescribePatchBaselines` | Count patch baselines |
+| **Cognito** | `ListUserPools` | List Cognito user pools |
+| | `DescribeUserPool` | Get estimated user count per pool |
+| | `ListIdentityPools` | Count Cognito identity pools |
+| **Network Firewall** | `ListFirewalls` | Count Network Firewall firewalls |
+| | `ListFirewallPolicies` | Count firewall policies |
+| | `ListRuleGroups` | Count rule groups |
+| **Firewall Manager** | `ListPolicies` | Count FMS policies by resource type |
+| **ACM PCA** | `ListCertificateAuthorities` | Count private certificate authorities by status/type |
+| **Service Catalog** | `ListPortfolios` | Count Service Catalog portfolios |
+| | `SearchProductsAsAdmin` | Count Service Catalog products |
+| | `SearchProvisionedProducts` | Count provisioned products by status |
+| **License Manager** | `ListLicenseConfigurations` | Count license configurations |
 | **Cost Explorer** | `GetCostAndUsage` | Fetch cost by AWS service (attach separate AWSRadarCostExplorerPolicy when cost_explorer is enabled) |
 
 ## Security Best Practices
@@ -622,6 +677,26 @@ When the latest collectors are enabled, AWS Radar also emits these additional me
 - `aws_ses_config_sets_by_sending_pool_total`
 - `aws_ses_account_settings`
 - `aws_ses_sending_quota`
+- `aws_sns_subscriptions_total`
+- `aws_sns_topics_by_type_total`
+- `aws_sqs_messages_total`
+- `aws_sqs_queues_with_dlq_total`
+- `aws_ssm_documents_total`
+- `aws_ssm_maintenance_windows_total`
+- `aws_ssm_associations_total`
+- `aws_ssm_patch_baselines_total`
+- `aws_cognito_user_pools_total`
+- `aws_cognito_user_pool_users_total`
+- `aws_cognito_identity_pools_total`
+- `aws_networkfirewall_firewalls_total`
+- `aws_networkfirewall_policies_total`
+- `aws_networkfirewall_rule_groups_total`
+- `aws_fms_policies_total`
+- `aws_acmpca_certificate_authorities_total`
+- `aws_servicecatalog_portfolios_total`
+- `aws_servicecatalog_products_total`
+- `aws_servicecatalog_provisioned_products_total`
+- `aws_licensemanager_license_configurations_total`
 
 ## Cleanup
 

@@ -95,6 +95,12 @@ collectors:
   - globalaccelerator
   - datasync
   - dms
+  - cognito
+  - networkfirewall
+  - fms
+  - acmpca
+  - servicecatalog
+  - licensemanager
 
 logging:
   level: info

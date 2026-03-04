@@ -2,10 +2,12 @@ package collector
 
 import (
 	"context"
+	"strconv"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
+	sqsTypes "github.com/aws/aws-sdk-go-v2/service/sqs/types"
 	"github.com/nimishgj/aws-radar/internal/metrics"
 	"github.com/rs/zerolog/log"
 )
@@ -24,6 +26,8 @@ func (c *SQSCollector) Collect(ctx context.Context, cfg aws.Config, region, acco
 	client := sqs.NewFromConfig(cfg)
 
 	counts := make(map[string]float64)
+	messageCounts := make(map[string]float64)
+	var dlqCount float64
 
 	paginator := sqs.NewListQueuesPaginator(client, &sqs.ListQueuesInput{})
 
@@ -34,23 +38,51 @@ func (c *SQSCollector) Collect(ctx context.Context, cfg aws.Config, region, acco
 		}
 
 		for _, queueUrl := range page.QueueUrls {
-			// Determine queue type (FIFO vs Standard)
 			queueType := "standard"
 			if strings.HasSuffix(queueUrl, ".fifo") {
 				queueType = "fifo"
 			}
 			counts[queueType]++
+
+			// Get queue attributes for message count and DLQ config
+			attrs, err := client.GetQueueAttributes(ctx, &sqs.GetQueueAttributesInput{
+				QueueUrl: aws.String(queueUrl),
+				AttributeNames: []sqsTypes.QueueAttributeName{
+					sqsTypes.QueueAttributeNameApproximateNumberOfMessages,
+					sqsTypes.QueueAttributeNameRedrivePolicy,
+				},
+			})
+			if err != nil {
+				log.Warn().Err(err).Str("region", region).Str("queue", queueUrl).Msg("Failed to get SQS queue attributes")
+				continue
+			}
+
+			if msgStr, ok := attrs.Attributes["ApproximateNumberOfMessages"]; ok {
+				if msgs, parseErr := strconv.ParseFloat(msgStr, 64); parseErr == nil {
+					messageCounts[queueType] += msgs
+				}
+			}
+
+			if _, ok := attrs.Attributes["RedrivePolicy"]; ok {
+				dlqCount++
+			}
 		}
 	}
 
-	// Update metrics
 	for queueType, count := range counts {
 		metrics.SQSQueues.WithLabelValues(account, accountName, region, queueType).Set(count)
 	}
 
+	for queueType, msgs := range messageCounts {
+		metrics.SQSMessages.WithLabelValues(account, accountName, region, queueType).Set(msgs)
+	}
+
+	metrics.SQSQueuesWithDLQ.WithLabelValues(account, accountName, region).Set(dlqCount)
+
 	log.Debug().
 		Str("region", region).
 		Int("queue_types", len(counts)).
+		Float64("dlq_queues", dlqCount).
 		Msg("SQS collection completed")
 
 	return nil

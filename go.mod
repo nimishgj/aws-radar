@@ -3,10 +3,11 @@ module github.com/nimishgj/aws-radar
 go 1.25.5
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.41.2
+	github.com/aws/aws-sdk-go-v2 v1.41.3
 	github.com/aws/aws-sdk-go-v2/config v1.32.7
 	github.com/aws/aws-sdk-go-v2/credentials v1.19.7
 	github.com/aws/aws-sdk-go-v2/service/acm v1.37.19
+	github.com/aws/aws-sdk-go-v2/service/acmpca v1.46.10
 	github.com/aws/aws-sdk-go-v2/service/amplify v1.38.11
 	github.com/aws/aws-sdk-go-v2/service/apigateway v1.38.4
 	github.com/aws/aws-sdk-go-v2/service/apigatewayv2 v1.33.5
@@ -23,6 +24,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/codebuild v1.68.10
 	github.com/aws/aws-sdk-go-v2/service/codedeploy v1.35.10
 	github.com/aws/aws-sdk-go-v2/service/codepipeline v1.46.18
+	github.com/aws/aws-sdk-go-v2/service/cognitoidentity v1.33.20
+	github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.59.1
 	github.com/aws/aws-sdk-go-v2/service/configservice v1.61.1
 	github.com/aws/aws-sdk-go-v2/service/connect v1.163.0
 	github.com/aws/aws-sdk-go-v2/service/controltower v1.28.6
@@ -45,6 +48,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/emr v1.57.6
 	github.com/aws/aws-sdk-go-v2/service/eventbridge v1.45.18
 	github.com/aws/aws-sdk-go-v2/service/firehose v1.42.10
+	github.com/aws/aws-sdk-go-v2/service/fms v1.44.19
 	github.com/aws/aws-sdk-go-v2/service/fsx v1.65.4
 	github.com/aws/aws-sdk-go-v2/service/globalaccelerator v1.35.12
 	github.com/aws/aws-sdk-go-v2/service/glue v1.137.0
@@ -57,10 +61,12 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/kinesisvideo v1.33.5
 	github.com/aws/aws-sdk-go-v2/service/kms v1.50.1
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.87.1
+	github.com/aws/aws-sdk-go-v2/service/licensemanager v1.37.8
 	github.com/aws/aws-sdk-go-v2/service/macie2 v1.50.10
 	github.com/aws/aws-sdk-go-v2/service/memorydb v1.33.11
 	github.com/aws/aws-sdk-go-v2/service/mq v1.34.16
 	github.com/aws/aws-sdk-go-v2/service/neptune v1.44.0
+	github.com/aws/aws-sdk-go-v2/service/networkfirewall v1.59.5
 	github.com/aws/aws-sdk-go-v2/service/opensearch v1.57.1
 	github.com/aws/aws-sdk-go-v2/service/opensearchserverless v1.29.1
 	github.com/aws/aws-sdk-go-v2/service/organizations v1.50.3
@@ -74,6 +80,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sagemaker v1.233.1
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.41.1
 	github.com/aws/aws-sdk-go-v2/service/securityhub v1.68.0
+	github.com/aws/aws-sdk-go-v2/service/servicecatalog v1.39.10
 	github.com/aws/aws-sdk-go-v2/service/sesv2 v1.59.2
 	github.com/aws/aws-sdk-go-v2/service/sfn v1.40.6
 	github.com/aws/aws-sdk-go-v2/service/shield v1.34.18
@@ -93,8 +100,8 @@ require (
 require (
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.5 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.17 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.18 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.18 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.19 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.19 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.4 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.18 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.5 // indirect
@@ -105,7 +112,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/signin v1.0.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.30.9 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.35.13 // indirect
-	github.com/aws/smithy-go v1.24.1 // indirect
+	github.com/aws/smithy-go v1.24.2 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
