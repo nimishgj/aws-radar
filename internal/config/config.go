@@ -12,6 +12,7 @@ type Config struct {
 	Collection   CollectionConfig   `mapstructure:"collection"`
 	AWS          AWSConfig          `mapstructure:"aws"`
 	CostExplorer CostExplorerConfig `mapstructure:"cost_explorer"`
+	CostCUR      CostCURConfig      `mapstructure:"cost_cur"`
 	Collectors   []string           `mapstructure:"collectors"`
 	Logging      LoggingConfig      `mapstructure:"logging"`
 }
@@ -34,6 +35,17 @@ type AWSConfig struct {
 type CostExplorerConfig struct {
 	Enabled   bool   `mapstructure:"enabled"`
 	Frequency string `mapstructure:"frequency"`
+}
+
+type CostCURConfig struct {
+	Enabled      bool   `mapstructure:"enabled"`
+	Bucket       string `mapstructure:"bucket"`
+	Prefix       string `mapstructure:"prefix"`
+	ReportName   string `mapstructure:"report_name"`
+	Format       string `mapstructure:"format"`
+	Frequency    string `mapstructure:"frequency"`
+	Region       string `mapstructure:"region"`
+	MaxResources int    `mapstructure:"max_resources"`
 }
 
 type LoggingConfig struct {
@@ -61,6 +73,10 @@ func Load() (*Config, error) {
 	viper.SetDefault("aws.regions", []string{"us-east-1"})
 	viper.SetDefault("cost_explorer.enabled", false)
 	viper.SetDefault("cost_explorer.frequency", "daily")
+	viper.SetDefault("cost_cur.enabled", false)
+	viper.SetDefault("cost_cur.frequency", "daily")
+	viper.SetDefault("cost_cur.region", "us-east-1")
+	viper.SetDefault("cost_cur.max_resources", 100)
 	viper.SetDefault("collectors", []string{
 		"apigateway",
 		"apigatewayv2",

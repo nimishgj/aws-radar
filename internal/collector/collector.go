@@ -46,6 +46,7 @@ func NewOrchestrator(
 	interval, timeout time.Duration,
 	enabledCollectors []string,
 	costExplorer appconfig.CostExplorerConfig,
+	costCUR appconfig.CostCURConfig,
 ) *Orchestrator {
 	allCollectors := []Collector{
 		NewAPIGatewayCollector(),
@@ -156,6 +157,9 @@ func NewOrchestrator(
 	globalCollectors := filterGlobalCollectors(allGlobalCollectors, enabled)
 	if costExplorer.Enabled {
 		globalCollectors = append(globalCollectors, NewCostCollector(costExplorer.Frequency))
+	}
+	if costCUR.Enabled {
+		globalCollectors = append(globalCollectors, NewCURCollector(costCUR))
 	}
 
 	if len(collectors) == 0 && len(globalCollectors) == 0 {

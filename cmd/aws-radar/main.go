@@ -43,6 +43,7 @@ func main() {
 		cfg.Collection.Timeout,
 		cfg.Collectors,
 		cfg.CostExplorer,
+		cfg.CostCUR,
 	)
 	go orchestrator.Start(ctx)
 

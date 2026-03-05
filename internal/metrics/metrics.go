@@ -1191,6 +1191,55 @@ var (
 		[]string{"account", "account_name", "period_start"},
 	)
 
+	// CUR (Cost and Usage Report) Metrics
+	CURTotalCost = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_cur_total_cost_usd",
+			Help: "Total cost from CUR report in USD",
+		},
+		[]string{"account", "account_name", "period"},
+	)
+
+	CURCostByService = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_cur_cost_by_service_usd",
+			Help: "Cost by AWS service from CUR report in USD",
+		},
+		[]string{"account", "account_name", "service", "period"},
+	)
+
+	CURCostByResource = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_cur_cost_by_resource_usd",
+			Help: "Cost by resource ID from CUR report in USD (top N)",
+		},
+		[]string{"account", "account_name", "service", "resource_id", "period"},
+	)
+
+	CURCostByUsageType = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_cur_cost_by_usage_type_usd",
+			Help: "Cost by usage type from CUR report in USD",
+		},
+		[]string{"account", "account_name", "service", "usage_type", "period"},
+	)
+
+	CURCostByTag = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_cur_cost_by_tag_usd",
+			Help: "Cost by user tag from CUR report in USD",
+		},
+		[]string{"account", "account_name", "tag_key", "tag_value", "period"},
+	)
+
+	CURLastProcessed = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_cur_last_processed_timestamp",
+			Help: "Unix timestamp of last successful CUR processing",
+		},
+		[]string{"account", "account_name"},
+	)
+
 	// Cognito Metrics
 	CognitoUserPools = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
@@ -1531,6 +1580,12 @@ func ResetAll() {
 	DMSReplicationInstances.Reset()
 	CostByService.Reset()
 	CostTotal.Reset()
+	CURTotalCost.Reset()
+	CURCostByService.Reset()
+	CURCostByResource.Reset()
+	CURCostByUsageType.Reset()
+	CURCostByTag.Reset()
+	CURLastProcessed.Reset()
 	CognitoUserPools.Reset()
 	CognitoUserPoolUsers.Reset()
 	CognitoIdentityPools.Reset()
@@ -1720,4 +1775,7 @@ func InitGlobalDefaults(account, accountName string) {
 	OrganizationsAccounts.WithLabelValues(account, accountName, n).Add(0)
 	DirectConnectConnections.WithLabelValues(account, accountName, n).Add(0)
 	GlobalAccelerators.WithLabelValues(account, accountName, n, n).Add(0)
+	CURTotalCost.WithLabelValues(account, accountName, n).Add(0)
+	CURCostByService.WithLabelValues(account, accountName, n, n).Add(0)
+	CURLastProcessed.WithLabelValues(account, accountName).Add(0)
 }

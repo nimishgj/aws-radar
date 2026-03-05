@@ -154,6 +154,7 @@ func TestNewOrchestratorIncludesBatchCollectors(t *testing.T) {
 		30*time.Second,
 		[]string{"codebuild", "redshift", "shield"},
 		appconfig.CostExplorerConfig{Enabled: true, Frequency: "daily"},
+		appconfig.CostCURConfig{},
 	)
 
 	regionalNames := make(map[string]struct{}, len(o.collectors))
