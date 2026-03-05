@@ -16,6 +16,16 @@ cost_explorer:
   enabled: true
   frequency: hourly # hourly | daily | weekly | monthly
 
+cost_cur:
+  enabled: false
+  bucket: ""
+  prefix: ""
+  report_name: ""
+  format: ""           # auto-detect from manifest; "parquet" or "csv"
+  frequency: daily     # hourly | daily
+  region: us-east-1
+  max_resources: 100
+
 collectors:
   - apigateway
   - apigatewayv2

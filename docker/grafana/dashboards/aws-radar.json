@@ -17253,6 +17253,68 @@
       "title": "Service Catalog Provisioned Products by Status",
       "type": "timeseries",
       "transformations": [{ "id": "partitionByValues", "options": { "fields": ["series"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 507 },
+      "id": 900,
+      "panels": [],
+      "title": "CUR Cost Analysis",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "#73BF69", "value": null }] }, "unit": "currencyUSD" }, "overrides": [] },
+      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 508 },
+      "id": 901,
+      "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) AS time, argMax(Value, TimeUnix) AS value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_cur_total_cost_usd' AND Attributes['account_name'] IN (${account:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time ORDER BY time DESC LIMIT 1", "refId": "A" }],
+      "title": "CUR Total Cost (Current Period)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "bars", "fillOpacity": 80, "lineWidth": 1, "pointSize": 5, "showPoints": "never", "stacking": { "group": "A", "mode": "none" } }, "unit": "currencyUSD" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 16, "x": 8, "y": 508 },
+      "id": 902,
+      "options": { "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "right", "showLegend": true, "sortBy": "Last *", "sortDesc": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) AS time, Attributes['service'] AS service, argMax(Value, TimeUnix) AS value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_cur_cost_by_service_usd' AND Attributes['account_name'] IN (${account:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, service ORDER BY time", "refId": "A" }],
+      "title": "CUR Cost by Service",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["service"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "bars", "fillOpacity": 80, "lineWidth": 1, "pointSize": 5, "showPoints": "never", "stacking": { "group": "A", "mode": "none" } }, "unit": "currencyUSD" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 516 },
+      "id": 903,
+      "options": { "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "right", "showLegend": true, "sortBy": "Last *", "sortDesc": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) AS time, concat(Attributes['service'], ' / ', Attributes['resource_id']) AS resource, argMax(Value, TimeUnix) AS value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_cur_cost_by_resource_usd' AND Attributes['account_name'] IN (${account:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, resource ORDER BY time", "refId": "A" }],
+      "title": "CUR Top Resources by Cost",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["resource"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "bars", "fillOpacity": 80, "lineWidth": 1, "pointSize": 5, "showPoints": "never", "stacking": { "group": "A", "mode": "none" } }, "unit": "currencyUSD" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 516 },
+      "id": 904,
+      "options": { "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "right", "showLegend": true, "sortBy": "Last *", "sortDesc": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) AS time, concat(Attributes['service'], ' / ', Attributes['usage_type']) AS usage_type, argMax(Value, TimeUnix) AS value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_cur_cost_by_usage_type_usd' AND Attributes['account_name'] IN (${account:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, usage_type ORDER BY time", "refId": "A" }],
+      "title": "CUR Cost by Usage Type",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["usage_type"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
+    },
+    {
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "drawStyle": "bars", "fillOpacity": 80, "lineWidth": 1, "pointSize": 5, "showPoints": "never", "stacking": { "group": "A", "mode": "none" } }, "unit": "currencyUSD" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 524 },
+      "id": 905,
+      "options": { "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "right", "showLegend": true, "sortBy": "Last *", "sortDesc": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse-aws-radar" }, "format": 1, "queryType": "sql", "rawSql": "SELECT toStartOfMinute(TimeUnix) AS time, concat(Attributes['tag_key'], '=', Attributes['tag_value']) AS tag, argMax(Value, TimeUnix) AS value FROM aws_radar.otel_metrics_gauge WHERE MetricName = 'aws_cur_cost_by_tag_usd' AND Attributes['account_name'] IN (${account:singlequote}) AND $__timeFilter(TimeUnix) GROUP BY time, tag ORDER BY time", "refId": "A" }],
+      "title": "CUR Cost by Tag",
+      "type": "timeseries",
+      "transformations": [{ "id": "partitionByValues", "options": { "fields": ["tag"], "keepFields": false, "naming": { "asLabels": true } } }, { "id": "renameByRegex", "options": { "regex": "^(?:value\\s+)?(.+?)$", "renamePattern": "$1" } }]
     }
   ],
   "refresh": "1m",

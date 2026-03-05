@@ -629,6 +629,8 @@ The following table lists all API actions required by AWS Radar:
 | | `SearchProvisionedProducts` | Count provisioned products by status |
 | **License Manager** | `ListLicenseConfigurations` | Count license configurations |
 | **Cost Explorer** | `GetCostAndUsage` | Fetch cost by AWS service (attach separate AWSRadarCostExplorerPolicy when cost_explorer is enabled) |
+| **S3 (CUR)** | `GetObject` | Read CUR report data files from S3 (attach separate AWSRadarCURPolicy when cost_cur is enabled) |
+| | `ListBucket` | List CUR report files in S3 bucket |
 
 ## Security Best Practices
 
