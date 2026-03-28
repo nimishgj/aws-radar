@@ -264,13 +264,16 @@ func (o *Orchestrator) collect(ctx context.Context) {
 	}
 
 	var wg sync.WaitGroup
+	sem := make(chan struct{}, 20) // limit to 20 concurrent collectors to avoid DNS overload
 
 	// Run regional collectors
 	for _, region := range o.regions {
 		for _, collector := range o.collectors {
 			wg.Add(1)
+			sem <- struct{}{} // acquire semaphore
 			go func(c Collector, r string) {
 				defer wg.Done()
+				defer func() { <-sem }() // release semaphore
 				o.runCollector(ctx, c, cfg, r, o.accountID, o.accountName)
 			}(collector, region)
 		}
@@ -279,8 +282,10 @@ func (o *Orchestrator) collect(ctx context.Context) {
 	// Run global collectors
 	for _, collector := range o.globalCollectors {
 		wg.Add(1)
+		sem <- struct{}{} // acquire semaphore
 		go func(c GlobalCollector) {
 			defer wg.Done()
+			defer func() { <-sem }() // release semaphore
 			o.runGlobalCollector(ctx, c, cfg, o.accountID, o.accountName)
 		}(collector)
 	}
