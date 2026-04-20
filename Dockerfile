@@ -1,5 +1,8 @@
 # Build stage
-FROM golang:alpine AS builder
+FROM --platform=$BUILDPLATFORM golang:alpine AS builder
+
+ARG TARGETOS
+ARG TARGETARCH
 
 WORKDIR /build
 
@@ -14,8 +17,10 @@ RUN go mod download && go mod verify
 COPY cmd/ cmd/
 COPY internal/ internal/
 
-# Build with optimizations for smaller binary
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+# Build with optimizations for smaller binary.
+# Cross-compile using buildkit-provided TARGETOS/TARGETARCH so a single
+# builder host can emit images for multiple platforms.
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build \
     -ldflags='-w -s -extldflags "-static"' \
     -a -installsuffix cgo \
     -o aws-radar ./cmd/aws-radar
