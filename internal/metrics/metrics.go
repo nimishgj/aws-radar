@@ -50,6 +50,14 @@ var (
 		[]string{"account", "account_name", "region"},
 	)
 
+	ECRRepositoriesByPolicy = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ecr_repositories_by_policy_total",
+			Help: "Number of ECR repositories grouped by repository policy access (public, private, error)",
+		},
+		[]string{"account", "account_name", "region", "policy_status"},
+	)
+
 	// EC2 Metrics
 	EC2Instances = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
@@ -66,6 +74,14 @@ var (
 			Help: "Total number of S3 buckets",
 		},
 		[]string{"account", "account_name", "region"},
+	)
+
+	S3BucketPublicAccessBlock = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_s3_bucket_public_access_block",
+			Help: "Number of S3 buckets by Block Public Access status (fully_blocked, partially_blocked, not_blocked, not_set, error)",
+		},
+		[]string{"account", "account_name", "bucket_region", "status"},
 	)
 
 	// RDS Metrics
@@ -235,6 +251,14 @@ var (
 		prometheus.GaugeOpts{
 			Name: "aws_ebs_volumes_total",
 			Help: "Total number of EBS volumes",
+		},
+		[]string{"account", "account_name", "region", "volume_type", "state"},
+	)
+
+	EBSVolumesSizeGiB = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_ebs_volumes_size_gib",
+			Help: "Total size of EBS volumes in GiB",
 		},
 		[]string{"account", "account_name", "region", "volume_type", "state"},
 	)
@@ -1452,12 +1476,14 @@ func ResetAll() {
 	AutoScalingInstanceRefreshes.Reset()
 	AthenaWorkgroups.Reset()
 	ECRRepositories.Reset()
+	ECRRepositoriesByPolicy.Reset()
 	ECRPublicRepositories.Reset()
 	EC2Instances.Reset()
 	EFSFileSystems.Reset()
 	EventBridgeRules.Reset()
 	GlueJobs.Reset()
 	S3Buckets.Reset()
+	S3BucketPublicAccessBlock.Reset()
 	S3AccessPoints.Reset()
 	S3StorageLensConfigurations.Reset()
 	RDSInstances.Reset()
@@ -1548,6 +1574,7 @@ func ResetAll() {
 	SNSTopics.Reset()
 	CloudFrontDistributions.Reset()
 	EBSVolumes.Reset()
+	EBSVolumesSizeGiB.Reset()
 	VPCs.Reset()
 	Subnets.Reset()
 	SecurityGroups.Reset()
@@ -1661,6 +1688,7 @@ func InitRegionalDefaults(account, accountName, region string) {
 	EFSFileSystems.WithLabelValues(account, accountName, region).Add(0)
 	GlueJobs.WithLabelValues(account, accountName, region).Add(0)
 	ECRRepositories.WithLabelValues(account, accountName, region).Add(0)
+	ECRRepositoriesByPolicy.WithLabelValues(account, accountName, region, n).Add(0)
 	InternetGateways.WithLabelValues(account, accountName, region).Add(0)
 	AmplifyApps.WithLabelValues(account, accountName, region).Add(0)
 	DataSyncTasks.WithLabelValues(account, accountName, region).Add(0)
@@ -1677,6 +1705,7 @@ func InitRegionalDefaults(account, accountName, region string) {
 	LicenseManagerConfigurations.WithLabelValues(account, accountName, region).Add(0)
 	CognitoIdentityPools.WithLabelValues(account, accountName, region).Add(0)
 	S3Buckets.WithLabelValues(account, accountName, region).Add(0)
+	S3BucketPublicAccessBlock.WithLabelValues(account, accountName, region, n).Add(0)
 	S3AccessPoints.WithLabelValues(account, accountName, region).Add(0)
 	S3StorageLensConfigurations.WithLabelValues(account, accountName, region).Add(0)
 
@@ -1714,6 +1743,7 @@ func InitRegionalDefaults(account, accountName, region string) {
 	SQSQueues.WithLabelValues(account, accountName, region, n).Add(0)
 	SQSMessages.WithLabelValues(account, accountName, region, n).Add(0)
 	EBSVolumes.WithLabelValues(account, accountName, region, n, n).Add(0)
+	EBSVolumesSizeGiB.WithLabelValues(account, accountName, region, n, n).Add(0)
 	VPCs.WithLabelValues(account, accountName, region, n).Add(0)
 	Subnets.WithLabelValues(account, accountName, region, n).Add(0)
 	SecurityGroups.WithLabelValues(account, accountName, region, n).Add(0)
