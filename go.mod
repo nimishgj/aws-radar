@@ -92,6 +92,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/transfer v1.69.2
 	github.com/aws/aws-sdk-go-v2/service/wafv2 v1.71.0
 	github.com/aws/aws-sdk-go-v2/service/workspaces v1.66.1
+	github.com/aws/smithy-go v1.24.2
 	github.com/parquet-go/parquet-go v0.28.0
 	github.com/prometheus/client_golang v1.23.2
 	github.com/rs/zerolog v1.34.0
@@ -114,7 +115,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/signin v1.0.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.30.9 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.35.13 // indirect
-	github.com/aws/smithy-go v1.24.2 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect

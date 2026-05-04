@@ -51,6 +51,7 @@ AWS Radar requires **read-only access** to various AWS services to collect resou
                 "cloudtrail:DescribeTrails",
                 "batch:DescribeJobQueues",
                 "ecr:DescribeRepositories",
+                "ecr:GetRepositoryPolicy",
                 "ec2:DescribeInstances",
                 "ec2:DescribeVpcs",
                 "ec2:DescribeSubnets",
@@ -70,6 +71,7 @@ AWS Radar requires **read-only access** to various AWS services to collect resou
                 "redshift:DescribeClusters",
                 "s3:ListAllMyBuckets",
                 "s3:GetBucketLocation",
+                "s3:GetBucketPublicAccessBlock",
                 "rds:DescribeDBInstances",
                 "lambda:ListFunctions",
                 "ecs:ListClusters",
@@ -82,10 +84,9 @@ AWS Radar requires **read-only access** to various AWS services to collect resou
                 "eks:ListClusters",
                 "eks:DescribeCluster",
                 "elasticloadbalancing:DescribeLoadBalancers",
-                "elasticloadbalancingv2:DescribeLoadBalancers",
-                "elasticloadbalancingv2:DescribeListeners",
-                "elasticloadbalancingv2:DescribeTargetGroups",
-                "elasticloadbalancingv2:DescribeRules",
+                "elasticloadbalancing:DescribeListeners",
+                "elasticloadbalancing:DescribeTargetGroups",
+                "elasticloadbalancing:DescribeRules",
                 "dynamodb:ListTables",
                 "dynamodb:DescribeTable",
                 "elasticache:DescribeCacheClusters",
@@ -247,6 +248,7 @@ Create or update a file named `aws-radar-policy.json` with the policy shown belo
                 "cloudtrail:DescribeTrails",
                 "batch:DescribeJobQueues",
                 "ecr:DescribeRepositories",
+                "ecr:GetRepositoryPolicy",
                 "ec2:DescribeInstances",
                 "ec2:DescribeVpcs",
                 "ec2:DescribeSubnets",
@@ -266,6 +268,7 @@ Create or update a file named `aws-radar-policy.json` with the policy shown belo
                 "redshift:DescribeClusters",
                 "s3:ListAllMyBuckets",
                 "s3:GetBucketLocation",
+                "s3:GetBucketPublicAccessBlock",
                 "rds:DescribeDBInstances",
                 "lambda:ListFunctions",
                 "ecs:ListClusters",
@@ -278,10 +281,9 @@ Create or update a file named `aws-radar-policy.json` with the policy shown belo
                 "eks:ListClusters",
                 "eks:DescribeCluster",
                 "elasticloadbalancing:DescribeLoadBalancers",
-                "elasticloadbalancingv2:DescribeLoadBalancers",
-                "elasticloadbalancingv2:DescribeListeners",
-                "elasticloadbalancingv2:DescribeTargetGroups",
-                "elasticloadbalancingv2:DescribeRules",
+                "elasticloadbalancing:DescribeListeners",
+                "elasticloadbalancing:DescribeTargetGroups",
+                "elasticloadbalancing:DescribeRules",
                 "dynamodb:ListTables",
                 "dynamodb:DescribeTable",
                 "elasticache:DescribeCacheClusters",
@@ -504,6 +506,7 @@ The following table lists all API actions required by AWS Radar:
 | | `DescribeVolumes` | Count EBS volumes |
 | **S3** | `ListAllMyBuckets` | List S3 buckets |
 | | `GetBucketLocation` | Get bucket region |
+| | `GetBucketPublicAccessBlock` | Classify Block Public Access status per bucket |
 | **RDS** | `DescribeDBInstances` | Count RDS instances |
 | **Lambda** | `ListFunctions` | Count Lambda functions |
 | **ECS** | `ListClusters` | List ECS clusters |
@@ -572,6 +575,8 @@ The following table lists all API actions required by AWS Radar:
 | **ECS** | `DescribeCapacityProviders` | Count ECS capacity providers |
 | | `ListTaskDefinitions` | Count ECS task definitions |
 | | `DescribeTaskDefinition` | Classify task definitions by family/revision/runtime platform |
+| **ECR** | `DescribeRepositories` | Count private ECR repositories |
+| | `GetRepositoryPolicy` | Detect repos exposed via public-access policies |
 | **ECR Public** | `DescribeRepositories` | Count ECR Public repositories |
 | **VPC / EC2 networking** | `DescribeVpcEndpoints` | Count VPC endpoints |
 | | `DescribeTransitGateways` | Count transit gateways |

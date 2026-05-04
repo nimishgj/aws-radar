@@ -23,6 +23,7 @@ func (c *EBSCollector) Collect(ctx context.Context, cfg aws.Config, region, acco
 	client := ec2.NewFromConfig(cfg)
 
 	counts := make(map[string]float64)
+	sizes := make(map[string]float64)
 
 	paginator := ec2.NewDescribeVolumesPaginator(client, &ec2.DescribeVolumesInput{})
 
@@ -38,6 +39,9 @@ func (c *EBSCollector) Collect(ctx context.Context, cfg aws.Config, region, acco
 
 			key := volumeType + "|" + state
 			counts[key]++
+			if volume.Size != nil {
+				sizes[key] += float64(*volume.Size)
+			}
 		}
 	}
 
@@ -48,6 +52,13 @@ func (c *EBSCollector) Collect(ctx context.Context, cfg aws.Config, region, acco
 			parts[0], // volume_type
 			parts[1], // state
 		).Set(count)
+	}
+	for key, totalGiB := range sizes {
+		parts := splitKey(key, 2)
+		metrics.EBSVolumesSizeGiB.WithLabelValues(account, accountName, region,
+			parts[0], // volume_type
+			parts[1], // state
+		).Set(totalGiB)
 	}
 
 	log.Debug().

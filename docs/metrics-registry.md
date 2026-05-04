@@ -118,12 +118,29 @@ All AWS resource metrics:
 | **Labels** | |
 | `region` | AWS region where bucket was created |
 
+| Metric | `aws_s3_bucket_public_access_block` |
+|--------|-------------------------------------|
+| **Type** | Gauge |
+| **Description** | Number of S3 buckets by Block Public Access status |
+| **Labels** | |
+| `bucket_region` | AWS region where bucket was created |
+| `status` | One of: `fully_blocked`, `partially_blocked`, `not_blocked`, `not_set`, `error` |
+
 #### EBS Volumes
 
 | Metric | `aws_ebs_volumes_total` |
 |--------|-------------------------|
 | **Type** | Gauge |
 | **Description** | Total number of EBS volumes |
+| **Labels** | |
+| `region` | AWS region |
+| `volume_type` | Volume type (`gp2`, `gp3`, `io1`, `io2`, `st1`, `sc1`) |
+| `state` | Volume state (`available`, `in-use`, `creating`, etc.) |
+
+| Metric | `aws_ebs_volumes_size_gib` |
+|--------|----------------------------|
+| **Type** | Gauge |
+| **Description** | Total size of EBS volumes in GiB |
 | **Labels** | |
 | `region` | AWS region |
 | `volume_type` | Volume type (`gp2`, `gp3`, `io1`, `io2`, `st1`, `sc1`) |
@@ -371,6 +388,14 @@ All AWS resource metrics:
 | **Description** | Total number of ECR repositories |
 | **Labels** | |
 | `region` | AWS region |
+
+| Metric | `aws_ecr_repositories_by_policy_total` |
+|--------|----------------------------------------|
+| **Type** | Gauge |
+| **Description** | Number of ECR repositories grouped by repository policy access |
+| **Labels** | |
+| `region` | AWS region |
+| `policy_status` | One of: `public` (policy grants `Principal: "*"` with `Allow`), `private` (no policy or scoped policy), `error` (policy fetch failed) |
 
 ### Search
 
