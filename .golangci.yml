@@ -1,0 +1,13 @@
+version: "2"
+
+linters:
+  # The "standard" set: errcheck, govet, ineffassign, staticcheck, unused.
+  default: standard
+  exclusions:
+    rules:
+      # Ignore deprecation warnings. The AWS SDK deprecates struct fields
+      # frequently, and failing CI on every SDK bump adds churn without
+      # improving correctness.
+      - linters:
+          - staticcheck
+        text: "SA1019"

@@ -25,13 +25,13 @@ func New(cfg *config.ServerConfig) *Server {
 	// Health check endpoint
 	mux.HandleFunc(cfg.HealthPath, func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("OK"))
+		_, _ = w.Write([]byte("OK"))
 	})
 
 	// Root endpoint
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html")
-		w.Write([]byte(fmt.Sprintf(`
+		_, _ = fmt.Fprintf(w, `
 <!DOCTYPE html>
 <html>
 <head><title>AWS Radar</title></head>
@@ -44,7 +44,7 @@ func New(cfg *config.ServerConfig) *Server {
 </ul>
 </body>
 </html>
-`, cfg.MetricsPath, cfg.HealthPath)))
+`, cfg.MetricsPath, cfg.HealthPath)
 	})
 
 	return &Server{

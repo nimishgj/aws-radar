@@ -34,13 +34,13 @@ func newMockAWSServer(routes []mockRoute) *httptest.Server {
 			if route.matcher(r) {
 				w.Header().Set("Content-Type", "text/xml")
 				w.WriteHeader(http.StatusOK)
-				w.Write([]byte(route.body))
+				_, _ = w.Write([]byte(route.body))
 				return
 			}
 		}
 		// Return empty 200 for unmatched requests
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{}`))
+		_, _ = w.Write([]byte(`{}`))
 	}))
 }
 
