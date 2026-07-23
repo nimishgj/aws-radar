@@ -168,6 +168,8 @@ collectors:
 | `AWS_ACCESS_KEY_ID` | AWS access key |
 | `AWS_SECRET_ACCESS_KEY` | AWS secret key |
 | `AWS_REGION` | Default AWS region (optional) |
+| `AWS_RADAR_CONFIG` | Path to the config file (overrides the default `./config.yaml` and `/app/config.yaml` lookup) |
+| `AWS_RADAR_ACCOUNT_NAME` | Account name used to label metrics (optional; otherwise resolved via Organizations/IAM alias) |
 
 ## Versioning & Releases
 
