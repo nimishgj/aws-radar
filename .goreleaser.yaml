@@ -1,0 +1,102 @@
+# GoReleaser configuration for AWS Radar.
+# Docs: https://goreleaser.com
+version: 2
+
+project_name: aws-radar
+
+before:
+  hooks:
+    - go mod download
+
+builds:
+  - id: aws-radar
+    main: ./cmd/aws-radar
+    binary: aws-radar
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      # Windows on arm64 is uncommon for a server agent; skip it.
+      - goos: windows
+        goarch: arm64
+    # Reproducible builds: stamp with the commit timestamp instead of build time.
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    ldflags:
+      - -s -w
+      - -X main.version={{ .Version }}
+
+archives:
+  - id: aws-radar
+    ids:
+      - aws-radar
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else }}{{ .Arch }}{{ end }}
+    # tar.gz everywhere, zip on Windows.
+    formats:
+      - tar.gz
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    files:
+      - README.md
+      - LICENSE
+      - config.yaml
+
+checksum:
+  name_template: "checksums.txt"
+  algorithm: sha256
+
+changelog:
+  sort: asc
+  use: git
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+      - "^ci:"
+      - "Merge pull request"
+      - "Merge branch"
+
+# dockers_v2 builds a single multi-platform image (buildx) and pushes the
+# combined manifest under each tag automatically — no separate manifest block.
+dockers_v2:
+  - id: aws-radar
+    ids:
+      - aws-radar
+    dockerfile: Dockerfile.goreleaser
+    images:
+      - "ghcr.io/nimishgj/aws-radar"
+    tags:
+      - "{{ .Version }}"
+      - "{{ .Major }}.{{ .Minor }}"
+      - "latest"
+    platforms:
+      - linux/amd64
+      - linux/arm64
+    labels:
+      org.opencontainers.image.title: "{{ .ProjectName }}"
+      org.opencontainers.image.description: "AWS resource monitoring agent"
+      org.opencontainers.image.version: "{{ .Version }}"
+      org.opencontainers.image.revision: "{{ .FullCommit }}"
+      org.opencontainers.image.source: "https://github.com/nimishgj/aws-radar"
+      org.opencontainers.image.licenses: "Apache-2.0"
+    extra_files:
+      - config.yaml
+
+release:
+  github:
+    owner: nimishgj
+    name: aws-radar
+  # Reuse GoReleaser's generated changelog as the release body.
+  mode: replace
