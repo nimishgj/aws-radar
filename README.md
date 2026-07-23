@@ -1,5 +1,10 @@
 # AWS Radar
 
+[![CI](https://github.com/nimishgj/aws-radar/actions/workflows/ci.yaml/badge.svg)](https://github.com/nimishgj/aws-radar/actions/workflows/ci.yaml)
+[![Release](https://img.shields.io/github/v/release/nimishgj/aws-radar)](https://github.com/nimishgj/aws-radar/releases/latest)
+[![Go](https://img.shields.io/github/go-mod/go-version/nimishgj/aws-radar)](go.mod)
+[![License](https://img.shields.io/github/license/nimishgj/aws-radar)](LICENSE)
+
 A lightweight AWS resource monitoring agent that collects resource counts across all AWS regions and exposes them as Prometheus metrics.
 
 ## Overview
