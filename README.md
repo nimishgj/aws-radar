@@ -72,7 +72,27 @@ AWS Radar periodically scans your AWS account and collects resource counts for v
 
 ## Quick Start
 
-### Prerequisites
+### Download a prebuilt binary
+
+Prebuilt binaries for Linux, macOS, and Windows (amd64 and arm64) are attached to every [release](https://github.com/nimishgj/aws-radar/releases/latest). Download the archive for your platform, verify it against `checksums.txt`, extract, and run:
+
+```bash
+tar -xzf aws-radar_<version>_<OS>_<arch>.tar.gz   # or unzip on Windows
+./aws-radar
+```
+
+Each archive bundles the binary along with `config.yaml`, `README.md`, and `LICENSE`.
+
+> **macOS:** the binaries are not notarized, so Gatekeeper may report the download as malware and refuse to run it. Clear the download quarantine flag once, then run it:
+>
+> ```bash
+> xattr -d com.apple.quarantine ./aws-radar
+> ./aws-radar
+> ```
+>
+> Alternatively, right-click the binary in Finder and choose **Open** the first time.
+
+### Prerequisites (Docker Compose)
 
 - Docker and Docker Compose
 - AWS credentials with read access to the services you want to monitor (see [AWS IAM Setup Guide](docs/aws-iam-setup.md))
