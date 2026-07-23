@@ -4,22 +4,16 @@ A lightweight AWS resource monitoring agent that collects resource counts across
 
 ## Overview
 
-AWS Radar periodically scans your AWS account and collects resource counts for various services including EC2, Lambda, S3, RDS, VPC, IAM, and more. The metrics are exposed via a Prometheus endpoint, which can be scraped by OpenTelemetry Collector and stored in ClickHouse for visualization in Grafana.
+AWS Radar periodically scans your AWS account and collects resource counts for various services including EC2, Lambda, S3, RDS, VPC, IAM, and more. The metrics are exposed via a Prometheus endpoint, which can be scraped by an OpenTelemetry Collector and forwarded to your observability backend.
 
 ## Architecture
 
 ```
-┌─────────────┐     ┌──────────────────┐     ┌────────────┐     ┌─────────┐
-│  AWS APIs   │────▶│   AWS Radar      │────▶│   OTel     │────▶│ ClickHouse│
-│             │     │  (Prometheus     │     │ Collector  │     │         │
-│             │     │   :9090/metrics) │     │            │     │         │
-└─────────────┘     └──────────────────┘     └────────────┘     └────┬────┘
-                                                                      │
-                                                                      ▼
-                                                                ┌─────────┐
-                                                                │ Grafana │
-                                                                │  :3000  │
-                                                                └─────────┘
+┌─────────────┐     ┌──────────────────┐     ┌────────────┐     ┌───────────────┐
+│  AWS APIs   │────▶│   AWS Radar      │────▶│   OTel     │────▶│ Observability │
+│             │     │  (Prometheus     │     │ Collector  │     │   Backend     │
+│             │     │   :9090/metrics) │     │            │     │               │
+└─────────────┘     └──────────────────┘     └────────────┘     └───────────────┘
 ```
 
 ## Features
@@ -204,26 +198,6 @@ make ci
 
 ```bash
 make help
-```
-
-## Project Structure
-
-```
-aws-radar/
-├── cmd/aws-radar/       # Application entrypoint
-├── internal/
-│   ├── collector/       # AWS service collectors
-│   ├── config/          # Configuration handling
-│   ├── metrics/         # Prometheus metrics definitions
-│   └── server/          # HTTP server
-├── docker/
-│   ├── docker-compose.yaml
-│   ├── clickhouse/      # ClickHouse init scripts
-│   ├── grafana/         # Grafana provisioning
-│   └── otel-collector-config.yaml
-├── config.yaml          # Default configuration
-├── Dockerfile
-└── Makefile
 ```
 
 ## Documentation

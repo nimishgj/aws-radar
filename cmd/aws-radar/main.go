@@ -14,6 +14,10 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// version is injected at build time via -ldflags "-X main.version=...".
+// It defaults to "dev" for local builds.
+var version = "dev"
+
 func main() {
 	// Load configuration
 	cfg, err := config.Load()
@@ -25,7 +29,7 @@ func main() {
 	setupLogging(cfg.Logging)
 
 	log.Info().
-		Str("version", "1.0.0").
+		Str("version", version).
 		Msg("Starting AWS Radar")
 
 	// Create context with cancellation

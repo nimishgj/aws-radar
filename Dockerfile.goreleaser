@@ -1,0 +1,16 @@
+# Runtime image for GoReleaser-built binaries.
+# GoReleaser cross-compiles the binary and places it (plus config.yaml) in the
+# build context, so this Dockerfile only assembles the runtime layer.
+# The source-building Dockerfile at repo root is kept for local `make docker`.
+FROM alpine:3.21
+
+RUN apk add --no-cache ca-certificates tzdata wget
+
+COPY aws-radar /app/aws-radar
+COPY config.yaml /app/config.yaml
+
+WORKDIR /app
+
+EXPOSE 9090
+
+ENTRYPOINT ["./aws-radar"]
