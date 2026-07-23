@@ -198,7 +198,7 @@ func (c *CURCollector) downloadManifest(ctx context.Context, client *s3.Client, 
 	if err != nil {
 		return nil, err
 	}
-	defer out.Body.Close()
+	defer func() { _ = out.Body.Close() }()
 
 	var manifest curManifest
 	if err := json.NewDecoder(out.Body).Decode(&manifest); err != nil {
@@ -234,15 +234,15 @@ func (c *CURCollector) processParquet(ctx context.Context, client *s3.Client, ke
 	if err != nil {
 		return fmt.Errorf("get S3 object %s: %w", key, err)
 	}
-	defer out.Body.Close()
+	defer func() { _ = out.Body.Close() }()
 
 	// Parquet reader needs a file; download to temp.
 	tmp, err := os.CreateTemp("", "cur-*.parquet")
 	if err != nil {
 		return fmt.Errorf("create temp file: %w", err)
 	}
-	defer os.Remove(tmp.Name())
-	defer tmp.Close()
+	defer func() { _ = os.Remove(tmp.Name()) }()
+	defer func() { _ = tmp.Close() }()
 
 	if _, err := io.Copy(tmp, out.Body); err != nil {
 		return fmt.Errorf("download parquet to temp: %w", err)
@@ -277,11 +277,11 @@ func (c *CURCollector) processParquet(ctx context.Context, client *s3.Client, ke
 				if err == io.EOF {
 					break
 				}
-				rows.Close()
+				_ = rows.Close()
 				return fmt.Errorf("read parquet rows: %w", err)
 			}
 		}
-		rows.Close()
+		_ = rows.Close()
 	}
 
 	return nil
@@ -434,7 +434,7 @@ func (c *CURCollector) processCSV(ctx context.Context, client *s3.Client, key st
 	if err != nil {
 		return fmt.Errorf("get S3 object %s: %w", key, err)
 	}
-	defer out.Body.Close()
+	defer func() { _ = out.Body.Close() }()
 
 	var reader io.Reader = out.Body
 	if strings.HasSuffix(key, ".gz") {
@@ -442,7 +442,7 @@ func (c *CURCollector) processCSV(ctx context.Context, client *s3.Client, key st
 		if err != nil {
 			return fmt.Errorf("open gzip reader: %w", err)
 		}
-		defer gz.Close()
+		defer func() { _ = gz.Close() }()
 		reader = gz
 	}
 

@@ -229,8 +229,7 @@ func (c *ECSCollector) Collect(ctx context.Context, cfg aws.Config, region, acco
 				if family == "" {
 					family = "unknown"
 				}
-				revision := "0"
-				revision = strconv.FormatInt(int64(desc.TaskDefinition.Revision), 10)
+				revision := strconv.FormatInt(int64(desc.TaskDefinition.Revision), 10)
 				osFamily := "unknown"
 				cpuArch := "unknown"
 				if desc.TaskDefinition.RuntimePlatform != nil {

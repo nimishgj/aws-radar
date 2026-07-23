@@ -18,6 +18,11 @@ GOVET=$(GOCMD) vet
 # Docker parameters
 DOCKER_COMPOSE=docker-compose -f docker/docker-compose.yaml
 
+# golangci-lint (installed into $(BUILD_DIR) on demand so `make ci` is
+# self-contained and runs the same locally as in CI)
+GOLANGCI_LINT_VERSION=v2.12.2
+GOLANGCI_LINT=$(BUILD_DIR)/golangci-lint
+
 # Build the binary
 build:
 	@echo "Building $(BINARY_NAME)..."
@@ -51,10 +56,16 @@ fmt:
 	@echo "Formatting code..."
 	$(GOFMT) ./...
 
-# Lint code
-lint:
+# Install golangci-lint into $(BUILD_DIR) if it is not already present
+$(GOLANGCI_LINT):
+	@echo "Installing golangci-lint $(GOLANGCI_LINT_VERSION)..."
+	@mkdir -p $(BUILD_DIR)
+	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b $(BUILD_DIR) $(GOLANGCI_LINT_VERSION)
+
+# Lint code (golangci-lint's standard set includes go vet)
+lint: $(GOLANGCI_LINT)
 	@echo "Linting code..."
-	$(GOVET) ./...
+	@$(GOLANGCI_LINT) run ./...
 
 # Check formatting (fails if not formatted)
 fmt-check:

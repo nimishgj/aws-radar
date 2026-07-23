@@ -58,10 +58,7 @@ func TestCollector_ecs_Metrics(t *testing.T) {
 				bodyBytes, _ := io.ReadAll(r.Body)
 				body := string(bodyBytes)
 				r.Body = io.NopCloser(strings.NewReader(body))
-				if strings.Contains(body, `"RUNNING"`) {
-					return true
-				}
-				return false
+				return strings.Contains(body, `"RUNNING"`)
 			},
 			body: `{"taskArns":["arn:aws:ecs:us-east-1:123456789012:task/prod/task1","arn:aws:ecs:us-east-1:123456789012:task/prod/task2"]}`,
 		},
