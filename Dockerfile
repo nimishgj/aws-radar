@@ -26,7 +26,7 @@ RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build \
     -o aws-radar ./cmd/aws-radar
 
 # Runtime stage - minimal alpine for utilities
-FROM alpine:3.21
+FROM alpine:3.24
 
 # Install CA certificates, timezone data, and wget for healthcheck
 RUN apk add --no-cache ca-certificates tzdata wget
