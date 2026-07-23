@@ -4,7 +4,7 @@
 # extra_files (config.yaml) at the context root. buildx sets TARGETPLATFORM
 # per target, so the correct-arch binary is copied for each platform.
 # The source-building Dockerfile at repo root is kept for local `make docker`.
-FROM alpine:3.21
+FROM alpine:3.24
 
 ARG TARGETPLATFORM
 
