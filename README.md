@@ -32,6 +32,9 @@ AWS Radar periodically scans your AWS account and collects resource counts for v
 
 ## Supported AWS Services
 
+<details>
+<summary><strong>Click to expand the full list of supported services (40+)</strong></summary>
+
 | Service | Metrics |
 |---------|---------|
 | API Gateway | REST API count by region; HTTP/WebSocket API count by region, protocol |
@@ -74,6 +77,8 @@ AWS Radar periodically scans your AWS account and collects resource counts for v
 | Route53 | Hosted zone count |
 | ELB | Load balancer count by region, type |
 | Cost Explorer (optional) | Unblended cost by service and total cost |
+
+</details>
 
 ## Quick Start
 

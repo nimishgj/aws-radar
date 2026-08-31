@@ -98,6 +98,7 @@ func testAWSConfig(region string) aws.Config {
 		Region:      region,
 		Credentials: aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider("test", "test", "")),
 		HTTPClient:  &alwaysFailHTTPClient{},
+		Retryer:     func() aws.Retryer { return aws.NopRetryer{} },
 	}
 }
 

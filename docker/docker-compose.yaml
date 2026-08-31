@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     container_name: aws-radar
     env_file:
-      - aws-radar.env
+      - .env
     ports:
       - "9090:9090"
     volumes:
@@ -25,7 +25,7 @@ services:
     container_name: aws-radar-otel-collector
     command: ["--config=/etc/otelcol/config.yaml"]
     env_file:
-      - aws-radar.env
+      - .env
     volumes:
       - ./otel-collector-config.yaml:/etc/otelcol/config.yaml:ro
     ports:

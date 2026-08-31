@@ -1,7 +1,10 @@
 package collector
 
 import (
+	"archive/zip"
+	"bytes"
 	"math"
+	"os"
 	"testing"
 	"time"
 
@@ -153,6 +156,42 @@ func TestCSVColumnMap(t *testing.T) {
 	}
 }
 
+func TestCSVColumnMapSnakeCase(t *testing.T) {
+	header := []string{
+		"line_item_usage_account_id",
+		"line_item_product_code",
+		"line_item_unblended_cost",
+		"line_item_resource_id",
+		"line_item_usage_type",
+		"line_item_line_item_type",
+		"resource_tags_user_Environment",
+		"some_other_column",
+	}
+
+	m := CSVColumnMap(header)
+	if m.accountID != 0 {
+		t.Fatalf("expected accountID at index 0, got %d", m.accountID)
+	}
+	if m.service != 1 {
+		t.Fatalf("expected service at index 1, got %d", m.service)
+	}
+	if m.cost != 2 {
+		t.Fatalf("expected cost at index 2, got %d", m.cost)
+	}
+	if m.resource != 3 {
+		t.Fatalf("expected resource at index 3, got %d", m.resource)
+	}
+	if m.usageType != 4 {
+		t.Fatalf("expected usageType at index 4, got %d", m.usageType)
+	}
+	if m.lineItemType != 5 {
+		t.Fatalf("expected lineItemType at index 5, got %d", m.lineItemType)
+	}
+	if m.tagCols[6] != "Environment" {
+		t.Fatalf("expected tag 'Environment' at index 6, got %q", m.tagCols[6])
+	}
+}
+
 func TestAggregateCSVRow(t *testing.T) {
 	header := []string{
 		"lineItem/ProductCode",
@@ -261,11 +300,111 @@ func TestDetectFormat(t *testing.T) {
 	if f := c.detectFormat("report.csv.gz"); f != "csv" {
 		t.Fatalf("expected csv, got %s", f)
 	}
+	if f := c.detectFormat("report.csv.zip"); f != "zip" {
+		t.Fatalf("expected zip, got %s", f)
+	}
 
 	c.cfg.Format = "Parquet"
 	if f := c.detectFormat("report.csv.gz"); f != "parquet" {
 		t.Fatalf("expected parquet override, got %s", f)
 	}
+}
+
+func TestParseZIPSample(t *testing.T) {
+	f, err := os.Open("testdata/cur-sample.csv.zip")
+	if err != nil {
+		t.Fatalf("open fixture: %v", err)
+	}
+	defer func() { _ = f.Close() }()
+
+	stat, err := f.Stat()
+	if err != nil {
+		t.Fatalf("stat fixture: %v", err)
+	}
+
+	agg := &curAggregation{
+		byService:   make(map[string]float64),
+		byResource:  make(map[string]resourceCost),
+		byUsageType: make(map[string]float64),
+		byTag:       make(map[string]float64),
+	}
+
+	if err := parseZIP(f, stat.Size(), agg); err != nil {
+		t.Fatalf("parseZIP: %v", err)
+	}
+
+	if !floatClose(agg.total, 0.0035) {
+		t.Fatalf("expected total 0.0035, got %f", agg.total)
+	}
+	if !floatClose(agg.byService["AmazonEC2"], 0.0035) {
+		t.Fatalf("expected AmazonEC2 cost 0.0035, got %f", agg.byService["AmazonEC2"])
+	}
+	if _, ok := agg.byResource["AmazonEC2|i-0f0bf49951ab73706"]; !ok {
+		t.Fatalf("expected resource entry for AmazonEC2|i-0f0bf49951ab73706, got %v", agg.byResource)
+	}
+}
+
+func buildZIP(t *testing.T, entries map[string]string) *bytes.Reader {
+	t.Helper()
+	var buf bytes.Buffer
+	zw := zip.NewWriter(&buf)
+	for name, content := range entries {
+		w, err := zw.Create(name)
+		if err != nil {
+			t.Fatalf("create zip entry: %v", err)
+		}
+		if _, err := w.Write([]byte(content)); err != nil {
+			t.Fatalf("write zip entry: %v", err)
+		}
+	}
+	if err := zw.Close(); err != nil {
+		t.Fatalf("close zip writer: %v", err)
+	}
+	return bytes.NewReader(buf.Bytes())
+}
+
+func TestParseZIPEdgeCases(t *testing.T) {
+	csvContent := "lineItem/ProductCode,lineItem/UnblendedCost\nAmazonEC2,1.5\n"
+
+	t.Run("no csv entries", func(t *testing.T) {
+		r := buildZIP(t, map[string]string{"readme.txt": "hello"})
+		agg := NewCURAggregation("")
+		if err := parseZIP(r, r.Size(), agg); err != nil {
+			t.Fatalf("expected no error for zip without csv entries, got %v", err)
+		}
+		if agg.total != 0 {
+			t.Fatalf("expected zero total, got %f", agg.total)
+		}
+	})
+
+	t.Run("invalid csv propagates error", func(t *testing.T) {
+		r := buildZIP(t, map[string]string{"bad.csv": "col1,col2\nonly_one_field\n"})
+		agg := NewCURAggregation("")
+		if err := parseZIP(r, r.Size(), agg); err == nil {
+			t.Fatal("expected error for invalid csv content, got nil")
+		}
+	})
+
+	t.Run("skips __MACOSX entries", func(t *testing.T) {
+		r := buildZIP(t, map[string]string{
+			"report.csv":            csvContent,
+			"__MACOSX/._report.csv": "\x00\x01not a csv",
+		})
+		agg := NewCURAggregation("")
+		if err := parseZIP(r, r.Size(), agg); err != nil {
+			t.Fatalf("parseZIP: %v", err)
+		}
+		if !floatClose(agg.total, 1.5) {
+			t.Fatalf("expected total 1.5, got %f", agg.total)
+		}
+	})
+
+	t.Run("not a zip", func(t *testing.T) {
+		r := bytes.NewReader([]byte("plain text, not a zip"))
+		if err := parseZIP(r, r.Size(), NewCURAggregation("")); err == nil {
+			t.Fatal("expected error for non-zip input, got nil")
+		}
+	})
 }
 
 func floatClose(a, b float64) bool {

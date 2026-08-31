@@ -29,7 +29,7 @@ go.work
 # Environment files with secrets
 .env
 docker/.env
-docker/aws-radar.env
+docker/.env
 
 # Docker volumes
 docker/clickhouse-data/

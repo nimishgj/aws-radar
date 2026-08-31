@@ -1,6 +1,7 @@
 package collector
 
 import (
+	"archive/zip"
 	"compress/gzip"
 	"context"
 	"encoding/csv"
@@ -214,6 +215,9 @@ func (c *CURCollector) detectFormat(reportKey string) string {
 	if strings.HasSuffix(reportKey, ".parquet") || strings.HasSuffix(reportKey, ".snappy.parquet") {
 		return "parquet"
 	}
+	if strings.HasSuffix(reportKey, ".zip") {
+		return "zip"
+	}
 	return "csv"
 }
 
@@ -221,6 +225,8 @@ func (c *CURCollector) processFile(ctx context.Context, client *s3.Client, key, 
 	switch format {
 	case "parquet":
 		return c.processParquet(ctx, client, key, agg)
+	case "zip":
+		return c.processZIP(ctx, client, key, agg)
 	default:
 		return c.processCSV(ctx, client, key, agg)
 	}
@@ -446,6 +452,10 @@ func (c *CURCollector) processCSV(ctx context.Context, client *s3.Client, key st
 		reader = gz
 	}
 
+	return parseCSVStream(reader, agg)
+}
+
+func parseCSVStream(reader io.Reader, agg *curAggregation) error {
 	csvReader := csv.NewReader(reader)
 	csvReader.LazyQuotes = true
 	csvReader.ReuseRecord = true
@@ -466,6 +476,60 @@ func (c *CURCollector) processCSV(ctx context.Context, client *s3.Client, key st
 			return fmt.Errorf("read CSV row: %w", err)
 		}
 		aggregateCSVRow(record, colMap, agg)
+	}
+
+	return nil
+}
+
+func (c *CURCollector) processZIP(ctx context.Context, client *s3.Client, key string, agg *curAggregation) error {
+	out, err := client.GetObject(ctx, &s3.GetObjectInput{
+		Bucket: aws.String(c.cfg.Bucket),
+		Key:    aws.String(key),
+	})
+	if err != nil {
+		return fmt.Errorf("get S3 object %s: %w", key, err)
+	}
+	defer func() { _ = out.Body.Close() }()
+
+	// ZIP reader needs random access; download to temp.
+	tmp, err := os.CreateTemp("", "cur-*.zip")
+	if err != nil {
+		return fmt.Errorf("create temp file: %w", err)
+	}
+	defer func() { _ = os.Remove(tmp.Name()) }()
+	defer func() { _ = tmp.Close() }()
+
+	if _, err := io.Copy(tmp, out.Body); err != nil {
+		return fmt.Errorf("download zip to temp: %w", err)
+	}
+
+	stat, err := tmp.Stat()
+	if err != nil {
+		return fmt.Errorf("stat temp file: %w", err)
+	}
+
+	return parseZIP(tmp, stat.Size(), agg)
+}
+
+func parseZIP(r io.ReaderAt, size int64, agg *curAggregation) error {
+	zr, err := zip.NewReader(r, size)
+	if err != nil {
+		return fmt.Errorf("open zip reader: %w", err)
+	}
+
+	for _, f := range zr.File {
+		if !strings.HasSuffix(f.Name, ".csv") || strings.HasPrefix(f.Name, "__MACOSX/") {
+			continue
+		}
+		rc, err := f.Open()
+		if err != nil {
+			return fmt.Errorf("open zip entry %s: %w", f.Name, err)
+		}
+		parseErr := parseCSVStream(rc, agg)
+		_ = rc.Close()
+		if parseErr != nil {
+			return fmt.Errorf("parse zip entry %s: %w", f.Name, parseErr)
+		}
 	}
 
 	return nil
@@ -494,22 +558,24 @@ func csvColumnMap(header []string) csvColMap {
 
 	for i, col := range header {
 		switch col {
-		case "lineItem/UnblendedCost":
+		case "lineItem/UnblendedCost", "line_item_unblended_cost":
 			m.cost = i
-		case "lineItem/ProductCode":
+		case "lineItem/ProductCode", "line_item_product_code":
 			m.service = i
-		case "lineItem/ResourceId":
+		case "lineItem/ResourceId", "line_item_resource_id":
 			m.resource = i
-		case "lineItem/UsageType":
+		case "lineItem/UsageType", "line_item_usage_type":
 			m.usageType = i
-		case "lineItem/UsageAccountId":
+		case "lineItem/UsageAccountId", "line_item_usage_account_id":
 			m.accountID = i
-		case "lineItem/LineItemType":
+		case "lineItem/LineItemType", "line_item_line_item_type":
 			m.lineItemType = i
 		default:
-			if strings.HasPrefix(col, "resourceTags/user:") {
-				tagName := strings.TrimPrefix(col, "resourceTags/user:")
-				m.tagCols[i] = tagName
+			switch {
+			case strings.HasPrefix(col, "resourceTags/user:"):
+				m.tagCols[i] = strings.TrimPrefix(col, "resourceTags/user:")
+			case strings.HasPrefix(col, "resource_tags_user_"):
+				m.tagCols[i] = strings.TrimPrefix(col, "resource_tags_user_")
 			}
 		}
 	}

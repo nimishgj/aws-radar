@@ -49,7 +49,7 @@ exporters:
       max_interval: 30s
       max_elapsed_time: 300s
 
-  otlphttp/aws-radar:
+  otlphttp/backend:
     endpoint: ${env:OTEL_EXPORTER_ENDPOINT}
     auth:
       authenticator: oauth2client
@@ -65,7 +65,7 @@ extensions:
     client_id: ${env:OAUTH2_CLIENT_ID}
     client_secret: ${env:OAUTH2_CLIENT_SECRET}
     endpoint_params:
-      audience: collector
+      audience: ${env:OAUTH2_AUDIENCE}
     token_url: ${env:OAUTH2_TOKEN_URL}
     tls:
       insecure_skip_verify: true
@@ -80,14 +80,14 @@ service:
     metrics:
       receivers: [prometheus, otlp]
       processors: [memory_limiter, resource, batch]
-      exporters: [clickhouse, otlphttp/aws-radar, debug]
+      exporters: [clickhouse, otlphttp/backend, debug]
 
     logs:
       receivers: [otlp]
       processors: [memory_limiter, resource, batch]
-      exporters: [clickhouse, otlphttp/aws-radar, debug]
+      exporters: [clickhouse, otlphttp/backend, debug]
 
     traces:
       receivers: [otlp]
       processors: [memory_limiter, resource, batch]
-      exporters: [clickhouse, otlphttp/aws-radar, debug]
+      exporters: [clickhouse, otlphttp/backend, debug]

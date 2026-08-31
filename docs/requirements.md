@@ -96,7 +96,7 @@ aws-radar/
 ├── docker/                         # Docker-related configs
 │   ├── docker-compose.yaml
 │   ├── otel-collector-config.yaml
-│   ├── aws-radar.env
+│   ├── .env
 │   ├── clickhouse/init.sql
 │   └── grafana/
 ├── docs/                           # Documentation
