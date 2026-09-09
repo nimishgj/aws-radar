@@ -23,9 +23,51 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// curManifest represents the CUR manifest JSON structure.
+// curManifest represents the CUR manifest JSON structure. Legacy CUR uses
+// reportKeys; CUR 2.0 (Data Exports) manifests have used both dataFileS3Keys
+// (plain strings) and dataFiles/files (objects), so all variants are accepted.
 type curManifest struct {
-	ReportKeys []string `json:"reportKeys"`
+	ReportKeys     []string           `json:"reportKeys"`
+	DataFileS3Keys []string           `json:"dataFileS3Keys"`
+	DataFiles      []curManifestEntry `json:"dataFiles"`
+	Files          []curManifestEntry `json:"files"`
+}
+
+// curManifestEntry is either a plain string key/URI or an object with a
+// key/s3Key field, depending on the export tooling that wrote the manifest.
+type curManifestEntry struct {
+	Key   string `json:"key"`
+	S3Key string `json:"s3Key"`
+}
+
+func (e *curManifestEntry) UnmarshalJSON(data []byte) error {
+	if len(data) > 0 && data[0] == '"' {
+		return json.Unmarshal(data, &e.Key)
+	}
+	type entry curManifestEntry
+	return json.Unmarshal(data, (*entry)(e))
+}
+
+func (m *curManifest) keys() []string {
+	var keys []string
+	keys = append(keys, m.ReportKeys...)
+	keys = append(keys, m.DataFileS3Keys...)
+	for _, e := range append(m.DataFiles, m.Files...) {
+		if e.S3Key != "" {
+			keys = append(keys, e.S3Key)
+		} else if e.Key != "" {
+			keys = append(keys, e.Key)
+		}
+	}
+	for i, k := range keys {
+		// CUR 2.0 keys may be full s3:// URIs; reduce to the object key.
+		if strings.HasPrefix(k, "s3://") {
+			if idx := strings.IndexByte(strings.TrimPrefix(k, "s3://"), '/'); idx >= 0 {
+				keys[i] = strings.TrimPrefix(k, "s3://")[idx+1:]
+			}
+		}
+	}
+	return keys
 }
 
 // curAggregation holds aggregated cost data from CUR files.
@@ -149,20 +191,25 @@ func (c *CURCollector) refresh(ctx context.Context, cfg aws.Config, now time.Tim
 
 	client := s3.NewFromConfig(s3Cfg)
 
-	// Compute billing period path.
-	periodStart, periodEnd := billingPeriod(now)
-	period := periodStart + "-" + periodEnd
+	periodStart, _ := billingPeriod(now)
 
-	manifestKey := fmt.Sprintf("%s/%s/%s/%s-Manifest.json",
-		c.cfg.Prefix, c.cfg.ReportName, period, c.cfg.ReportName)
-
-	manifest, err := c.downloadManifest(ctx, client, manifestKey)
-	if err != nil {
-		return fmt.Errorf("download CUR manifest: %w", err)
+	var manifest *curManifest
+	var err error
+	candidates := c.manifestKeyCandidates(now)
+	for _, manifestKey := range candidates {
+		manifest, err = c.downloadManifest(ctx, client, manifestKey)
+		if err == nil {
+			break
+		}
+		log.Debug().Err(err).Str("key", manifestKey).Msg("CUR manifest candidate not found")
+	}
+	if manifest == nil {
+		return fmt.Errorf("download CUR manifest (tried %v): %w", candidates, err)
 	}
 
-	if len(manifest.ReportKeys) == 0 {
-		log.Warn().Str("manifest", manifestKey).Msg("CUR manifest has no report keys")
+	reportKeys := manifest.keys()
+	if len(reportKeys) == 0 {
+		log.Warn().Msg("CUR manifest has no report keys")
 		return nil
 	}
 
@@ -174,9 +221,9 @@ func (c *CURCollector) refresh(ctx context.Context, cfg aws.Config, now time.Tim
 		period:      periodStart,
 	}
 
-	format := c.detectFormat(manifest.ReportKeys[0])
+	format := c.detectFormat(reportKeys[0])
 
-	for _, key := range manifest.ReportKeys {
+	for _, key := range reportKeys {
 		if err := c.processFile(ctx, client, key, format, agg); err != nil {
 			log.Error().Err(err).Str("key", key).Msg("Failed to process CUR file")
 			continue
@@ -189,6 +236,24 @@ func (c *CURCollector) refresh(ctx context.Context, cfg aws.Config, now time.Tim
 	c.mu.Unlock()
 
 	return nil
+}
+
+// manifestKeyCandidates returns manifest paths to try, in order. Legacy CUR:
+// {prefix}/{name}/{YYYYMMDD-YYYYMMDD}/{name}-Manifest.json. CUR 2.0 (Data
+// Exports): {prefix}/{name}/metadata/BILLING_PERIOD=YYYY-MM/ containing either
+// {name}-Manifest.json or Manifest.json.
+func (c *CURCollector) manifestKeyCandidates(now time.Time) []string {
+	if strings.EqualFold(c.cfg.ReportType, "cur2") {
+		partition := "BILLING_PERIOD=" + now.UTC().Format("2006-01")
+		base := fmt.Sprintf("%s/%s/metadata/%s", c.cfg.Prefix, c.cfg.ReportName, partition)
+		return []string{
+			fmt.Sprintf("%s/%s-Manifest.json", base, c.cfg.ReportName),
+			base + "/Manifest.json",
+		}
+	}
+	periodStart, periodEnd := billingPeriod(now)
+	return []string{fmt.Sprintf("%s/%s/%s-%s/%s-Manifest.json",
+		c.cfg.Prefix, c.cfg.ReportName, periodStart, periodEnd, c.cfg.ReportName)}
 }
 
 func (c *CURCollector) downloadManifest(ctx context.Context, client *s3.Client, key string) (*curManifest, error) {

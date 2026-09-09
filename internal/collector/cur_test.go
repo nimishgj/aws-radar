@@ -3,8 +3,15 @@ package collector
 import (
 	"archive/zip"
 	"bytes"
+	"context"
 	"math"
+	"net/http"
+	"net/http/httptest"
 	"os"
+	"strings"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/credentials"
 	"testing"
 	"time"
 
@@ -92,6 +99,68 @@ func TestParseManifest(t *testing.T) {
 	}
 	if m.ReportKeys[0] != "prefix/report/20260301-20260401/report-00001.snappy.parquet" {
 		t.Fatalf("unexpected report key: %s", m.ReportKeys[0])
+	}
+}
+
+func TestParseManifestCUR2Variants(t *testing.T) {
+	cases := []struct {
+		name string
+		json string
+		want []string
+	}{
+		{"dataFileS3Keys strings", `{"dataFileS3Keys":["pfx/exp/data/BILLING_PERIOD=2026-08/exp-00001.snappy.parquet"]}`,
+			[]string{"pfx/exp/data/BILLING_PERIOD=2026-08/exp-00001.snappy.parquet"}},
+		{"dataFiles objects with key", `{"dataFiles":[{"key":"a.parquet"},{"key":"b.parquet"}]}`,
+			[]string{"a.parquet", "b.parquet"}},
+		{"files objects with s3Key", `{"files":[{"s3Key":"c.csv.gz"}]}`,
+			[]string{"c.csv.gz"}},
+		{"s3 uri normalized", `{"dataFileS3Keys":["s3://my-bucket/pfx/exp-00001.snappy.parquet"]}`,
+			[]string{"pfx/exp-00001.snappy.parquet"}},
+		{"legacy reportKeys", `{"reportKeys":["r.csv.gz"]}`,
+			[]string{"r.csv.gz"}},
+		{"dataFiles as s3 uri strings", `{"executionId":"e-1","dataFiles":["s3://bkt/pfx/exp/data/BILLING_PERIOD=2026-06/part.parquet"]}`,
+			[]string{"pfx/exp/data/BILLING_PERIOD=2026-06/part.parquet"}},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			m, err := ParseManifest([]byte(tc.json))
+			if err != nil {
+				t.Fatalf("parse: %v", err)
+			}
+			got := m.keys()
+			if len(got) != len(tc.want) {
+				t.Fatalf("expected %v, got %v", tc.want, got)
+			}
+			for i := range got {
+				if got[i] != tc.want[i] {
+					t.Fatalf("expected %v, got %v", tc.want, got)
+				}
+			}
+		})
+	}
+}
+
+func TestManifestKeyCandidates(t *testing.T) {
+	now := time.Date(2026, 8, 15, 10, 0, 0, 0, time.UTC)
+
+	legacy := NewCURCollector(config.CostCURConfig{
+		Prefix: "cur-reports", ReportName: "my-report",
+	})
+	got := legacy.manifestKeyCandidates(now)
+	want := "cur-reports/my-report/20260801-20260901/my-report-Manifest.json"
+	if len(got) != 1 || got[0] != want {
+		t.Fatalf("expected [%s], got %v", want, got)
+	}
+
+	cur2 := NewCURCollector(config.CostCURConfig{
+		ReportType: "cur2", Prefix: "exports", ReportName: "my-export",
+	})
+	got = cur2.manifestKeyCandidates(now)
+	want0 := "exports/my-export/metadata/BILLING_PERIOD=2026-08/my-export-Manifest.json"
+	want1 := "exports/my-export/metadata/BILLING_PERIOD=2026-08/Manifest.json"
+	if len(got) != 2 || got[0] != want0 || got[1] != want1 {
+		t.Fatalf("expected [%s %s], got %v", want0, want1, got)
 	}
 }
 
@@ -341,6 +410,96 @@ func TestParseZIPSample(t *testing.T) {
 	}
 	if _, ok := agg.byResource["AmazonEC2|i-0f0bf49951ab73706"]; !ok {
 		t.Fatalf("expected resource entry for AmazonEC2|i-0f0bf49951ab73706, got %v", agg.byResource)
+	}
+}
+
+// newMockS3Server serves objects by exact URL path (path-style addressing),
+// returning S3-style 404s for unknown keys, and records requested paths.
+func newMockS3Server(objects map[string]string, requested *[]string) *httptest.Server {
+	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		*requested = append(*requested, r.URL.Path)
+		if body, ok := objects[r.URL.Path]; ok {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(body))
+			return
+		}
+		w.WriteHeader(http.StatusNotFound)
+		_, _ = w.Write([]byte(`<?xml version="1.0"?><Error><Code>NoSuchKey</Code></Error>`))
+	}))
+}
+
+func mockS3Config(serverURL string) aws.Config {
+	resolver := aws.EndpointResolverWithOptionsFunc(
+		func(service, reg string, options ...interface{}) (aws.Endpoint, error) {
+			return aws.Endpoint{URL: serverURL, SigningRegion: "us-east-1", HostnameImmutable: true}, nil
+		},
+	)
+	return aws.Config{
+		Region:                      "us-east-1",
+		Credentials:                 aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider("test", "test", "")),
+		EndpointResolverWithOptions: resolver,
+		Retryer:                     func() aws.Retryer { return aws.NopRetryer{} },
+	}
+}
+
+func TestRefreshManifestFallback(t *testing.T) {
+	now := time.Date(2026, 9, 2, 10, 0, 0, 0, time.UTC)
+	csvBody := "lineItem/ProductCode,lineItem/UnblendedCost,lineItem/LineItemType\nAmazonEC2,2.5,Usage\n"
+	dataKey := "/test-bucket/exports/exp/data/BILLING_PERIOD=2026-09/exp-00001.csv"
+	// Only the second manifest candidate (Manifest.json) exists.
+	manifest := `{"dataFiles":["exports/exp/data/BILLING_PERIOD=2026-09/exp-00001.csv"]}`
+
+	var requested []string
+	server := newMockS3Server(map[string]string{
+		"/test-bucket/exports/exp/metadata/BILLING_PERIOD=2026-09/Manifest.json": manifest,
+		dataKey: csvBody,
+	}, &requested)
+	defer server.Close()
+
+	c := NewCURCollector(config.CostCURConfig{
+		Enabled: true, ReportType: "cur2", Bucket: "test-bucket",
+		Prefix: "exports", ReportName: "exp", Region: "us-east-1",
+	})
+
+	if err := c.refresh(context.Background(), mockS3Config(server.URL), now); err != nil {
+		t.Fatalf("refresh: %v", err)
+	}
+
+	firstCandidate := "/test-bucket/exports/exp/metadata/BILLING_PERIOD=2026-09/exp-Manifest.json"
+	if len(requested) == 0 || requested[0] != firstCandidate {
+		t.Fatalf("expected first request to be %s, got %v", firstCandidate, requested)
+	}
+
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	if c.cached == nil {
+		t.Fatal("expected cached aggregation after refresh")
+	}
+	if !floatClose(c.cached.total, 2.5) {
+		t.Fatalf("expected total 2.5 from fallback manifest, got %f", c.cached.total)
+	}
+}
+
+func TestRefreshAllManifestCandidatesFail(t *testing.T) {
+	now := time.Date(2026, 9, 2, 10, 0, 0, 0, time.UTC)
+	var requested []string
+	server := newMockS3Server(map[string]string{}, &requested)
+	defer server.Close()
+
+	c := NewCURCollector(config.CostCURConfig{
+		Enabled: true, ReportType: "cur2", Bucket: "test-bucket",
+		Prefix: "exports", ReportName: "exp", Region: "us-east-1",
+	})
+
+	err := c.refresh(context.Background(), mockS3Config(server.URL), now)
+	if err == nil {
+		t.Fatal("expected error when all manifest candidates fail")
+	}
+	if !strings.Contains(err.Error(), "exp-Manifest.json") || !strings.Contains(err.Error(), "tried") {
+		t.Fatalf("expected error naming tried candidates, got: %v", err)
+	}
+	if len(requested) != 2 {
+		t.Fatalf("expected both candidates requested, got %v", requested)
 	}
 }
 

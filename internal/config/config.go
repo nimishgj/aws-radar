@@ -39,6 +39,7 @@ type CostExplorerConfig struct {
 
 type CostCURConfig struct {
 	Enabled      bool   `mapstructure:"enabled"`
+	ReportType   string `mapstructure:"report_type"`
 	Bucket       string `mapstructure:"bucket"`
 	Prefix       string `mapstructure:"prefix"`
 	ReportName   string `mapstructure:"report_name"`
@@ -74,6 +75,7 @@ func Load() (*Config, error) {
 	viper.SetDefault("cost_explorer.enabled", false)
 	viper.SetDefault("cost_explorer.frequency", "daily")
 	viper.SetDefault("cost_cur.enabled", false)
+	viper.SetDefault("cost_cur.report_type", "cur")
 	viper.SetDefault("cost_cur.frequency", "daily")
 	viper.SetDefault("cost_cur.region", "us-east-1")
 	viper.SetDefault("cost_cur.max_resources", 100)
