@@ -11,6 +11,7 @@ jobs:
     permissions:
       contents: write
       packages: write
+      actions: read # query ci.yaml runs via the Actions API (required on a private repo)
     steps:
       - name: Checkout
         uses: actions/checkout@v7
