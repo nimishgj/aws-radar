@@ -359,12 +359,18 @@ func (c *CURCollector) processParquet(ctx context.Context, client *s3.Client, ke
 }
 
 // costLineItemTypes are the line_item_line_item_type values that represent
-// actual charges. Credits, refunds, and savings-plan negations are excluded
-// so that the aggregated totals reflect real spend.
+// actual unblended spend, matching the AWS Cost Explorer "unblended cost" view.
+//
+// Credits and refunds are excluded. Savings Plans are counted via their
+// RecurringFee/UpfrontFee only: SavingsPlanCoveredUsage carries the public
+// on-demand price of the covered usage and SavingsPlanNegation carries its
+// exact offset, so the two net to zero in unblended cost. Including
+// CoveredUsage while excluding Negation would double-count the covered compute
+// (e.g. inflating EC2), so both are left out here. DiscountedUsage (RI-covered
+// usage) carries ~$0 unblended cost and is harmless to include.
 var costLineItemTypes = map[string]struct{}{
 	"Usage":                   {},
 	"DiscountedUsage":         {},
-	"SavingsPlanCoveredUsage": {},
 	"Tax":                     {},
 	"Fee":                     {},
 	"RIFee":                   {},

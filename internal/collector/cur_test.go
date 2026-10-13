@@ -322,6 +322,47 @@ func TestAggregateCSVRow(t *testing.T) {
 	}
 }
 
+func TestAggregateCSVRow_SavingsPlanNotDoubleCounted(t *testing.T) {
+	// A Savings Plan appears in CUR as three line items for the same compute:
+	//   SavingsPlanCoveredUsage  = +on-demand price of the covered usage
+	//   SavingsPlanNegation      = -that same amount (cancels the covered usage)
+	//   SavingsPlanRecurringFee  = +what you actually pay for the commitment
+	// The unblended cost (what Cost Explorer shows) is therefore just the
+	// recurring fee; the covered usage nets to zero against its negation.
+	// Including CoveredUsage while excluding Negation double-counts the compute,
+	// so neither should be summed.
+	header := []string{
+		"lineItem/ProductCode",
+		"lineItem/UnblendedCost",
+		"lineItem/ResourceId",
+		"lineItem/UsageType",
+		"lineItem/LineItemType",
+	}
+	colMap := CSVColumnMap(header)
+	agg := NewCURAggregation("20261001")
+
+	// Plain on-demand EC2 usage (not covered by the SP).
+	AggregateCSVRow([]string{"AmazonEC2", "20.00", "i-ondemand", "BoxUsage:t3.micro", "Usage"}, colMap, agg)
+	// SP-covered EC2 usage, valued at the public on-demand rate.
+	AggregateCSVRow([]string{"AmazonEC2", "85.00", "i-covered", "BoxUsage:t3.large", "SavingsPlanCoveredUsage"}, colMap, agg)
+	// The negation that cancels the covered usage.
+	AggregateCSVRow([]string{"AmazonEC2", "-85.00", "i-covered", "BoxUsage:t3.large", "SavingsPlanNegation"}, colMap, agg)
+	// The real commitment fee you actually pay.
+	AggregateCSVRow([]string{"ComputeSavingsPlans", "60.00", "", "ComputeSP:1yrNoUpfront", "SavingsPlanRecurringFee"}, colMap, agg)
+
+	// Unblended total = on-demand usage (20) + recurring fee (60) = 80, NOT 165.
+	if !floatClose(agg.total, 80.00) {
+		t.Fatalf("expected unblended total 80.00 (SP covered usage must not be double-counted), got %f", agg.total)
+	}
+	// EC2 reflects only genuine on-demand usage, not the SP-covered hours.
+	if !floatClose(agg.byService["AmazonEC2"], 20.00) {
+		t.Fatalf("expected EC2 cost 20.00, got %f", agg.byService["AmazonEC2"])
+	}
+	if !floatClose(agg.byService["ComputeSavingsPlans"], 60.00) {
+		t.Fatalf("expected ComputeSavingsPlans cost 60.00, got %f", agg.byService["ComputeSavingsPlans"])
+	}
+}
+
 func TestTopNResources(t *testing.T) {
 	resources := map[string]resourceCost{
 		"svc|r1": {service: "svc", resourceID: "r1", cost: 10},
