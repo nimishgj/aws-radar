@@ -1216,28 +1216,41 @@ var (
 	)
 
 	// CUR (Cost and Usage Report) Metrics
+	// cost_type is "unblended" (AWS default view) or "amortized" (Savings
+	// Plan / RI commitment attributed to the usage that consumed it).
 	CURTotalCost = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "aws_cur_total_cost_usd",
 			Help: "Total cost from CUR report in USD",
 		},
-		[]string{"account", "account_name", "period"},
+		[]string{"account", "account_name", "cost_type", "period"},
 	)
 
 	CURCostByService = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "aws_cur_cost_by_service_usd",
-			Help: "Cost by AWS service from CUR report in USD",
+			Help: "Cost by AWS service and region from CUR report in USD",
 		},
-		[]string{"account", "account_name", "service", "period"},
+		[]string{"account", "account_name", "service", "region", "cost_type", "period"},
 	)
 
 	CURCostByResource = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "aws_cur_cost_by_resource_usd",
-			Help: "Cost by resource ID from CUR report in USD (top N)",
+			Help: "Cost by resource ID from CUR report in USD (top N), with region/AZ/spec",
 		},
-		[]string{"account", "account_name", "service", "resource_id", "period"},
+		[]string{"account", "account_name", "service", "resource_id", "region", "availability_zone", "spec_key", "spec_value", "cost_type", "period"},
+	)
+
+	// CURUsageAmount is the usage quantity for top-N resources, in each line's
+	// native unit (instance-hours, GB-months, GB, …) — not directly summable
+	// across usage types. Pair with cost for unit economics / rightsizing.
+	CURUsageAmount = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "aws_cur_usage_amount",
+			Help: "Usage quantity by resource from CUR report (unit varies by usage type)",
+		},
+		[]string{"account", "account_name", "service", "resource_id", "region", "availability_zone", "spec_key", "spec_value", "period"},
 	)
 
 	CURCostByUsageType = promauto.NewGaugeVec(
@@ -1610,6 +1623,7 @@ func ResetAll() {
 	CURTotalCost.Reset()
 	CURCostByService.Reset()
 	CURCostByResource.Reset()
+	CURUsageAmount.Reset()
 	CURCostByUsageType.Reset()
 	CURCostByTag.Reset()
 	CURLastProcessed.Reset()

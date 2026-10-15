@@ -287,25 +287,25 @@ func TestAggregateCSVRow(t *testing.T) {
 	AggregateCSVRow([]string{"AmazonEC2", "-10.50", "i-abc123", "BoxUsage:t3.micro", "SavingsPlanNegation", "prod"}, colMap, agg)
 
 	// Check totals.
-	if !floatClose(agg.total, 16.75) {
-		t.Fatalf("expected total 16.75, got %f", agg.total)
+	if !floatClose(agg.totalUnblended, 16.75) {
+		t.Fatalf("expected total 16.75, got %f", agg.totalUnblended)
 	}
 
-	// Check by service.
-	if !floatClose(agg.byService["AmazonEC2"], 15.75) {
-		t.Fatalf("expected EC2 cost 15.75, got %f", agg.byService["AmazonEC2"])
+	// Check by service (no region column in this fixture -> region "").
+	if ec2 := agg.byService[svcKey{"AmazonEC2", ""}]; ec2 == nil || !floatClose(ec2.unblended, 15.75) {
+		t.Fatalf("expected EC2 cost 15.75, got %+v", ec2)
 	}
-	if !floatClose(agg.byService["AmazonS3"], 1.00) {
-		t.Fatalf("expected S3 cost 1.00, got %f", agg.byService["AmazonS3"])
+	if s3 := agg.byService[svcKey{"AmazonS3", ""}]; s3 == nil || !floatClose(s3.unblended, 1.00) {
+		t.Fatalf("expected S3 cost 1.00, got %+v", s3)
 	}
 
 	// Check by resource.
 	if len(agg.byResource) != 3 {
 		t.Fatalf("expected 3 resources, got %d", len(agg.byResource))
 	}
-	rc := agg.byResource["AmazonEC2|i-abc123"]
-	if !floatClose(rc.cost, 10.50) {
-		t.Fatalf("expected resource cost 10.50, got %f", rc.cost)
+	rc := agg.byResource["AmazonEC2|i-abc123|"]
+	if rc == nil || !floatClose(rc.unblended, 10.50) {
+		t.Fatalf("expected resource cost 10.50, got %+v", rc)
 	}
 
 	// Check by usage type.
@@ -351,25 +351,130 @@ func TestAggregateCSVRow_SavingsPlanNotDoubleCounted(t *testing.T) {
 	AggregateCSVRow([]string{"ComputeSavingsPlans", "60.00", "", "ComputeSP:1yrNoUpfront", "SavingsPlanRecurringFee"}, colMap, agg)
 
 	// Unblended total = on-demand usage (20) + recurring fee (60) = 80, NOT 165.
-	if !floatClose(agg.total, 80.00) {
-		t.Fatalf("expected unblended total 80.00 (SP covered usage must not be double-counted), got %f", agg.total)
+	if !floatClose(agg.totalUnblended, 80.00) {
+		t.Fatalf("expected unblended total 80.00 (SP covered usage must not be double-counted), got %f", agg.totalUnblended)
 	}
 	// EC2 reflects only genuine on-demand usage, not the SP-covered hours.
-	if !floatClose(agg.byService["AmazonEC2"], 20.00) {
-		t.Fatalf("expected EC2 cost 20.00, got %f", agg.byService["AmazonEC2"])
+	if ec2 := agg.byService[svcKey{"AmazonEC2", ""}]; ec2 == nil || !floatClose(ec2.unblended, 20.00) {
+		t.Fatalf("expected EC2 cost 20.00, got %+v", ec2)
 	}
-	if !floatClose(agg.byService["ComputeSavingsPlans"], 60.00) {
-		t.Fatalf("expected ComputeSavingsPlans cost 60.00, got %f", agg.byService["ComputeSavingsPlans"])
+	if sp := agg.byService[svcKey{"ComputeSavingsPlans", ""}]; sp == nil || !floatClose(sp.unblended, 60.00) {
+		t.Fatalf("expected ComputeSavingsPlans cost 60.00, got %+v", sp)
+	}
+}
+
+func TestAmortizedCost(t *testing.T) {
+	cases := []struct {
+		name          string
+		lit           string
+		unblended     float64
+		effSP, effRI  float64
+		wantUnblended float64
+		wantAmortized float64
+	}{
+		// Plain on-demand usage: same in both views.
+		{"usage", "Usage", 20, 0, 0, 20, 20},
+		{"tax", "Tax", 5, 0, 0, 5, 5},
+		// SP covered usage: excluded from unblended, valued at effective cost amortized.
+		{"sp_covered", "SavingsPlanCoveredUsage", 85, 50, 0, 0, 50},
+		// SP recurring fee: counted unblended, zero amortized (cost moved onto usage).
+		{"sp_fee", "SavingsPlanRecurringFee", 60, 0, 0, 60, 0},
+		{"sp_upfront", "SavingsPlanUpfrontFee", 10, 0, 0, 10, 0},
+		// RI covered usage: effective cost is the amortized value.
+		{"ri_discounted", "DiscountedUsage", 0, 0, 12, 0, 12},
+		// RI fee: counted unblended, zero amortized.
+		{"ri_fee", "RIFee", 30, 0, 0, 30, 0},
+		// Credits/negations: excluded from both.
+		{"credit", "Credit", -3, 0, 0, 0, 0},
+		{"negation", "SavingsPlanNegation", -85, 0, 0, 0, 0},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			u := unblendedContribution(c.lit, c.unblended)
+			a := amortizedContribution(c.lit, c.unblended, c.effSP, c.effRI)
+			if !floatClose(u, c.wantUnblended) {
+				t.Fatalf("unblended: want %v got %v", c.wantUnblended, u)
+			}
+			if !floatClose(a, c.wantAmortized) {
+				t.Fatalf("amortized: want %v got %v", c.wantAmortized, a)
+			}
+		})
+	}
+}
+
+func TestAggregateRow(t *testing.T) {
+	agg := newCurAggregation("20261001")
+	// EC2 on-demand usage, us-east-1, resource i-1
+	aggregateRow(agg, curRow{service: "AmazonEC2", resourceID: "i-1", usageType: "BoxUsage:t3",
+		lineItemType: "Usage", region: "us-east-1", az: "us-east-1a", specKey: "instance_type", specVal: "t3",
+		unblended: 20, usageAmount: 744})
+	// SP-covered EC2 usage same resource: excluded from unblended, amortized = effSP
+	aggregateRow(agg, curRow{service: "AmazonEC2", resourceID: "i-1", usageType: "BoxUsage:t3",
+		lineItemType: "SavingsPlanCoveredUsage", region: "us-east-1", unblended: 85, effSP: 50})
+	// SP recurring fee: counted unblended, zero amortized, no region
+	aggregateRow(agg, curRow{service: "ComputeSavingsPlans", usageType: "ComputeSP",
+		lineItemType: "SavingsPlanRecurringFee", unblended: 60})
+	// EBS gp3 in eu-west-1
+	aggregateRow(agg, curRow{service: "AmazonEC2", resourceID: "vol-1", usageType: "EBS:VolumeUsage.gp3",
+		lineItemType: "Usage", region: "eu-west-1", specKey: "volume_type", specVal: "gp3",
+		unblended: 10, usageAmount: 100})
+
+	if !floatClose(agg.totalUnblended, 90) {
+		t.Fatalf("totalUnblended want 90 got %v", agg.totalUnblended)
+	}
+	if !floatClose(agg.totalAmortized, 80) {
+		t.Fatalf("totalAmortized want 80 got %v", agg.totalAmortized)
+	}
+	ec2us := agg.byService[svcKey{"AmazonEC2", "us-east-1"}]
+	if ec2us == nil || !floatClose(ec2us.unblended, 20) || !floatClose(ec2us.amortized, 70) {
+		t.Fatalf("EC2/us-east-1 want {20,70} got %+v", ec2us)
+	}
+	sp := agg.byService[svcKey{"ComputeSavingsPlans", ""}]
+	if sp == nil || !floatClose(sp.unblended, 60) || !floatClose(sp.amortized, 0) {
+		t.Fatalf("SP want {60,0} got %+v", sp)
+	}
+	r := agg.byResource["AmazonEC2|i-1|us-east-1"]
+	if r == nil || !floatClose(r.unblended, 20) || !floatClose(r.amortized, 70) || !floatClose(r.usage, 744) ||
+		r.az != "us-east-1a" || r.specVal != "t3" {
+		t.Fatalf("resource i-1 unexpected: %+v", r)
+	}
+	v := agg.byResource["AmazonEC2|vol-1|eu-west-1"]
+	if v == nil || !floatClose(v.usage, 100) || v.specKey != "volume_type" || v.specVal != "gp3" {
+		t.Fatalf("resource vol-1 unexpected: %+v", v)
+	}
+}
+
+func TestProductAttrs(t *testing.T) {
+	cases := []struct {
+		name                   string
+		product                map[string]string
+		region, az, sKey, sVal string
+	}{
+		{"ec2", map[string]string{"region": "us-east-1", "availability_zone": "us-east-1a", "instance_type_family": "t4g"},
+			"us-east-1", "us-east-1a", "instance_type", "t4g"},
+		{"ebs", map[string]string{"region": "eu-west-1", "volume_api_name": "gp3"},
+			"eu-west-1", "", "volume_type", "gp3"},
+		{"rds", map[string]string{"region": "ap-south-1", "database_engine": "postgres"},
+			"ap-south-1", "", "engine", "postgres"},
+		{"empty", map[string]string{}, "", "", "", ""},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			region, az, sKey, sVal := productAttrs(c.product)
+			if region != c.region || az != c.az || sKey != c.sKey || sVal != c.sVal {
+				t.Fatalf("got (%q,%q,%q,%q) want (%q,%q,%q,%q)", region, az, sKey, sVal, c.region, c.az, c.sKey, c.sVal)
+			}
+		})
 	}
 }
 
 func TestTopNResources(t *testing.T) {
-	resources := map[string]resourceCost{
-		"svc|r1": {service: "svc", resourceID: "r1", cost: 10},
-		"svc|r2": {service: "svc", resourceID: "r2", cost: 50},
-		"svc|r3": {service: "svc", resourceID: "r3", cost: 30},
-		"svc|r4": {service: "svc", resourceID: "r4", cost: 5},
-		"svc|r5": {service: "svc", resourceID: "r5", cost: 20},
+	resources := map[string]*resourceAgg{
+		"svc|r1": {service: "svc", resourceID: "r1", unblended: 10},
+		"svc|r2": {service: "svc", resourceID: "r2", unblended: 50},
+		"svc|r3": {service: "svc", resourceID: "r3", unblended: 30},
+		"svc|r4": {service: "svc", resourceID: "r4", unblended: 5},
+		"svc|r5": {service: "svc", resourceID: "r5", unblended: 20},
 	}
 
 	top3 := topNResources(resources, 3)
@@ -432,24 +537,31 @@ func TestParseZIPSample(t *testing.T) {
 		t.Fatalf("stat fixture: %v", err)
 	}
 
-	agg := &curAggregation{
-		byService:   make(map[string]float64),
-		byResource:  make(map[string]resourceCost),
-		byUsageType: make(map[string]float64),
-		byTag:       make(map[string]float64),
-	}
+	agg := NewCURAggregation("")
 
 	if err := parseZIP(f, stat.Size(), agg); err != nil {
 		t.Fatalf("parseZIP: %v", err)
 	}
 
-	if !floatClose(agg.total, 0.0035) {
-		t.Fatalf("expected total 0.0035, got %f", agg.total)
+	if !floatClose(agg.totalUnblended, 0.0035) {
+		t.Fatalf("expected total 0.0035, got %f", agg.totalUnblended)
 	}
-	if !floatClose(agg.byService["AmazonEC2"], 0.0035) {
-		t.Fatalf("expected AmazonEC2 cost 0.0035, got %f", agg.byService["AmazonEC2"])
+	var ec2 *costPair
+	for k, v := range agg.byService {
+		if k.service == "AmazonEC2" {
+			ec2 = v
+		}
 	}
-	if _, ok := agg.byResource["AmazonEC2|i-0f0bf49951ab73706"]; !ok {
+	if ec2 == nil || !floatClose(ec2.unblended, 0.0035) {
+		t.Fatalf("expected AmazonEC2 cost 0.0035, got %+v", ec2)
+	}
+	found := false
+	for k := range agg.byResource {
+		if strings.HasPrefix(k, "AmazonEC2|i-0f0bf49951ab73706|") {
+			found = true
+		}
+	}
+	if !found {
 		t.Fatalf("expected resource entry for AmazonEC2|i-0f0bf49951ab73706, got %v", agg.byResource)
 	}
 }
@@ -516,8 +628,8 @@ func TestRefreshManifestFallback(t *testing.T) {
 	if c.cached == nil {
 		t.Fatal("expected cached aggregation after refresh")
 	}
-	if !floatClose(c.cached.total, 2.5) {
-		t.Fatalf("expected total 2.5 from fallback manifest, got %f", c.cached.total)
+	if !floatClose(c.cached.totalUnblended, 2.5) {
+		t.Fatalf("expected total 2.5 from fallback manifest, got %f", c.cached.totalUnblended)
 	}
 }
 
@@ -572,8 +684,8 @@ func TestParseZIPEdgeCases(t *testing.T) {
 		if err := parseZIP(r, r.Size(), agg); err != nil {
 			t.Fatalf("expected no error for zip without csv entries, got %v", err)
 		}
-		if agg.total != 0 {
-			t.Fatalf("expected zero total, got %f", agg.total)
+		if agg.totalUnblended != 0 {
+			t.Fatalf("expected zero total, got %f", agg.totalUnblended)
 		}
 	})
 
@@ -594,8 +706,8 @@ func TestParseZIPEdgeCases(t *testing.T) {
 		if err := parseZIP(r, r.Size(), agg); err != nil {
 			t.Fatalf("parseZIP: %v", err)
 		}
-		if !floatClose(agg.total, 1.5) {
-			t.Fatalf("expected total 1.5, got %f", agg.total)
+		if !floatClose(agg.totalUnblended, 1.5) {
+			t.Fatalf("expected total 1.5, got %f", agg.totalUnblended)
 		}
 	})
 

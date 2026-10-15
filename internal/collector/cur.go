@@ -70,20 +70,89 @@ func (m *curManifest) keys() []string {
 	return keys
 }
 
-// curAggregation holds aggregated cost data from CUR files.
+// curAggregation holds aggregated cost data from CUR files. Costs are tracked in
+// both the unblended and amortized views (see unblended/amortizedContribution).
 type curAggregation struct {
-	total       float64
-	byService   map[string]float64
-	byResource  map[string]resourceCost // key: "service|resource_id"
-	byUsageType map[string]float64      // key: "service|usage_type"
-	byTag       map[string]float64      // key: "tag_key|tag_value"
-	period      string
+	totalUnblended float64
+	totalAmortized float64
+	byService      map[svcKey]*costPair    // {service, region} -> costs
+	byResource     map[string]*resourceAgg // key: "service|resource_id|region"
+	byUsageType    map[string]float64      // key: "service|usage_type" (unblended)
+	byTag          map[string]float64      // key: "tag_key|tag_value" (unblended)
+	period         string
 }
 
-type resourceCost struct {
-	service    string
-	resourceID string
-	cost       float64
+type svcKey struct{ service, region string }
+
+type costPair struct{ unblended, amortized float64 }
+
+type resourceAgg struct {
+	service, resourceID, region, az, specKey, specVal string
+	unblended, amortized, usage                       float64
+}
+
+// curRow is a normalized CUR line item (extracted from parquet or CSV) that the
+// format-independent aggregateRow consumes.
+type curRow struct {
+	service, resourceID, usageType, lineItemType string
+	region, az, specKey, specVal                 string
+	unblended, effSP, effRI, usageAmount         float64
+	tags                                         map[string]string
+}
+
+func newCurAggregation(period string) *curAggregation {
+	return &curAggregation{
+		byService:   make(map[svcKey]*costPair),
+		byResource:  make(map[string]*resourceAgg),
+		byUsageType: make(map[string]float64),
+		byTag:       make(map[string]float64),
+		period:      period,
+	}
+}
+
+// aggregateRow folds one normalized CUR line into the aggregation, tracking the
+// unblended and amortized cost views plus usage quantity.
+func aggregateRow(agg *curAggregation, r curRow) {
+	u := unblendedContribution(r.lineItemType, r.unblended)
+	a := amortizedContribution(r.lineItemType, r.unblended, r.effSP, r.effRI)
+	if u == 0 && a == 0 && r.usageAmount == 0 {
+		return
+	}
+	agg.totalUnblended += u
+	agg.totalAmortized += a
+
+	if r.service != "" {
+		sk := svcKey{r.service, r.region}
+		cp := agg.byService[sk]
+		if cp == nil {
+			cp = &costPair{}
+			agg.byService[sk] = cp
+		}
+		cp.unblended += u
+		cp.amortized += a
+	}
+
+	if r.resourceID != "" && r.service != "" {
+		key := r.service + "|" + r.resourceID + "|" + r.region
+		ra := agg.byResource[key]
+		if ra == nil {
+			ra = &resourceAgg{service: r.service, resourceID: r.resourceID, region: r.region,
+				az: r.az, specKey: r.specKey, specVal: r.specVal}
+			agg.byResource[key] = ra
+		}
+		ra.unblended += u
+		ra.amortized += a
+		ra.usage += r.usageAmount
+	}
+
+	if r.usageType != "" && r.service != "" {
+		agg.byUsageType[r.service+"|"+r.usageType] += u
+	}
+	for k, v := range r.tags {
+		if v != "" {
+			agg.byTag[k+"|"+v] += u
+		}
+	}
 }
 
 // CURCollector reads CUR report files from S3 and emits cost metrics.
@@ -137,16 +206,20 @@ func (c *CURCollector) Collect(ctx context.Context, cfg aws.Config, account, acc
 		return nil
 	}
 
-	metrics.CURTotalCost.WithLabelValues(account, accountName, agg.period).Set(agg.total)
+	metrics.CURTotalCost.WithLabelValues(account, accountName, "unblended", agg.period).Set(agg.totalUnblended)
+	metrics.CURTotalCost.WithLabelValues(account, accountName, "amortized", agg.period).Set(agg.totalAmortized)
 
-	for svc, cost := range agg.byService {
-		metrics.CURCostByService.WithLabelValues(account, accountName, svc, agg.period).Set(cost)
+	for sk, cp := range agg.byService {
+		metrics.CURCostByService.WithLabelValues(account, accountName, sk.service, sk.region, "unblended", agg.period).Set(cp.unblended)
+		metrics.CURCostByService.WithLabelValues(account, accountName, sk.service, sk.region, "amortized", agg.period).Set(cp.amortized)
 	}
 
-	// Emit top N resources by cost.
+	// Emit top N resources by cost (unblended + amortized), plus usage quantity.
 	topResources := topNResources(agg.byResource, c.cfg.MaxResources)
 	for _, rc := range topResources {
-		metrics.CURCostByResource.WithLabelValues(account, accountName, rc.service, rc.resourceID, agg.period).Set(rc.cost)
+		metrics.CURCostByResource.WithLabelValues(account, accountName, rc.service, rc.resourceID, rc.region, rc.az, rc.specKey, rc.specVal, "unblended", agg.period).Set(rc.unblended)
+		metrics.CURCostByResource.WithLabelValues(account, accountName, rc.service, rc.resourceID, rc.region, rc.az, rc.specKey, rc.specVal, "amortized", agg.period).Set(rc.amortized)
+		metrics.CURUsageAmount.WithLabelValues(account, accountName, rc.service, rc.resourceID, rc.region, rc.az, rc.specKey, rc.specVal, agg.period).Set(rc.usage)
 	}
 
 	for key, cost := range agg.byUsageType {
@@ -213,13 +286,7 @@ func (c *CURCollector) refresh(ctx context.Context, cfg aws.Config, now time.Tim
 		return nil
 	}
 
-	agg := &curAggregation{
-		byService:   make(map[string]float64),
-		byResource:  make(map[string]resourceCost),
-		byUsageType: make(map[string]float64),
-		byTag:       make(map[string]float64),
-		period:      periodStart,
-	}
+	agg := newCurAggregation(periodStart)
 
 	format := c.detectFormat(reportKeys[0])
 
@@ -378,6 +445,54 @@ var costLineItemTypes = map[string]struct{}{
 	"SavingsPlanUpfrontFee":   {},
 }
 
+// productAttrs pulls the region, availability zone, and a single adaptive
+// "spec" (instance type / volume type / db engine) out of the CUR product map.
+func productAttrs(product map[string]string) (region, az, specKey, specVal string) {
+	region = product["region"]
+	az = product["availability_zone"]
+	switch {
+	case product["database_engine"] != "":
+		specKey, specVal = "engine", product["database_engine"]
+	case product["volume_api_name"] != "":
+		specKey, specVal = "volume_type", product["volume_api_name"]
+	case product["instance_type_family"] != "":
+		specKey, specVal = "instance_type", product["instance_type_family"]
+	}
+	return
+}
+
+// unblendedContribution returns the line's cost for the AWS "unblended" view:
+// the raw unblended cost for real-charge line-item types, 0 otherwise
+// (credits/refunds/negations and SP-covered usage are excluded — SP is counted
+// via its recurring/upfront fee).
+func unblendedContribution(lit string, unblended float64) float64 {
+	if lit == "" { // no line-item-type column: treat as a plain cost line
+		return unblended
+	}
+	if _, ok := costLineItemTypes[lit]; ok {
+		return unblended
+	}
+	return 0
+}
+
+// amortizedContribution returns the line's cost for the "amortized" view, where
+// Savings Plan / RI commitment is attributed to the usage that consumed it:
+// covered usage is valued at its effective cost and the commitment fees become 0.
+func amortizedContribution(lit string, unblended, effSP, effRI float64) float64 {
+	switch lit {
+	case "SavingsPlanCoveredUsage":
+		return effSP
+	case "DiscountedUsage":
+		return effRI
+	case "SavingsPlanRecurringFee", "SavingsPlanUpfrontFee", "RIFee":
+		return 0
+	case "Usage", "Tax", "Fee", "":
+		return unblended
+	default:
+		return 0
+	}
+}
+
 type parquetColIndices struct {
 	cost         int
 	service      int
@@ -385,6 +500,11 @@ type parquetColIndices struct {
 	usageType    int
 	accountID    int
 	lineItemType int
+	usageAmount  int
+	effSP        int            // savings_plan_savings_plan_effective_cost
+	effRI        int            // reservation_effective_cost
+	productKey   int            // product.key_value.key
+	productVal   int            // product.key_value.value
 	tagCols      map[int]string // column index -> tag name
 }
 
@@ -396,6 +516,11 @@ func parquetColumnIndices(schema *parquet.Schema) parquetColIndices {
 		usageType:    -1,
 		accountID:    -1,
 		lineItemType: -1,
+		usageAmount:  -1,
+		effSP:        -1,
+		effRI:        -1,
+		productKey:   -1,
+		productVal:   -1,
 		tagCols:      make(map[int]string),
 	}
 
@@ -414,6 +539,16 @@ func parquetColumnIndices(schema *parquet.Schema) parquetColIndices {
 			idx.accountID = i
 		case "line_item_line_item_type":
 			idx.lineItemType = i
+		case "line_item_usage_amount":
+			idx.usageAmount = i
+		case "savings_plan_savings_plan_effective_cost":
+			idx.effSP = i
+		case "reservation_effective_cost":
+			idx.effRI = i
+		case "product.key_value.key":
+			idx.productKey = i
+		case "product.key_value.value":
+			idx.productVal = i
 		default:
 			if strings.HasPrefix(path, "resource_tags_user_") {
 				tagName := strings.TrimPrefix(path, "resource_tags_user_")
@@ -425,54 +560,59 @@ func parquetColumnIndices(schema *parquet.Schema) parquetColIndices {
 	return idx
 }
 
+// productMapFromRow reconstructs the CUR `product` map from the repeated
+// key_value columns in a parquet row (key then its value, per map entry).
+func productMapFromRow(row parquet.Row, keyCol, valCol int) map[string]string {
+	if keyCol < 0 || valCol < 0 {
+		return nil
+	}
+	m := make(map[string]string)
+	var lastKey string
+	for _, v := range row {
+		switch v.Column() {
+		case keyCol:
+			lastKey = v.String()
+		case valCol:
+			if lastKey != "" {
+				m[lastKey] = v.String()
+				lastKey = ""
+			}
+		}
+	}
+	return m
+}
+
 func aggregateParquetRow(row parquet.Row, idx parquetColIndices, agg *curAggregation) {
 	if idx.cost < 0 {
 		return
 	}
+	region, az, specKey, specVal := productAttrs(productMapFromRow(row, idx.productKey, idx.productVal))
 
-	// Skip non-cost line item types (credits, refunds, negations).
-	if idx.lineItemType >= 0 {
-		lit := parquetString(row, idx.lineItemType)
-		if _, ok := costLineItemTypes[lit]; !ok {
-			return
-		}
-	}
-
-	cost := parquetFloat64(row, idx.cost)
-	if cost == 0 {
-		return
-	}
-
-	service := parquetString(row, idx.service)
-	resourceID := parquetString(row, idx.resource)
-	usageType := parquetString(row, idx.usageType)
-
-	agg.total += cost
-
-	if service != "" {
-		agg.byService[service] += cost
-	}
-
-	if resourceID != "" && service != "" {
-		key := service + "|" + resourceID
-		rc := agg.byResource[key]
-		rc.service = service
-		rc.resourceID = resourceID
-		rc.cost += cost
-		agg.byResource[key] = rc
-	}
-
-	if usageType != "" && service != "" {
-		agg.byUsageType[service+"|"+usageType] += cost
-	}
-
-	// Aggregate tag costs.
+	var tags map[string]string
 	for colIdx, tagName := range idx.tagCols {
-		tagValue := parquetString(row, colIdx)
-		if tagValue != "" {
-			agg.byTag[tagName+"|"+tagValue] += cost
+		if tv := parquetString(row, colIdx); tv != "" {
+			if tags == nil {
+				tags = make(map[string]string)
+			}
+			tags[tagName] = tv
 		}
 	}
+
+	aggregateRow(agg, curRow{
+		service:      parquetString(row, idx.service),
+		resourceID:   parquetString(row, idx.resource),
+		usageType:    parquetString(row, idx.usageType),
+		lineItemType: parquetString(row, idx.lineItemType),
+		region:       region,
+		az:           az,
+		specKey:      specKey,
+		specVal:      specVal,
+		unblended:    parquetFloat64(row, idx.cost),
+		effSP:        parquetFloat64(row, idx.effSP),
+		effRI:        parquetFloat64(row, idx.effRI),
+		usageAmount:  parquetFloat64(row, idx.usageAmount),
+		tags:         tags,
+	})
 }
 
 func parquetString(row parquet.Row, colIdx int) string {
@@ -613,6 +753,14 @@ type csvColMap struct {
 	usageType    int
 	accountID    int
 	lineItemType int
+	usageAmount  int
+	effSP        int
+	effRI        int
+	region       int
+	az           int
+	instanceType int
+	volumeType   int
+	engine       int
 	tagCols      map[int]string // column index -> tag name
 }
 
@@ -624,6 +772,14 @@ func csvColumnMap(header []string) csvColMap {
 		usageType:    -1,
 		accountID:    -1,
 		lineItemType: -1,
+		usageAmount:  -1,
+		effSP:        -1,
+		effRI:        -1,
+		region:       -1,
+		az:           -1,
+		instanceType: -1,
+		volumeType:   -1,
+		engine:       -1,
 		tagCols:      make(map[int]string),
 	}
 
@@ -641,6 +797,22 @@ func csvColumnMap(header []string) csvColMap {
 			m.accountID = i
 		case "lineItem/LineItemType", "line_item_line_item_type":
 			m.lineItemType = i
+		case "lineItem/UsageAmount", "line_item_usage_amount":
+			m.usageAmount = i
+		case "savingsPlan/SavingsPlanEffectiveCost", "savings_plan_savings_plan_effective_cost":
+			m.effSP = i
+		case "reservation/EffectiveCost", "reservation_effective_cost":
+			m.effRI = i
+		case "product/region", "product_region", "product/regionCode", "product_region_code":
+			m.region = i
+		case "lineItem/AvailabilityZone", "line_item_availability_zone", "product/availabilityZone", "product_availability_zone":
+			m.az = i
+		case "product/instanceTypeFamily", "product_instance_type_family":
+			m.instanceType = i
+		case "product/volumeApiName", "product_volume_api_name":
+			m.volumeType = i
+		case "product/databaseEngine", "product_database_engine":
+			m.engine = i
 		default:
 			switch {
 			case strings.HasPrefix(col, "resourceTags/user:"):
@@ -664,49 +836,55 @@ func aggregateCSVRow(record []string, colMap csvColMap, agg *curAggregation) {
 	if colMap.cost < 0 || colMap.cost >= len(record) {
 		return
 	}
+	cost, _ := strconv.ParseFloat(csvField(record, colMap.cost), 64)
 
-	// Skip non-cost line item types (credits, refunds, negations).
-	if colMap.lineItemType >= 0 {
-		lit := csvField(record, colMap.lineItemType)
-		if _, ok := costLineItemTypes[lit]; !ok {
-			return
-		}
+	product := map[string]string{}
+	if v := csvField(record, colMap.region); v != "" {
+		product["region"] = v
 	}
-
-	cost, err := strconv.ParseFloat(record[colMap.cost], 64)
-	if err != nil || cost == 0 {
-		return
+	if v := csvField(record, colMap.az); v != "" {
+		product["availability_zone"] = v
 	}
-
-	service := csvField(record, colMap.service)
-	resourceID := csvField(record, colMap.resource)
-	usageType := csvField(record, colMap.usageType)
-
-	agg.total += cost
-
-	if service != "" {
-		agg.byService[service] += cost
+	if v := csvField(record, colMap.instanceType); v != "" {
+		product["instance_type_family"] = v
 	}
-
-	if resourceID != "" && service != "" {
-		key := service + "|" + resourceID
-		rc := agg.byResource[key]
-		rc.service = service
-		rc.resourceID = resourceID
-		rc.cost += cost
-		agg.byResource[key] = rc
+	if v := csvField(record, colMap.volumeType); v != "" {
+		product["volume_api_name"] = v
 	}
-
-	if usageType != "" && service != "" {
-		agg.byUsageType[service+"|"+usageType] += cost
+	if v := csvField(record, colMap.engine); v != "" {
+		product["database_engine"] = v
 	}
+	region, az, specKey, specVal := productAttrs(product)
 
+	var tags map[string]string
 	for colIdx, tagName := range colMap.tagCols {
-		tagValue := csvField(record, colIdx)
-		if tagValue != "" {
-			agg.byTag[tagName+"|"+tagValue] += cost
+		if tv := csvField(record, colIdx); tv != "" {
+			if tags == nil {
+				tags = make(map[string]string)
+			}
+			tags[tagName] = tv
 		}
 	}
+
+	effSP, _ := strconv.ParseFloat(csvField(record, colMap.effSP), 64)
+	effRI, _ := strconv.ParseFloat(csvField(record, colMap.effRI), 64)
+	usageAmount, _ := strconv.ParseFloat(csvField(record, colMap.usageAmount), 64)
+
+	aggregateRow(agg, curRow{
+		service:      csvField(record, colMap.service),
+		resourceID:   csvField(record, colMap.resource),
+		usageType:    csvField(record, colMap.usageType),
+		lineItemType: csvField(record, colMap.lineItemType),
+		region:       region,
+		az:           az,
+		specKey:      specKey,
+		specVal:      specVal,
+		unblended:    cost,
+		effSP:        effSP,
+		effRI:        effRI,
+		usageAmount:  usageAmount,
+		tags:         tags,
+	})
 }
 
 func csvField(record []string, idx int) string {
@@ -723,14 +901,15 @@ func billingPeriod(now time.Time) (string, string) {
 	return start.Format("20060102"), end.Format("20060102")
 }
 
-func topNResources(byResource map[string]resourceCost, n int) []resourceCost {
-	resources := make([]resourceCost, 0, len(byResource))
+// topNResources returns the n most expensive resources by unblended cost.
+func topNResources(byResource map[string]*resourceAgg, n int) []*resourceAgg {
+	resources := make([]*resourceAgg, 0, len(byResource))
 	for _, rc := range byResource {
 		resources = append(resources, rc)
 	}
 
 	sort.Slice(resources, func(i, j int) bool {
-		return resources[i].cost > resources[j].cost
+		return resources[i].unblended > resources[j].unblended
 	})
 
 	if len(resources) > n {
@@ -755,11 +934,5 @@ func CSVColumnMap(header []string) csvColMap {
 
 // NewCURAggregation creates a new empty aggregation. Exported for testing.
 func NewCURAggregation(period string) *curAggregation {
-	return &curAggregation{
-		byService:   make(map[string]float64),
-		byResource:  make(map[string]resourceCost),
-		byUsageType: make(map[string]float64),
-		byTag:       make(map[string]float64),
-		period:      period,
-	}
+	return newCurAggregation(period)
 }
