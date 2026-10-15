@@ -445,6 +445,58 @@ func TestAggregateRow(t *testing.T) {
 	}
 }
 
+func TestSerializeTags(t *testing.T) {
+	cases := []struct {
+		in   map[string]string
+		want string
+	}{
+		{nil, ""},
+		{map[string]string{}, ""},
+		{map[string]string{"team": "data", "env": "prod"}, "env=prod, team=data"}, // sorted by key
+		{map[string]string{"Name": "web-1"}, "Name=web-1"},
+	}
+	for _, c := range cases {
+		if got := serializeTags(c.in); got != c.want {
+			t.Fatalf("serializeTags(%v) = %q, want %q", c.in, got, c.want)
+		}
+	}
+}
+
+func TestResourceIDFromARN(t *testing.T) {
+	cases := map[string]string{
+		"arn:aws:ec2:us-east-1:1:instance/i-abc": "i-abc",
+		"arn:aws:ec2:us-east-1:1:volume/vol-xyz": "vol-xyz",
+		"arn:aws:s3:::my-bucket":                 "my-bucket",
+		"arn:aws:rds:us-east-1:1:db:mydb":        "mydb",
+		"i-plainid":                              "i-plainid",
+	}
+	for in, want := range cases {
+		if got := resourceIDFromARN(in); got != want {
+			t.Fatalf("resourceIDFromARN(%q) = %q, want %q", in, got, want)
+		}
+	}
+}
+
+func TestTagsFor(t *testing.T) {
+	m := map[string]string{
+		"i-abc":                                "env=prod",
+		"arn:aws:ec2:us-east-1:1:volume/vol-1": "team=data",
+		"vol-1":                                "team=data",
+	}
+	if got := tagsFor(m, "i-abc"); got != "env=prod" {
+		t.Fatalf("bare id lookup: got %q", got)
+	}
+	if got := tagsFor(m, "arn:aws:ec2:us-east-1:1:instance/i-abc"); got != "env=prod" {
+		t.Fatalf("arn->id fallback: got %q", got)
+	}
+	if got := tagsFor(nil, "i-abc"); got != "" {
+		t.Fatalf("nil map should be empty, got %q", got)
+	}
+	if got := tagsFor(m, "i-missing"); got != "" {
+		t.Fatalf("missing should be empty, got %q", got)
+	}
+}
+
 func TestProductMapFromRow_ZipsGroupedColumns(t *testing.T) {
 	// parquet-go flattens a map's key column and value column into two separate
 	// ordered runs within the row (not interleaved per entry), so the i-th key

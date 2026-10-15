@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/nimishgj/aws-radar/internal/config"
 	"github.com/nimishgj/aws-radar/internal/metrics"
@@ -80,6 +81,10 @@ type curAggregation struct {
 	byUsageType    map[string]float64      // key: "service|usage_type" (unblended)
 	byTag          map[string]float64      // key: "tag_key|tag_value" (unblended)
 	period         string
+	// resourceTags maps a resource id (bare id or ARN) to its serialized tag set,
+	// populated from the Resource Groups Tagging API when costCUR.resource_tags is
+	// enabled. nil when the feature is off.
+	resourceTags map[string]string
 }
 
 type svcKey struct{ service, region string }
@@ -217,8 +222,9 @@ func (c *CURCollector) Collect(ctx context.Context, cfg aws.Config, account, acc
 	// Emit top N resources by cost (unblended + amortized), plus usage quantity.
 	topResources := topNResources(agg.byResource, c.cfg.MaxResources)
 	for _, rc := range topResources {
-		metrics.CURCostByResource.WithLabelValues(account, accountName, rc.service, rc.resourceID, rc.region, rc.az, rc.specKey, rc.specVal, "unblended", agg.period).Set(rc.unblended)
-		metrics.CURCostByResource.WithLabelValues(account, accountName, rc.service, rc.resourceID, rc.region, rc.az, rc.specKey, rc.specVal, "amortized", agg.period).Set(rc.amortized)
+		tags := tagsFor(agg.resourceTags, rc.resourceID)
+		metrics.CURCostByResource.WithLabelValues(account, accountName, rc.service, rc.resourceID, rc.region, rc.az, rc.specKey, rc.specVal, tags, "unblended", agg.period).Set(rc.unblended)
+		metrics.CURCostByResource.WithLabelValues(account, accountName, rc.service, rc.resourceID, rc.region, rc.az, rc.specKey, rc.specVal, tags, "amortized", agg.period).Set(rc.amortized)
 		metrics.CURUsageAmount.WithLabelValues(account, accountName, rc.service, rc.resourceID, rc.region, rc.az, rc.specKey, rc.specVal, agg.period).Set(rc.usage)
 	}
 
@@ -295,6 +301,11 @@ func (c *CURCollector) refresh(ctx context.Context, cfg aws.Config, now time.Tim
 			log.Error().Err(err).Str("key", key).Msg("Failed to process CUR file")
 			continue
 		}
+	}
+
+	// Optional: enrich resources with all their tags (Resource Groups Tagging API).
+	if c.cfg.ResourceTags {
+		agg.resourceTags = fetchResourceTags(ctx, cfg, agg.byResource)
 	}
 
 	c.mu.Lock()
@@ -459,6 +470,93 @@ func productAttrs(product map[string]string) (region, az, specKey, specVal strin
 		specKey, specVal = "instance_type", product["instance_type_family"]
 	}
 	return
+}
+
+// serializeTags renders a resource's tags as a stable, human-readable
+// "key=value, key=value" string (sorted by key) for the single `tags` label.
+func serializeTags(tags map[string]string) string {
+	if len(tags) == 0 {
+		return ""
+	}
+	keys := make([]string, 0, len(tags))
+	for k := range tags {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	parts := make([]string, 0, len(keys))
+	for _, k := range keys {
+		parts = append(parts, k+"="+tags[k])
+	}
+	return strings.Join(parts, ", ")
+}
+
+// fetchResourceTags looks up every tag for the resources in byResource via the
+// Resource Groups Tagging API (one paginated GetResources per region present),
+// returning a map keyed by both bare resource id and full ARN -> serialized tags.
+func fetchResourceTags(ctx context.Context, cfg aws.Config, byResource map[string]*resourceAgg) map[string]string {
+	regions := map[string]struct{}{}
+	for _, r := range byResource {
+		if r.region != "" && r.region != "global" {
+			regions[r.region] = struct{}{}
+		}
+	}
+	out := map[string]string{}
+	for region := range regions {
+		rcfg := cfg.Copy()
+		rcfg.Region = region
+		client := resourcegroupstaggingapi.NewFromConfig(rcfg)
+		p := resourcegroupstaggingapi.NewGetResourcesPaginator(client, &resourcegroupstaggingapi.GetResourcesInput{})
+		for p.HasMorePages() {
+			page, err := p.NextPage(ctx)
+			if err != nil {
+				log.Warn().Err(err).Str("region", region).Msg("GetResources failed for CUR tag enrichment")
+				break
+			}
+			for _, m := range page.ResourceTagMappingList {
+				arn := aws.ToString(m.ResourceARN)
+				if len(m.Tags) == 0 {
+					continue
+				}
+				tags := make(map[string]string, len(m.Tags))
+				for _, t := range m.Tags {
+					tags[aws.ToString(t.Key)] = aws.ToString(t.Value)
+				}
+				s := serializeTags(tags)
+				if s == "" {
+					continue
+				}
+				out[arn] = s
+				out[resourceIDFromARN(arn)] = s
+			}
+		}
+	}
+	return out
+}
+
+// tagsFor looks up a resource's serialized tags by its CUR resource id (trying
+// the id as-is, then the id extracted from an ARN form).
+func tagsFor(resourceTags map[string]string, resourceID string) string {
+	if resourceTags == nil {
+		return ""
+	}
+	if s := resourceTags[resourceID]; s != "" {
+		return s
+	}
+	return resourceTags[resourceIDFromARN(resourceID)]
+}
+
+// resourceIDFromARN extracts the bare resource id from an ARN so it matches the
+// CUR line_item_resource_id (which is often the bare id). Non-ARNs pass through.
+func resourceIDFromARN(s string) string {
+	if i := strings.LastIndex(s, "/"); i >= 0 {
+		return s[i+1:]
+	}
+	if strings.HasPrefix(s, "arn:") {
+		if i := strings.LastIndex(s, ":"); i >= 0 {
+			return s[i+1:]
+		}
+	}
+	return s
 }
 
 // unblendedContribution returns the line's cost for the AWS "unblended" view:

@@ -47,6 +47,10 @@ type CostCURConfig struct {
 	Frequency    string `mapstructure:"frequency"`
 	Region       string `mapstructure:"region"`
 	MaxResources int    `mapstructure:"max_resources"`
+	// ResourceTags, when true, enriches the top-N resource cost series with all
+	// of each resource's tags (from the Resource Groups Tagging API) in a single
+	// `tags` label. Opt-in — needs the tag:GetResources IAM permission.
+	ResourceTags bool `mapstructure:"resource_tags"`
 }
 
 type LoggingConfig struct {

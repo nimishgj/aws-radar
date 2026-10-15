@@ -1237,9 +1237,9 @@ var (
 	CURCostByResource = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "aws_cur_cost_by_resource_usd",
-			Help: "Cost by resource ID from CUR report in USD (top N), with region/AZ/spec",
+			Help: "Cost by resource ID from CUR report in USD (top N), with region/AZ/spec and optional tags",
 		},
-		[]string{"account", "account_name", "service", "resource_id", "region", "availability_zone", "spec_key", "spec_value", "cost_type", "period"},
+		[]string{"account", "account_name", "service", "resource_id", "region", "availability_zone", "spec_key", "spec_value", "tags", "cost_type", "period"},
 	)
 
 	// CURUsageAmount is the usage quantity for top-N resources, in each line's
