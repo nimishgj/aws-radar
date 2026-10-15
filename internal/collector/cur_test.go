@@ -12,6 +12,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/parquet-go/parquet-go"
 	"testing"
 	"time"
 
@@ -441,6 +442,23 @@ func TestAggregateRow(t *testing.T) {
 	v := agg.byResource["AmazonEC2|vol-1|eu-west-1"]
 	if v == nil || !floatClose(v.usage, 100) || v.specKey != "volume_type" || v.specVal != "gp3" {
 		t.Fatalf("resource vol-1 unexpected: %+v", v)
+	}
+}
+
+func TestProductMapFromRow_ZipsGroupedColumns(t *testing.T) {
+	// parquet-go flattens a map's key column and value column into two separate
+	// ordered runs within the row (not interleaved per entry), so the i-th key
+	// pairs with the i-th value.
+	const keyCol, valCol = 3, 4
+	row := parquet.Row{
+		parquet.ValueOf("region").Level(0, 1, keyCol),
+		parquet.ValueOf("availability_zone").Level(0, 1, keyCol),
+		parquet.ValueOf("us-east-1").Level(0, 1, valCol),
+		parquet.ValueOf("us-east-1a").Level(0, 1, valCol),
+	}
+	m := productMapFromRow(row, keyCol, valCol)
+	if m["region"] != "us-east-1" || m["availability_zone"] != "us-east-1a" {
+		t.Fatalf("expected region=us-east-1, availability_zone=us-east-1a; got %v", m)
 	}
 }
 

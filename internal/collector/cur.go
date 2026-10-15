@@ -566,17 +566,22 @@ func productMapFromRow(row parquet.Row, keyCol, valCol int) map[string]string {
 	if keyCol < 0 || valCol < 0 {
 		return nil
 	}
-	m := make(map[string]string)
-	var lastKey string
+	// parquet-go flattens a map's key column and value column into two separate
+	// ordered runs within the row (not interleaved per entry), so pair the i-th
+	// key with the i-th value.
+	var keys, vals []string
 	for _, v := range row {
 		switch v.Column() {
 		case keyCol:
-			lastKey = v.String()
+			keys = append(keys, v.String())
 		case valCol:
-			if lastKey != "" {
-				m[lastKey] = v.String()
-				lastKey = ""
-			}
+			vals = append(vals, v.String())
+		}
+	}
+	m := make(map[string]string, len(keys))
+	for i := range keys {
+		if i < len(vals) {
+			m[keys[i]] = vals[i]
 		}
 	}
 	return m
