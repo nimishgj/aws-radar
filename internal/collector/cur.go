@@ -303,9 +303,10 @@ func (c *CURCollector) refresh(ctx context.Context, cfg aws.Config, now time.Tim
 		}
 	}
 
-	// Optional: enrich resources with all their tags (Resource Groups Tagging API).
+	// Optional: enrich the top-N resources with all their tags (Resource Groups
+	// Tagging API), limited to those resources' regions to bound API calls.
 	if c.cfg.ResourceTags {
-		agg.resourceTags = fetchResourceTags(ctx, cfg, agg.byResource)
+		agg.resourceTags = fetchResourceTags(ctx, cfg, topNResources(agg.byResource, c.cfg.MaxResources))
 	}
 
 	c.mu.Lock()
@@ -493,9 +494,9 @@ func serializeTags(tags map[string]string) string {
 // fetchResourceTags looks up every tag for the resources in byResource via the
 // Resource Groups Tagging API (one paginated GetResources per region present),
 // returning a map keyed by both bare resource id and full ARN -> serialized tags.
-func fetchResourceTags(ctx context.Context, cfg aws.Config, byResource map[string]*resourceAgg) map[string]string {
+func fetchResourceTags(ctx context.Context, cfg aws.Config, resources []*resourceAgg) map[string]string {
 	regions := map[string]struct{}{}
-	for _, r := range byResource {
+	for _, r := range resources {
 		if r.region != "" && r.region != "global" {
 			regions[r.region] = struct{}{}
 		}
@@ -505,9 +506,12 @@ func fetchResourceTags(ctx context.Context, cfg aws.Config, byResource map[strin
 		rcfg := cfg.Copy()
 		rcfg.Region = region
 		client := resourcegroupstaggingapi.NewFromConfig(rcfg)
+		// Bound each region so one slow/disabled region can't exhaust the
+		// collection deadline for the rest.
+		rctx, cancel := context.WithTimeout(ctx, 20*time.Second)
 		p := resourcegroupstaggingapi.NewGetResourcesPaginator(client, &resourcegroupstaggingapi.GetResourcesInput{})
 		for p.HasMorePages() {
-			page, err := p.NextPage(ctx)
+			page, err := p.NextPage(rctx)
 			if err != nil {
 				log.Warn().Err(err).Str("region", region).Msg("GetResources failed for CUR tag enrichment")
 				break
@@ -529,6 +533,7 @@ func fetchResourceTags(ctx context.Context, cfg aws.Config, byResource map[strin
 				out[resourceIDFromARN(arn)] = s
 			}
 		}
+		cancel()
 	}
 	return out
 }
